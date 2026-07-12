@@ -3,9 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Game Merch Store | Official Goods</title>
+    
+    <!-- CSS link -->
+    <link rel="stylesheet" href="assets/css/main.css">
 </head>
 <body>
-    
+
+    <!-- HEADER & NAVIGATION -->
+    <header class="top-nav">
+        <div class="logo">
+            <a href="index.html">
+                <img src="assets/images/system/logo.png" alt="Game Merch Shop Logo">
+            </a>
+        </div>
+        <nav class="main-menu">
+            <ul>
+                <li><a href="#">Figures</a></li>
+                <li><a href="#">Plushies</a></li>
+                <li><a href="#">Apparel</a></li>
+                <li><a href="#">Accessories</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <!-- Link sang các trang Shared Module -->
+            <a href="pages/shared/login.html" class="btn-login">Login</a>
+            <!-- Link sang module của Beryl -->
+            <a href="pages/cart/cart.html" class="cart-icon">
+                🛒 Cart (<span class="cart-count">0</span>)
+            </a>
+        </div>
+    </header>
+
+    <!-- 2. MAIN CONTENT -->
+    <main>
+        
+        <!-- Hero Banner: Bắt mắt ngay từ cái nhìn đầu tiên -->
+        <section class="hero-banner">
+            <div class="hero-content">
+                <h1>Arknights W 1/7 Scale Figure</h1>
+                <p>Khám phá bộ sưu tập kỷ niệm giới hạn. Đặt trước ngay hôm nay!</p>
+                <a href="#" class="btn-primary">Shop Now</a>
+            </div>
+            <!-- Ảnh nền banner sẽ được set trong CSS -->
+        </section>
+
+        <!-- Danh mục sản phẩm nổi bật -->
+        <section class="featured-categories">
+            <h2>Shop by Category</h2>
+            <div class="category-grid">
+                <a href="#" class="category-card">
+                    <img src="assets/images/system/cat-figure.jpg" alt="Figures Category">
+                    <h3>Scale Figures</h3>
+                </a>
+                <a href="#" class="category-card">
+                    <img src="assets/images/system/cat-plushie.jpg" alt="Plushies Category">
+                    <h3>Cute Plushies</h3>
+                </a>
+                <a href="#" class="category-card">
+                    <img src="assets/images/system/cat-apparel.jpg" alt="Apparel Category">
+                    <h3>Apparel</h3>
+                </a>
+            </div>
+        </section>
+
+        <!-- Lưới sản phẩm bán chạy (Trending) -->
+        <section class="trending-products">
+            <h2>Trending Now</h2>
+            <div class="product-grid">
+                
+                <!-- Sản phẩm 1 -->
+                <article class="product-card">
+                    <div class="product-image">
+                        <img src="assets/images/products/stardew-chicken.jpg" alt="Stardew Valley Chicken Plush">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Stardew Valley Chicken Plush</h3>
+                        <p class="product-price">$24.99</p>
+                        <!-- Nút này sẽ kết nối với module Cart của em -->
+                        <button class="btn-add-to-cart">Add to Cart</button>
+                    </div>
+                </article>
+
+                <!-- Sản phẩm 2 -->
+                <article class="product-card">
+                    <div class="product-image">
+                        <img src="assets/images/products/mahoraga-figure.jpg" alt="Mahoraga Figure">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Mahoraga 1/8 Action Figure</h3>
+                        <p class="product-price">$129.99</p>
+                        <button class="btn-add-to-cart">Add to Cart</button>
+                    </div>
+                </article>
+                
+                <!-- Em có thể copy thêm các thẻ <article> để hiển thị 4-8 sản phẩm -->
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 3. FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-columns">
+            <div class="footer-col">
+                <h4>Customer Service</h4>
+                <ul>
+                    <li><a href="#">Shipping Policy</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Follow Us</h4>
+                <!-- Nhét icon mạng xã hội vào đây -->
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2026 Game Merch Store. This is a student project. Not for commercial use.</p>
+        </div>
+    </footer>
+
 </body>
 </html>
