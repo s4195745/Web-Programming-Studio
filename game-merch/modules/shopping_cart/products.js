@@ -1,4 +1,5 @@
 const products = [
+    
     {
         id: 1,
         title: "The Knight Plush",
@@ -18,6 +19,7 @@ const products = [
         ]
     },
 
+
     {
         id: 2,
         title: "Hornet Plush",
@@ -35,6 +37,7 @@ const products = [
             }
         ]
     },
+
 
     {
         id: 3,
@@ -54,78 +57,5 @@ const products = [
         ]
     },
 
-    {
-        id: 4,
-        title: "Hornet Plush",
-        price: "$32",
-        description: "Hornet from Silksong",
-        colors: [
-            {
-                colorName: "red",
-                mainImage: "../../assets/cart.images/product_HK_hornet_plush_main.webp",
-                thumbnails: [
-                    "../../assets/cart.images/product_HK_hornet_plush_photo1.webp",
-                    "../../assets/cart.images/product_HK_hornet_plush_photo2.webp",
-                ],
-                sizes: ["S", "M", "L","XL","XXL"]
-            }
-        ]
-    },
-
-    {
-        id: 5,
-        title: "Hornet Plush",
-        price: "$32",
-        description: "Hornet from Silksong",
-        colors: [
-            {
-                colorName: "red",
-                mainImage: "../../assets/cart.images/product_HK_hornet_plush_main.webp",
-                thumbnails: [
-                    "../../assets/cart.images/product_HK_hornet_plush_photo1.webp",
-                    "../../assets/cart.images/product_HK_hornet_plush_photo2.webp",
-                ],
-                sizes: ["S", "M", "L"]
-            }
-        ]
-    },
-
-    {
-        id: 6,
-        title: "Hornet Plush",
-        price: "$32",
-        description: "Hornet from Silksong",
-        colors: [
-            {
-                colorName: "red",
-                mainImage: "../../assets/cart.images/product_HK_hornet_plush_main.webp",
-                thumbnails: [
-                    "../../assets/cart.images/product_HK_hornet_plush_photo1.webp",
-                    "../../assets/cart.images/product_HK_hornet_plush_photo2.webp",
-                ],
-                sizes: ["S", "M", "L"]
-            }
-        ]
-    },
-
-        {
-        id: 7,
-        title: "Hornet Plush",
-        price: "$32",
-        description: "Hornet from Silksong",
-        colors: [
-            {
-                colorName: "red",
-                mainImage: "../../assets/cart.images/product_HK_hornet_plush_main.webp",
-                thumbnails: [
-                    "../../assets/cart.images/product_HK_hornet_plush_photo1.webp",
-                    "../../assets/cart.images/product_HK_hornet_plush_photo2.webp",
-                ],
-                sizes: ["S", "M", "L"]
-            }
-        ]
-    },
-
-    
 
 ];
