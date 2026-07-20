@@ -1,11 +1,315 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Forum</title>
+    <link rel="stylesheet" href="../../assets/css/forum.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css">
 </head>
+
 <body>
-    
+    <nav class="navbar">
+        <a href="../../index.html" class="logo">Lootbox.</a>
+        <a href="../../modules/shopping_cart/cart.html" class="cart_icon">
+            <i class="ri-shopping-bag-line"></i>
+        </a>
+    </nav>
+
+    <div class="page_layout">
+        <main class="main_content">
+            <div class="banner_adv">
+                <h2>Advertise</h2>
+            </div>
+
+            <div class="filter_content">
+                <form class="filter_form" action="" method="get">
+                    <input type="text" name="q" class="search_input" placeholder="Search by title/ contents...">
+                    <select name="sort" class="sort_options">
+                        <option value="sort by" disabled>Sort by</option>
+                        <option value="newest">Newest post</option>
+                        <option value="lowest">Oldest post</option>
+                    </select>
+                    <button type="submit" class="apply_btn">Apply</button>
+                </form>
+            </div>
+
+            <!--Result meta-->
+            <p class="result_meta">Showing 24 threads &middot; sorted by <strong>Newest post</strong></p>
+
+            <!--Thread list-->
+            <div class="thread_list">
+                <!--Pinned thread-->
+                <article class="thread_card pinned">
+                    <a href="thread_detail.html" class="card_stretch_link"
+                        aria-label="View thread: Forum rules and how to get the best support for your order"></a>
+                    <span class="pinned_badge"><i class="ri-pushpin-fill"></i> Pinned</span>
+                    <div class="card_header">
+                        <img src="../../assets/Product Images/avatar.jpg" alt="avatar" class="avatar">
+                        <span class="author_name">Admin</span>
+                        <time class="post_time" datetime="2026-07-19T08">Just now</time>
+                    </div>
+                    <h3 class="thread_title">Forum rules &amp; how to get the best support for your order</h3>
+                    <div class="thread_content">
+                        <p>Pleadse read this before posting: how to describe your issue, attach proof of purchase, and
+                            what response to expect from the team.</p>
+                    </div>
+                    <div class="card_footer">
+                        <button class="reaction_btn"><i class="ri-heart-line"></i></button>
+                        <a href="thread_detail.html" class="comment_btn"><i class="ri-chat-3-line">Comment</i></a>
+                    </div>
+                </article>
+
+                <article class="thread_card">
+                    <a href="thread_detail.html" class="card_stretch_link"
+                        aria-label="View thread: Just got the Garen figure with the glowing sword — is the blade detail as sharp as in the photos?"></a>
+                    <div class="card_header">
+                        <img src="../../assets/Product Images/avatar.jpg" alt="avatar" class="avatar">
+                        <span class="author_name">Oliver Holigate</span>
+                        <time class="post_time" datetime="2026-07-19T15:58"> 2 minutes ago</time>
+                    </div>
+                    <h3 class="thread_title">Just got the Garen figure with the glowing sword — is the blade detail as
+                        sharp as in the photos?</h3>
+                    <div class="thread_content">
+                        <img src="../../assets/Product Images/Garen_figure.webp" alt="Garen figure with glowing sword"
+                            class="content_img">
+                    </div>
+                    <div class="card_footer">
+                        <button class="reaction_btn"><i class="ri-heart-line"></i></button>
+                        <a href="thread_detail.html" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
+                    </div>
+                </article>
+                <section class="replies_seciton">
+                    <h4 class="replies_heading">Reply</h4>
+                    <div class="reply_item">
+                        <div class="reply_header">
+                            <img src="../../assets/Product Images/avatar.jpg" alt="avatar" class="avatar">
+                            <span class="author_name">Alex</span>
+                            <time class="post_time" datetime="2026-07-19T16:00">Few seconds ago</time>
+                        </div>
+                        <div class="reply_content">
+                            <img src="../../assets/Product Images/reply for garen figure.jpg">
+                            <p>Got mine today — the blade edge actually has a nice gradient, not flat purple like some
+                                photos show. Minor paint overflow near the wing joint, but overall solid quality.</p>
+                        </div>
+                        <div class="reply_footer">
+                            <button class="reaction_btn"><i class="ri-heart-line"></i></button>
+                        </div>
+                    </div>
+                    
+                </section>
+
+                <article class="thread_card">
+                    <a href="thread_detail.html" class="card_stretch_link"
+                        aria-label="View thread: Can the horned Orn plush be machine washed, or just spot-cleaned? "></a>
+                    <div class="card_header">
+                        <img src="../../assets/Product Images/avatar.jpg" alt="avatar" class="avatar">
+                        <span class="author_name">Hoang Dang</span>
+                        <time class="post_time" datetime="2026-07-19T11:15">4 hours ago</time>
+                    </div>
+                    <h3 class="thread_title">Can the horned plush be machine washed, or just spot-cleaned?</h3>
+                    <div class="thread_content">
+                        <div class="content_gallery">
+                            <img src="../../assets/Product Images/Orn_plush.webp" alt="Orn plush" class="content_img">
+                        </div>                        
+                    </div>
+                    <div class="card_footer">
+                        <button class="reaction_btn"><i class="ri-heart-line"></i></button>
+                        <a href="thread_detail.html" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
+                    </div>
+                </article>
+                <section class="replies_seciton">
+                    <h4 class="replies_heading">Reply</h4>
+                    <div class="reply_item">
+                        <div class="reply_header">
+                            <img src="../../assets/Product Images/avatar.jpg" alt="avatar" class="avatar">
+                            <span class="author_name">Jacob</span>
+                            <time class="post_time" datetime="2026-07-19T13:00">3 hours agp</time>
+                        </div>
+                        <div class="reply_content">
+                            <p>Wouldn't risk the washing machine, the fur tangles easily. I just used a damp cloth with
+                                mild soap and air-dried it flat — worked fine.</p>
+                        </div>
+                        <div class="reply_footer">
+                            <button class="reaction_btn"><i class="ri-heart-line"></i></button>
+                            <a href="thread_detail.html" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
+                        </div>
+                    </div>
+                </section>
+
+                <article class="thread_card">
+                    <a href="thread_detail.html" class="card_stretch_link"
+                        aria-label="View thread: Between Garen and Galio, which one has better paint quality?"></a>
+                    <div class="card_header">
+                        <img src="../../assets/Product Images/avatar.jpg" alt="avatar" class="avatar">
+                        <span class="author_name">Apex</span>
+                        <time class="post_time" datetime="2026-07-16T02:00">3 days ago</time>
+                    </div>
+                    <h3 class="thread_title">Between Garen and Galio, which one has better paint quality?</h3>
+                    <div class="thread_content">
+                        <img src="../../assets/Product Images/Galio_figure.webp" alt="Galio figure" class="content_img">
+                    </div>
+                    <div class="card_footer">
+                        <button class="reaction_btn"><i class="ri-heart-line"></i></button>
+                        <a href="thread_detail.html" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
+                    </div>
+                </article>
+                <section class="replies_seciton">
+                    <h4 class="replies_heading">Reply</h4>
+                    <div class="reply_item">
+                        <div class="reply_header">
+                            <img src="../../assets/Product Images/avatar.jpg" alt="avatar" class="avatar">
+                            <span class="author_name">Pauloramte</span>
+                            <time class="post_time" datetime="2026-07-18T03:00">2 days ago</time>
+                        </div>
+                        <div class="reply_content">
+                            <p>Own both. Garen's sword has a nicer gradient effect, but Galio's gold trim lines are
+                                cleaner overall. Depends if you want detail (Galio) or a dynamic pose (Garen).</p>
+                        </div>
+                        <div class="reply_footer">
+                            <button class="reaction_btn"><i class="ri-heart-line"></i></button>
+                            <a href="thread_detail.html" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
+                        </div>
+                    </div>
+                </section>
+
+                <article class="thread_card">
+                    <a href="thread_detail.html" class="card_stretch_link"
+                        aria-label="View thread: Ordered the bundle of all 3 (Garen, Ornn, Galio) — will they ship safely in one box?"></a>
+                    <div class="card_header">
+                        <img src="../../assets/Product Images/avatar.jpg" alt="avatar" class="avatar">
+                        <span class="author_name">Beryl</span>
+                        <time class="post_time" datetime="2026-07-10T09:00">9 days ago</time>
+                    </div>
+                    <h3 class="thread_title">Ordered the bundle of all 3 (Garen, Ornn, Galio) — will they ship safely in
+                        one box?</h3>
+                    <div class="thread_content_image">
+                        <img src="../../assets/Product Images/Galio_figure.webp" alt="Galio_figure" class="content_img">
+                        <img src="../../assets/Product Images/Garen_figure.webp" alt="Garen_figure" class="content_img">
+                        <img src="../../assets/Product Images/Orn_plush.webp" alt="Orn_plush" class="content_img">
+                    </div>
+                    <div class="card_footer">
+                        <button class="reaction_btn"><i class="ri-heart-line"></i></button>
+                        <a href="thread_detail.html" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
+                    </div>
+                </article>
+                <section class="replies_seciton">
+                    <h4 class="replies_heading">Reply</h4>
+                    <div class="reply_item">
+                        <div class="reply_header">
+                            <img src="../../assets/Product Images/avatar.jpg" alt="avatar" class="avatar">
+                            <span class="author_name">Sophia</span>
+                            <time class="post_time" datetime="2026-07-17T15:00">2 days ago</time>
+                        </div>
+                        <div class="reply_content">
+                            <p>Ordered the same bundle last week, everything arrived intact. The shop wrapped each item
+                                separately in foam before packing them into one larger box — no scratches or damage at
+                                all.</p>
+                        </div>
+                        <div class="reply_footer">
+                            <button class="reaction_btn"><i class="ri-heart-line"></i></button>
+                            <a href="thread_detail.html" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
+                        </div>
+                    </div>
+                </section>
+
+                <!--Empty state (hidden by default, shown by JS when a search/filter return nothing)-->
+                <div class="empty_state" hidden>
+                    <i class="ri-search-eye-line"></i>
+                    <p>No threads found. Try a different title or contents!</p>
+                </div>
+            </div>
+
+            <!--Load more button-->
+            <button class="load_more_btn">Load more threads</button>
+
+        </main>
+
+        <!--SIDEBAR-->
+        <aside class="sidebar">
+            <div class="sidebar_box">
+                <div class="sidebar_box_header">
+                    <h3>Related Products</h3>
+                    <a href="../../index.html">View Shop</a>
+                </div>
+
+                <a href="#" class="product_item">
+                    <div class="product_thumb">
+                        <img src="../../assets/Product Images/Garen_figure.webp" alt="product thumbnail">
+                    </div>
+                    <div class="product_info">
+                        <div class="product_name">Pengu Garen Figure</div>
+                        <div class="product_price">$36.99</div>
+                        <div class="product_tag">Mentioned in this thread</div>
+                    </div>
+                </a>
+
+                <a href="#" class="product_item">
+                    <div class="product_thumb">
+                        <img src="../../assets/Product Images/Galio_figure.webp" alt="product thumbnail">
+                    </div>
+                    <div class="product_info">
+                        <div class="product_name">Baby Galio Plush</div>
+                        <div class="product_price">$31.99</div>
+                        <div class="product_tag">New arrival</div>
+                    </div>
+                </a>
+
+                <a href="#" class="product_item">
+                    <div class="product_thumb">
+                        <img src="../../assets/Product Images/Orn_plush.webp" alt="product thumbnail">
+                    </div>
+                    <div class="product_info">
+                        <div class="product_name">Spirit of Hearth-Home Ornn Plush</div>
+                        <div class="product_price">$31.99</div>
+                        <div class="product_tag">Mentioned in this thread</div>
+                    </div>
+                </a>
+
+                <a href="../../index.html" class="sidebar_cta">View All Products</a>
+            </div>
+        </aside>
+    </div>
+
+    <!--FLOATING CTA: Ask question (always visible when scrolling)-->
+    <a href="new_thread.html" class="ask_question_fab">
+        <i class="ri-add-line"></i>
+        <span>Ask Question Now !</span>
+    </a>
+
+    <!--FOOTER-->
+    <footer class="site_footer">
+        <div class="footer_col">
+            <h4>About Us</h4>
+            <p>LootBox. is a marketplace for game merchandise, from apparel to collectible figures. </p>
+        </div>
+        <div class="footer_col">
+            <h4>Community</h4>
+            <ul>
+                <li><a href="forum.html">Discussion Forum</a></li>
+                <li><a href="../blog/blog.html">Blog</a></li>
+                <li><a href="../review/review.html">Reviews</a></li>
+            </ul>
+        </div>
+        <div class="footer_col">
+            <h4>Privacy</h4>
+            <ul>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Service</a></li>
+            </ul>
+        </div>
+        <div class="footer_col">
+            <h4>Follow Us</h4>
+            <div class="social_icons">
+                <a href="#"><i class="ri-facebook-fill"></i></a>
+                <a href="#"><i class="ri-discord-fill"></i></a>
+                <a href="#"><i class="ri-instagram-line"></i></a>
+            </div>
+        </div>
+
+        <a href="#" class="back_to_top"><i class="ri-arrow-up-line"></i></a>
+    </footer>
+
 </body>
 </html>
