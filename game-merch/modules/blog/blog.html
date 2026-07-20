@@ -3,47 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Barebone Blog</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Game Merch Blog</title>
+  <link rel="stylesheet" href="blog.css" />
 </head>
 <body>
   <header class="site-header">
     <div class="container">
-      <h1>Blog</h1>
-      <p>Test Blog.</p>
+      <h1>Game Merch Blog</h1>
+      <p>Share community stories.</p>
     </div>
   </header>
 
-  <main class="container">
-    <section class="new-post-section">
-      <h2>Blog a post</h2>
-      <form id="newPostForm" class="new-post-form">
-        <label>
-          Title
-          <input type="text" id="title" name="title" placeholder="Enter a title" required />
-        </label>
-
-        <label>
-          Description
-          <textarea id="summary" name="summary" rows="4" required></textarea>
-        </label>
-
-        <label>
-          Tags
-          <input type="text" id="tags" name="tags" />
-        </label>
-
-    <section class="post-list" id="postList">
+    <section class="blog-layout">
+      <div class="post-list-section">
+        <h2>Latest posts</h2>
+        <div class="post-list" id="postList"></div>
+      </div>
     </section>
   </main>
 
   <footer class="site-footer">
     <div class="container">
-      <p>End part thingy - Policy, ToS, Content.</p>
+      <p>Merch Blog.</p>
     </div>
   </footer>
 
-  
   <script src="script.js"></script>
 </body>
 </html>

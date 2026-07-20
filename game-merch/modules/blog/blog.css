@@ -1,0 +1,220 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Be Vietnam Pro',sans-serif;
+    background:#f5f5f5;
+    color:#333;
+    line-height:1.7;
+}
+
+.container{
+    width:min(1200px,90%);
+    margin:auto;
+}
+
+.site-header{
+    background:#ffffff;
+    border-bottom:1px solid #e8e8e8;
+    padding:30px 0;
+    text-align:center;
+}
+
+.site-header h1{
+    font-size:2.3rem;
+    color:#111;
+    margin-bottom:8px;
+    font-weight:700;
+}
+
+.site-header p{
+    color:#777;
+}
+
+
+.intro-card h2{
+    margin-bottom:15px;
+    color:#222;
+}
+
+
+.post-list-section h2{
+    margin-bottom:25px;
+    font-size:1.9rem;
+    font-weight:700;
+}
+
+.post-list{
+    display:flex;
+    flex-direction:column;
+    gap:28px;
+}
+
+.post-card{
+    display:flex;
+    background:#fff;
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 10px 28px rgba(0,0,0,.08);
+    transition:.3s;
+    cursor:pointer;
+}
+
+.post-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 16px 35px rgba(0,0,0,.14);
+}
+
+.post-thumbnail{
+    width:320px;
+    height:220px;
+    overflow:hidden;
+    flex-shrink:0;
+}
+
+.post-thumbnail img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:.4s;
+}
+
+.post-card:hover img{
+    transform:scale(1.06);
+}
+
+.post-content{
+    padding:28px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    flex:1;
+}
+
+.post-date{
+    color:#999;
+    font-size:.9rem;
+    margin-bottom:8px;
+}
+
+.post-title{
+    font-size:1.6rem;
+    color:#222;
+    margin-bottom:14px;
+    font-weight:700;
+    transition:.25s;
+}
+
+.post-card:hover .post-title{
+    color:#c62828;
+}
+
+.post-summary{
+    color:#666;
+    margin-bottom:18px;
+}
+
+.read-more{
+    color:#d32f2f;
+    font-weight:600;
+    text-decoration:none;
+}
+
+.read-more:hover{
+    text-decoration:underline;
+}
+
+.post-detail{
+    background:white;
+    padding:40px;
+    border-radius:16px;
+    box-shadow:0 8px 28px rgba(0,0,0,.08);
+}
+
+.post-detail img{
+    width:100%;
+    border-radius:12px;
+    margin:25px 0;
+}
+
+.post-detail h1{
+    margin-bottom:15px;
+    font-size:2.2rem;
+}
+
+.post-detail p{
+    margin:18px 0;
+}
+
+button{
+    border:none;
+    background:#d32f2f;
+    color:white;
+    padding:12px 26px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+    transition:.25s;
+}
+
+button:hover{
+    background:#b71c1c;
+}
+
+.site-footer{
+    margin-top:60px;
+    background:#222;
+    color:white;
+    text-align:center;
+    padding:30px;
+}
+
+@media (max-width:900px){
+
+.post-card{
+    flex-direction:column;
+}
+
+.post-thumbnail{
+    width:100%;
+    height:260px;
+}
+
+.post-content{
+    padding:24px;
+}
+
+.post-title{
+    font-size:1.4rem;
+}
+
+}
+
+@media (max-width:600px){
+
+.site-header h1{
+    font-size:1.8rem;
+}
+
+.intro-card{
+    padding:24px;
+}
+
+.post-thumbnail{
+    height:210px;
+}
+
+.post-content{
+    padding:20px;
+}
+
+.post-title{
+    font-size:1.2rem;
+}
+
+}
