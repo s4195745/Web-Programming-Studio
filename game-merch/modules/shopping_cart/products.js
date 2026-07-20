@@ -5,18 +5,15 @@ const products = [
         title: "The Knight Plush",
         price: "$32",
         description: "The hollow knight from the Hollow Knight",
-        colors: [
-            {
-                colorName: "black",
-                mainImage: "../../assets/cart.images/product_HK_knight_plush_main.webp",
-                thumbnails: [
-                    "../../assets/cart.images/product_HK_knight_plush_photo1.webp",
-                    "../../assets/cart.images/product_HK_knight_plush_photo2.webp",
-                    "../../assets/cart.images/product_HK_knight_plush_photo3.webp"
-                ],
-                sizes: ["S", "M", "L","XL","XXL"]
-            }
-        ]
+        
+        mainImage: "../../assets/cart.images/product_HK_knight_plush_main.webp",
+        thumbnails: [
+            "../../assets/cart.images/product_HK_knight_plush_photo1.webp",
+            "../../assets/cart.images/product_HK_knight_plush_photo2.webp",
+            "../../assets/cart.images/product_HK_knight_plush_photo3.webp"
+        ],
+        sizes: ["S", "M", "L","XL","XXL"]
+    
     },
 
 

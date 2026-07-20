@@ -5,7 +5,10 @@ if (productContainer) {
     displayProducts();
 } else if (isProductDetailPage) {
     displayProductDetail();
+} else if (isCartPage) {
+    displayCart();
 }
+
 
 //  PRODUCT LIST
 
@@ -158,8 +161,55 @@ function displayProductDetail() {
             });
         }
     }
-
     sessionStorage.setItem("cart", JSON.stringify(cart));
+}
 
 
+function displayCart() {
+    const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+
+    const cartItemsContainer = document.querySelector(".cart-items");
+    const subtotalEl = document.querySelector(".subtotal");
+    const grandTotalEl = document.querySelector(".grand-total")
+
+    cartItemsContainer.innerHTML = "";
+
+    if (cart.length === 0) {
+        cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
+        subtotalEl.textContent ="$0";
+        grandTotalEl.textContent ="$0";
+        return;
+    }
+
+    let subtotal = 0;
+    
+    cart.forEach((item, index) => {
+        const itemTotal = parseFloat(item.price.replace("$", "")) * item.quantity;
+        subtotal += itemTotal;
+
+        const cartItem = document.createElement("div");
+        cartItem.classList.add("cart-item");
+        cartItem.innerHTML = `
+            <img src="../../assets/cart.images/product_HK_knight_plush_main.webp">
+                <div class="${item.image}">
+                    <p>${item.title}</p>
+                    <div class="item-detail">
+                        <span class="size">${item.size}</span>
+                        <span class="color">${item.color}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <span class="price">${item.price}</span>
+            <div class="quantity"><input type="number" value="${item.quantity}" min="1"> data-index="${index}"</div>
+            <span class="total-price">$${itemTotal}</span>
+            <button class="remove" data-index= "${index}><i class="ri-close-line"></i></button>
+
+        `;   
+
+        cartItemsContainer.appendChild(cartItem);
+    });
+
+    subtotalEl.textContent = `$${subtotal.toFixed(2)}`
+    grandTotalEl.textContent = `$${subtotal.toFixed(2)}`
 }
