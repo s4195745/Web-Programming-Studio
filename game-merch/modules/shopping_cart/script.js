@@ -144,24 +144,34 @@ function displayProductDetail() {
     updateProductDisplay(selectedColor);
 
     //  ADD TO CART 
-    function addToCart(product, color, size) {
+    addToCartBtn.addEventListener("click", () => {
         let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
 
-        const existingItem = cart.find(item => item.id === product.id && item.color === color.name && item.size === size);
+        // Check if this exact item/color/size is already in the cart
+        const existingItem = cart.find(item => 
+            item.id === productData.id && 
+            item.color === selectedColor.name && 
+            item.size === selectedSize
+        );
+
         if (existingItem) {
-            existingItem.quantity +=1;
+            existingItem.quantity += 1;
         } else {
             cart.push({
-                id: product.id,
-                title: product.title,
-                price: product.price,
-                image: color.name,
-                size: size,
+                id: productData.id,
+                title: productData.title,
+                price: productData.price,
+                color: selectedColor.name, // Fixed: changed 'image' to 'color'
+                size: selectedSize,
                 quantity: 1
             });
         }
-    }
-    sessionStorage.setItem("cart", JSON.stringify(cart));
+        
+        // Save the updated cart back to storage (moved INSIDE the event)
+        sessionStorage.setItem("cart", JSON.stringify(cart));
+        
+        alert("Added to cart!"); // Quick visual feedback that it worked
+    });
 }
 
 

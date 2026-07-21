@@ -110,6 +110,11 @@ nav .cart-icon .cart-item-count {
     margin-bottom: 8px;
 }
 
+.product-detail .description {
+    line-height: 1.5; 
+    margin-bottom: 10px;
+}
+
 .product-detail .price {
     display: block;
     font-size: 25px;
