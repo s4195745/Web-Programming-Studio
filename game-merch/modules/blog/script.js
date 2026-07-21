@@ -6,7 +6,7 @@ const posts = [
     date: 'July 18, 2026',
     summary: 'Shes a plushie',
     thumbnail: 'LeaPlush.webp',
-    content: '<p>Lea Plushie buy it.</p>',
+    content: '<p>Shes a plushie. Buy her.</p>',
     comments: [
       { author: 'MADNKALD', text: 'Smug for what.' },
       { author: 'Mandanman', text: 'I hate it here.' }
@@ -14,14 +14,14 @@ const posts = [
   },
   {
   id: 2,
-  title: 'The 2nd Post no way',
+  title: 'Sir a second post has hit the website',
   author: 'Lee man Lee',
   date: 'July 2077, 2026',
-  summary: 'Sir a second post has hit the website',
+  summary: 'According to all known law of aviation.',
   thumbnail: 'https://www.fangamer.com/cdn/shop/products/product_HK_hornet_plush_main_55c63d68-e558-4387-9b7d-d3d030627658.png?crop=center&height=600&v=1691698061&width=900',
   content: '<p>According to all law of aviation there is no way a bee should be able to fly. </p>',
   comments: [
-    { author: 'TotallyNotLace', text: 'Do you guys know she make a ridiculous face when her back is against the wall.' },
+    { author: 'SilkDaughter', text: 'Do you guys know she make a ridiculous face when her back is against the wall.' },
     { author: 'FixerFlick', text: '#watdatmean.' }
   ]
 }
@@ -61,5 +61,7 @@ function renderPosts() {
     `;
   }).join('');
 }
+
+
 
 renderPosts();  

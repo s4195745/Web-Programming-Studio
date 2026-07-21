@@ -5,16 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Game Merch Blog</title>
   <link rel="stylesheet" href="blog.css" />
+
 </head>
 <body>
   <header class="site-header">
     <div class="container">
       <h1>Game Merch Blog</h1>
-      <p>Share community stories.</p>
+      <p>Share stories and thoughts.</p>
     </div>
   </header>
+  <!DOCTYPE html>
+<html lang="en">
 
-    <section class="blog-layout">
+  <main class="container">
+    <section class="new-post-section">
+      <h2>Blog a post</h2>
+      <form id="newPostForm" class="new-post-form">
+        <label>
+          Title
+          <input type="text" id="title" name="title" placeholder="Enter a title" required />
+        </label>
+
+        <label>
+          Description
+          <textarea id="summary" name="summary" rows="4" required></textarea>
+        </label>
+
+        <label>
+          Tags
+          <input type="text" id="tags" name="tags" />
+        </label>
+          <section class="blog-layout">
+            
       <div class="post-list-section">
         <h2>Latest posts</h2>
         <div class="post-list" id="postList"></div>
@@ -22,9 +44,14 @@
     </section>
   </main>
 
+
+    <section class="post-list" id="postList">
+    </section>
+  </main>
+
   <footer class="site-footer">
     <div class="container">
-      <p>Merch Blog.</p>
+      <p>End part thingy - Policy, ToS, Content.</p>
     </div>
   </footer>
 
