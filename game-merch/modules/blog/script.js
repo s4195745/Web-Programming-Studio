@@ -5,7 +5,7 @@ const posts = [
     author: 'He haw',
     date: 'July 18, 2026',
     summary: 'Shes a plushie',
-    thumbnail: 'LeaPlush.webp',
+    thumbnail: 'https://cdn.shopify.com/s/files/1/0125/8261/7145/files/Lea_Plush-SV3-P-1_1000x.png.webp?v=1738175364',
     content: '<p>Shes a plushie. Buy her.</p>',
     comments: [
       { author: 'MADNKALD', text: 'Smug for what.' },
