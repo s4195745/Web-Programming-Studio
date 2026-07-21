@@ -5,21 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/cart.css">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css"rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
     <title>Cart</title>
-
 </head>
 <body>
     <nav>
         <a href="index.html" class="logo">LootBox.</a>
-
         <a href="cart.html" class="cart-icon">
             <i class="ri-shopping-bag-line"></i>
-            <span class="cart-item-count">1</span>
+            <span class="cart-item-count">0</span>
         </a>
     </nav>
 
     <div class="cart">
+        <!-- New Sort Dropdown -->
+        <div class="cart-controls" style="display: flex; justify-content: flex-end; margin-bottom: 15px; gap: 10px; align-items: center;">
+            <label for="cart-sort" style="font-weight: 600;">Sort by:</label>
+            <select id="cart-sort" style="padding: 8px; border: 1px solid #ccc; outline: none; font-family: 'Outfit', serif;">
+                <option value="default">Recently Added</option>
+                <option value="title-asc">Title (A-Z)</option>
+                <option value="title-desc">Title (Z-A)</option>
+                <option value="price-asc">Price (Low to High)</option>
+                <option value="price-desc">Price (High to Low)</option>
+                <option value="qty-asc">Quantity (Low to High)</option>
+                <option value="qty-desc">Quantity (High to Low)</option>
+            </select>
+        </div>
+
         <div class="cart-header">
             <span>Products</span>
             <span>Price</span>
@@ -27,24 +39,19 @@
             <span>Total</span>
             <span>Remove</span>
         </div>
+
+        <div class="cart-items"></div>
+
+        <div class="cart-total">
+            <h3>Cart Total</h3>
+            <p>Subtotal <span class="Subtotal"></span></p>
+            <p>Delivery Fee <span>Free</span></p>
+            <p>Grand Total <span class="grand-total"></span></p>
+            <button class="btn">Proceed to checkout</button>
+        </div>
     </div>
 
-        <div class="cart-items">
-            <div class="cart-item">
-                <div class="product">
-
-            </div>
-
-            <div class="cart-total">
-                <h3>Cart Total</h3>
-                <p>Subtotal <span class="Subtotal"></span></p>
-                <p>Delivery Fee <span>Free</span></p>
-                <p>Grand Total <span class="grand-total"></span></p>
-                <button class="btn">Proceed to checkout</button>
-            </div>
-        </div>
-
-  
+    <script src="products.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
