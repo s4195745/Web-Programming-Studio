@@ -1,0 +1,807 @@
+/* ============================================================
+   RESET / BASE
+   ============================================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #222;
+    background: #fff;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ============================================================
+   NAVBAR (logo + cart icon)
+   ============================================================ */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    border-bottom: 1px solid #eee;
+}
+
+.navbar .logo {
+    font-size: 20px;
+    font-weight: 700;
+    color: #222;
+}
+
+.cart_icon {
+    font-size: 20px;
+    color: #333;
+}
+
+.cart_icon:hover {
+    color: #000;
+}
+
+/* ============================================================
+   PAGE LAYOUT (2 columns: main content + sidebar)
+   ============================================================ */
+.page_layout {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 20px 40px;
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+}
+
+/* Used on new_thread.html — single column, no sidebar */
+.page_layout.single_column {
+    display: block;
+    max-width: 700px;
+}
+
+.main_content {
+    flex: 1;
+    min-width: 0;
+}
+
+.back_link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 18px;
+}
+
+.back_link:hover {
+    color: #222;
+}
+
+/* ============================================================
+   ADVERTISE BANNER
+   ============================================================ */
+.banner_adv {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 18px 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    background: #fafafa;
+}
+
+.banner_adv h2 {
+    font-size: 13px;
+    font-weight: 500;
+    color: #999;
+    letter-spacing: 0.3px;
+}
+
+/* ============================================================
+   FILTER / SORT TOOLBAR (forum.html)
+   ============================================================ */
+.filter_content {
+    margin-bottom: 12px;
+}
+
+.filter_form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.search_input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.search_input:focus {
+    outline: none;
+    border-color: #888;
+}
+
+.sort_options {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #fff;
+    cursor: pointer;
+    min-width: 140px;
+}
+
+.apply_btn {
+    padding: 10px 20px;
+    border: 1px solid #222;
+    border-radius: 4px;
+    background: #222;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease;
+}
+
+.apply_btn:hover {
+    background: #000;
+}
+
+.result_meta {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 18px;
+}
+
+.result_meta strong {
+    color: #444;
+}
+
+/* ============================================================
+   ASK QUESTION FLOATING CTA
+   ============================================================ */
+.ask_question_fab {
+    position: fixed;
+    right: 28px;
+    bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 20px;
+    background: #222;
+    color: #fff;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+    z-index: 50;
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.ask_question_fab i {
+    font-size: 18px;
+}
+
+.ask_question_fab:hover {
+    background: #000;
+    transform: translateY(-2px);
+}
+
+/* ============================================================
+   THREAD LIST (forum.html)
+   ============================================================ */
+.thread_list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.thread_card {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 16px;
+    position: relative;
+    cursor: pointer;
+    transition: box-shadow 0.15s ease;
+}
+
+.thread_card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.thread_card.pinned {
+    border-color: #222;
+    background: #fafafa;
+}
+
+/* Stretched-link pattern: makes the whole card clickable while keeping
+   Reaction / Comment as separate, independently clickable controls.
+   The link is an absolutely-positioned sibling (not a parent), so no
+   invalid <a> nesting occurs. */
+.card_stretch_link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.card_header,
+.thread_title,
+.thread_content,
+.pinned_badge {
+    position: relative;
+    z-index: 0;
+}
+
+.pinned_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    background: #222;
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin-bottom: 10px;
+}
+
+.card_header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #eee;
+}
+
+.author_name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #444;
+}
+
+.post_time {
+    font-size: 11px;
+    color: #999;
+}
+
+.thread_title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    line-height: 1.35;
+}
+
+.thread_content {
+    margin-bottom: 12px;
+}
+
+.thread_content p {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.content_img {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    background: #f0f0f0;
+}
+
+.card_footer {
+    display: flex;
+    gap: 16px;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 10px;
+    position: relative;
+    z-index: 2;
+}
+
+.reaction_btn,
+.comment_btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #666;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.reaction_btn:hover,
+.comment_btn:hover {
+    color: #222;
+}
+
+/* ============================================================
+   EMPTY STATE (forum.html — shown by JS in A2 when no results)
+   ============================================================ */
+.empty_state {
+    text-align: center;
+    padding: 50px 20px;
+    color: #999;
+}
+
+.empty_state i {
+    font-size: 32px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.empty_state p {
+    font-size: 14px;
+}
+
+/* ============================================================
+   LOAD MORE (forum.html)
+   ============================================================ */
+.load_more_btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    color: #444;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.load_more_btn:hover {
+    background: #f5f5f5;
+}
+
+/* ============================================================
+   SIDEBAR — Related Products (forum.html + thread_detail.html)
+   ============================================================ */
+.sidebar {
+    width: 280px;
+    flex-shrink: 0;
+}
+
+.sidebar_box {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.sidebar_box_header {
+    padding: 14px 16px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sidebar_box_header h3 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.sidebar_box_header a {
+    font-size: 12px;
+    color: #888;
+}
+
+.sidebar_box_header a:hover {
+    color: #222;
+    text-decoration: underline;
+}
+
+.product_item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f2f2f2;
+    transition: background 0.15s ease;
+}
+
+.product_item:hover {
+    background: #fafafa;
+}
+
+.product_thumb {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    border: 1px solid #eee;
+    border-radius: 3px;
+    overflow: hidden;
+    background: #f0f0f0;
+}
+
+.product_thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product_info {
+    flex: 1;
+    min-width: 0;
+}
+
+.product_name {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.product_price {
+    font-size: 13px;
+    font-weight: 600;
+    color: #c0392b;
+    margin-top: 4px;
+}
+
+.product_tag {
+    font-size: 10px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-top: 2px;
+}
+
+.sidebar_cta {
+    display: block;
+    text-align: center;
+    padding: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    color: #fff;
+    background: #222;
+}
+
+.sidebar_cta:hover {
+    background: #000;
+}
+
+/* ============================================================
+   THREAD DETAIL PAGE (thread_detail.html)
+   ============================================================ */
+
+/* Original post block — no stretch-link, no Comment button,
+   since the user is already on this page */
+.thread_detail_post {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.thread_detail_post .thread_title {
+    font-size: 20px;
+    margin-bottom: 14px;
+}
+
+/* Multi-image gallery, used inside .thread_content or .reply_content */
+.content_gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.content_gallery .content_img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    margin-bottom: 0;
+}
+
+/* ---- Replies ---- */
+.replies_section {
+    margin-bottom: 20px;
+}
+
+.replies_heading {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    color: #333;
+}
+
+.reply_item {
+    border-left: 2px solid #eee;
+    padding: 14px 0 14px 16px;
+    margin-bottom: 14px;
+}
+
+.reply_header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.reply_content p {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.reply_content .content_img,
+.reply_content .content_gallery {
+    margin-bottom: 8px;
+}
+
+.reply_footer {
+    display: flex;
+    gap: 16px;
+    margin-top: 6px;
+}
+
+.reply_to_btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #666;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.reply_to_btn:hover {
+    color: #222;
+}
+
+/* Nested reply: indented further, sits inside the parent reply_item */
+.nested_reply {
+    margin-left: 8px;
+    margin-top: 10px;
+    margin-bottom: 0;
+    border-left: 2px solid #ddd;
+}
+
+/* ---- Quick reply input ("Join the conversation") ---- */
+.quick_reply_form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 30px;
+    padding: 6px 6px 6px 18px;
+}
+
+.quick_reply_input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    padding: 8px 0;
+}
+
+.quick_reply_btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: #222;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.quick_reply_btn:hover {
+    background: #000;
+}
+
+/* ============================================================
+   NEW THREAD PAGE (new_thread.html)
+   ============================================================ */
+.new_thread_box {
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 28px;
+}
+
+.new_thread_heading {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.new_thread_subheading {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 24px;
+}
+
+.form_group {
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form_group label {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #333;
+}
+
+.form_group input[type="text"],
+.form_group textarea {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.form_group input[type="text"]:focus,
+.form_group textarea:focus {
+    outline: none;
+    border-color: #888;
+}
+
+.form_group input[type="file"] {
+    font-size: 13px;
+}
+
+.form_hint {
+    font-size: 12px;
+    color: #999;
+    margin-top: 6px;
+}
+
+.form_actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.cancel_btn {
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #444;
+}
+
+.cancel_btn:hover {
+    background: #f5f5f5;
+}
+
+.submit_btn {
+    padding: 10px 24px;
+    border: 1px solid #222;
+    border-radius: 4px;
+    background: #222;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.submit_btn:hover {
+    background: #000;
+}
+
+/* FOOTER */
+.site_footer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+    background: #1a1a1a;
+    color: #ccc;
+    padding: 40px 32px;
+    position: relative;
+}
+
+.footer_col h4 {
+    color: #fff;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.footer_col p,
+.footer_col ul {
+    font-size: 13px;
+    line-height: 1.7;
+    list-style: none;
+}
+
+.footer_col ul li a {
+    color: #ccc;
+}
+
+.footer_col ul li a:hover {
+    color: #fff;
+}
+
+.social_icons {
+    display: flex;
+    gap: 14px;
+    font-size: 18px;
+}
+
+.social_icons a {
+    color: #ccc;
+}
+
+.social_icons a:hover {
+    color: #fff;
+}
+
+.back_to_top {
+    position: absolute;
+    right: 32px;
+    bottom: 32px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #ccc;
+}
+
+.back_to_top:hover {
+    background: #fff;
+    color: #1a1a1a;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 860px) {
+    .page_layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .site_footer {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .filter_form {
+        flex-wrap: wrap;
+    }
+
+    .search_input {
+        flex: 1 1 100%;
+    }
+}
