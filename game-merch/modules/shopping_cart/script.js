@@ -1,5 +1,7 @@
+
 const productContainer = document.querySelector(".product-list");
 const isProductDetailPage = document.querySelector(".product-detail");
+const isCartPage = document.querySelector(".cart");
 
 if (productContainer) {
     displayProducts();
@@ -161,25 +163,25 @@ function displayProductDetail() {
                 id: productData.id,
                 title: productData.title,
                 price: productData.price,
-                color: selectedColor.name, // Fixed: changed 'image' to 'color'
+                color: selectedColor.name,
                 size: selectedSize,
                 quantity: 1
+                
             });
         }
         
-        // Save the updated cart back to storage (moved INSIDE the event)
         sessionStorage.setItem("cart", JSON.stringify(cart));
         
-        alert("Added to cart!"); // Quick visual feedback that it worked
+        alert("Added to cart!"); 
     });
 }
 
 
-function displayCart() {
+    function displayCart() {
     const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
 
     const cartItemsContainer = document.querySelector(".cart-items");
-    const subtotalEl = document.querySelector(".subtotal");
+    const subtotalEl = document.querySelector(".Subtotal");
     const grandTotalEl = document.querySelector(".grand-total")
 
     cartItemsContainer.innerHTML = "";
@@ -200,22 +202,26 @@ function displayCart() {
         const cartItem = document.createElement("div");
         cartItem.classList.add("cart-item");
         cartItem.innerHTML = `
-            <img src="../../assets/cart.images/product_HK_knight_plush_main.webp">
-                <div class="${item.image}">
-                    <p>${item.title}</p>
-                    <div class="item-detail">
-                        <span class="size">${item.size}</span>
-                        <span class="color">${item.color}</span>
+                    <div class="product">
+                        <img src="../../assets/cart.images/product_HK_knight_plush_main.webp">
+                        <div class="item-detail">
+                            <p>${item.title}</p>
+                            <div class="item-detail">
+                                <span class="size">${item.size}</span>
+                                <span class="color">${item.color}</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            
-            <span class="price">${item.price}</span>
-            <div class="quantity"><input type="number" value="${item.quantity}" min="1"> data-index="${index}"</div>
-            <span class="total-price">$${itemTotal}</span>
-            <button class="remove" data-index= "${index}><i class="ri-close-line"></i></button>
-
-        `;   
+                    
+                    <span class="price">${item.price}</span>
+                    <div class="quantity">
+                        <!-- Fixed: Moved data-index INSIDE the input tag -->
+                        <input type="number" value="${item.quantity}" min="1" data-index="${index}">
+                    </div>
+                    <span class="total-price">$${itemTotal}</span>
+                    <!-- Fixed: Added the missing closing quote around index -->
+                    <button class="remove" data-index="${index}"><i class="ri-close-line"></i></button>
+                `;
 
         cartItemsContainer.appendChild(cartItem);
     });
