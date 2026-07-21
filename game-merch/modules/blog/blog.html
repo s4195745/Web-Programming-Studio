@@ -3,57 +3,60 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Game Merch Blog</title>
+  <title>Merch Blog</title>
   <link rel="stylesheet" type="text/css" href="../../assets/css/blog.css" />
-
 </head>
 <body>
+
   <header class="site-header">
-    <div class="container">
-      <h1>Game Merch Blog</h1>
-      <p>Share stories and thoughts.</p>
+    <div class="header-container">
+      <div class="brand">
+        <h1 class="site-title">Merch Blog</h1>
+        <p class="site-subtitle">Share stories</p>
+      </div>>
+      <a href="UserBlog.html" class="action-btn">Your blog</a>
     </div>
   </header>
-  <!DOCTYPE html>
-<html lang="en">
 
-  <main class="container">
-    <section class="new-post-section">
-      <h2>Blog a post</h2>
-      <form id="newPostForm" class="new-post-form">
-        <label>
-          Title
-          <input type="text" id="title" name="title" placeholder="Enter a title" required />
-        </label>
+  <main class="main-container">
+    <div class="post-feed" id="postFeed">
 
-        <label>
-          Description
-          <textarea id="summary" name="summary" rows="4" required></textarea>
-        </label>
+      <!-- First Post -->
+      <article class="blog-card">
+        <div class="card-image-wrapper">
+          <img src="https://www.radicalfishgames.com/wp-content/uploads/plush-header-600x338.jpg" alt="Limited Edition Lea Plush" class="card-image" />
+        </div>
+        <div class="category">
+          <span class="icon">📱</span>
+          <span class="category-name">Merch</span>
+        </div>
+        <h2 class="card-title">Lea Plushie</h2>
+        <p class="card-description">
+          Lea Plushie pre-order is live on Makeship now!
+        </p>
+        <div class="card-meta">June 18, 2026</div>
+        <a href="post1.html" class="read-link">Read More</a>
+      </article>
 
-        <label>
-          Tags
-          <input type="text" id="tags" name="tags" />
-        </label>
-          <section class="blog-layout">
+      <!-- Second Post -->
+      <article class="blog-card">
+        <div class="card-image-wrapper">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0UFw4m4xmzPauBwlyDQUHxCZHGCUsVzRrbd-TaQUghNse_dKngKO7TAk&s=10" alt="Fan-art illustration of an enemy bug" class="card-image" />
+        </div>
+        <div class="category">
+          <span class="icon">🎨</span>
+          <span class="category-name">Fan-art</span>
+        </div>
+        <h2 class="card-title">I got angry!</h2>
+        <p class="card-description">
+          This fat fuck killed me ten times over.
+        </p>
+        <div class="card-meta">Sep 30, 202</div>
+        <a href="post2.html" class="read-link">Read More</a>
+      </article>
 
-      <div class="post-list-section">
-        <h2>Latest posts</h2>
-        <div class="post-list" id="postList"></div>
-      </div>
-    </section>
-  </main>
-
-
-    <section class="post-list" id="postList">
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <p>End part thingy - Policy, ToS, Content.</p>
     </div>
-  </footer>
+  </main>
 
   <script src="script.js"></script>
 </body>

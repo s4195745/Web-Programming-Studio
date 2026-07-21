@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Posts - Merch Blog</title>
+  <link rel="stylesheet" type="text/css" href="../../assets/css/blog.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-container">
+      <div class="brand">
+        <a href="blog.html" class="site-title-link"><h1 class="site-title">Merch Blog</h1></a>
+        <p class="site-subtitle">Share stories</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="article-page">
+      
+      <section class="manage-section">
+        <h2 id="form-title">Create a New Post</h2>
+        <form class="post-form" onsubmit="event.preventDefault();">
+          <input type="hidden" id="post-id" value="" />
+
+          <div class="form-group">
+            <label for="post-title">Post Title</label>
+            <input type="text" id="post-title" class="form-input" placeholder="Enter post title" required />
+          </div>
+
+          <div class="form-group">
+            <label for="post-category">Category</label>
+            <select id="post-category" class="form-input">
+              <option value="Merch">📱 Merch</option>
+              <option value="Fan-art">🎨 Fan-art</option>
+              <option value="Discussion">💬 Discussion</option>
+              <option value="Review">⭐ Review</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="post-image">Image URL</label>
+            <input type="url" id="post-image" class="form-input" placeholder="https://example.com/image.jpg" />
+          </div>
+
+          <div class="form-group">
+            <label for="post-content">Content</label>
+            <textarea id="post-content" class="form-input" rows="4" placeholder="Write your post content..." required></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="submit-btn">Publish Post</button>
+            <button type="button" class="cancel-btn" style="display: none;">Cancel Edit</button>
+          </div>
+        </form>
+      </section>
+
+      <hr class="section-divider" />
+
+      <!-- Existing post -->
+      <section class="manage-section">
+        <h2>Your Posts</h2>
+        <div class="user-posts-list">
+
+          <div class="user-post-item">
+            <!-- Wrapped in a link to post2.html -->
+            <a href="post2.html" class="post-item-link">
+              <div class="user-post-thumb">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0UFw4m4xmzPauBwlyDQUHxCZHGCUsVzRrbd-TaQUghNse_dKngKO7TAk&s=10" alt="Fan-art illustration of an enemy bug" />
+              </div>
+              
+              <div class="user-post-info">
+                <span class="category"><span class="icon">🎨</span> Fan-art</span>
+                <h3>I got angry!</h3>
+                <p class="card-meta">Sep 30, 2025</p>
+              </div>
+            </a>
+
+            <!-- edit post -->
+            <div class="menu-dropdown">
+              <button type="button" class="three-dots-btn" aria-label="Post Options">⋮</button>
+              <div class="dropdown-menu">
+                <button type="button" class="dropdown-item edit-item">Edit</button>
+                <button type="button" class="dropdown-item delete-item">Delete</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <div class="bottom-nav">
+        <a href="blog.html" class="back-link">← Back to Posts</a>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>
