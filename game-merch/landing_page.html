@@ -3,20 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LootBox</title>
-
-    <link rel="stylesheet" href="./assets/css/landing_page.css">
-    <link rel="stylesheet" href="./assets/css/main.css">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css"rel="stylesheet"/>
-
+    <title>Game Merch Store - Home</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    
+    <link rel="stylesheet" href="assets/css/landing_page.css"> 
 </head>
 <body>
     <nav>
-        <a href="index.html" class="logo">LootBox.</a>
-
+        <a href="landing_page.html" class="logo">LootBox.</a>
         <a href="cart.html" class="cart-icon">
             <i class="ri-shopping-bag-line"></i>
         </a>
     </nav>
+
+    <main>
+        <!-- Hero Section (Top Banner) -->
+        <section class="hero-section">
+            <div class="hero-content">
+                
+                <div class="hero-graphics">
+                    <h1 class="hero-title">LootBox.</h1>
+                </div>
+                
+               
+
+                <div class="hero-login-box">
+                    <h2>Welcome Back</h2>
+                  
+                    <form action="modules/shared_module/profile.html" method="GET">
+                        <div class="home-form-group">
+                            <label for="login-username">Username or Email</label>
+                            <input type="text" id="login-username" name="username" placeholder="Enter your username" required>
+                        </div>
+                        
+                        <div class="home-form-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" name="password" placeholder="Enter your password" required>
+                        </div>
+                        
+                        <button type="submit" class="btn-home-login">Secure Login</button>
+                    </form>
+                    
+                    <div class="home-login-links">
+                        <a href="modules/shared_module/register.html">Create account</a>
+                        <a href="#">Forgot password?</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Collections (The 3 Cards) -->
+        <section class="collections-section">
+            <div class="cards-grid">
+                
+              
+                <article class="collection-card">
+                    <div class="card-image-bg" style="background-image: url('assets/images/card1-bg.jpg');">
+                        <img src="assets/images/hk.jpg" alt="Classic Shirts" class="card-item-image">
+                    </div>
+                    <div class="card-footer footer-red">
+                        <p>Plushies</p>
+                        <a href="#" class="btn-card">SHOP NOW</a>
+                    </div>
+                </article>
+
+               
+                <article class="collection-card">
+                    <div class="card-image-bg" style="background-image: url('assets/images/card2-bg.jpg');">
+                        <img src="assets/images/lol.jpg" alt="Expedition Collection" class="card-item-image">
+                    </div>
+                    <div class="card-footer footer-gold">
+                        <p>More plushies</p>
+                        <a href="#" class="btn-card">SHOP NOW</a>
+                    </div>
+                </article>
+
+                
+                <article class="collection-card">
+                    <div class="card-image-bg" style="background-image: url('assets/images/card3-bg.jpg');">
+                        <img src="assets/images/endfield.jpg" alt="New Plushes" class="card-item-image">
+                    </div>
+                    <div class="card-footer footer-red">
+                        <p>EVEN MORE PLUSHIES</p>
+                        <a href="#" class="btn-card">SHOP NOW</a>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+    </main>
 </body>
 </html>
