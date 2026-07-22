@@ -3,9 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>My Wishlist | Game Merchandise Store</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/wishlist.css">
 </head>
+
 <body>
-    
+    <nav>
+        <a href="index.html" class="logo">Game Merchandise Store</a>
+
+        <a href="cart.html" class="cart-icon">
+            &#128722;
+            <span class="cart-item-count" data-visible="true">2</span>
+        </a>
+    </nav>
+
+    <main id="main-content">
+        <section class="page-hero">
+            <div class="container">
+                <p class="breadcrumb"><a href="index.html">Home</a> / Wishlist</p>
+                <h1>My Wishlist</h1>
+                <p>Games you've saved for later. Move a title to your cart when you're ready to buy, or mark it as purchased once you own it.</p>
+            </div>
+        </section>
+
+        <div class="container">
+            <div class="wishlist-summary" style="margin-top: 32px;">
+                <div class="wishlist-summary__stat">
+                    <span>Saved games</span>
+                    <strong>4</strong>
+                </div>
+                <div class="wishlist-summary__stat">
+                    <span>Estimated total value</span>
+                    <strong>$121.96</strong>
+                </div>
+                <div class="wishlist-summary__stat">
+                    <span>Already purchased</span>
+                    <strong>1</strong>
+                </div>
+            </div>
+
+            <div class="alert alert-warning" role="note">
+                <span aria-hidden="true">&#9888;</span>
+                <span><strong>Duplicate protection:</strong> if a user tries to add a game that's already on their wishlist (e.g. re-clicking the heart icon on "Neon Drift Circuit" from the catalogue), Game Merchandise Store blocks the duplicate and shows a message such as &ldquo;Neon Drift Circuit is already in your wishlist.&rdquo; No second entry is created.</span>
+            </div>
+
+            <form class="toolbar" aria-label="Sort wishlist">
+                <div class="toolbar__filters">
+                    <div class="field">
+                        <label for="wishlist-sort">Sort by</label>
+                        <select id="wishlist-sort" name="sort">
+                            <option value="date-added">Date added (newest first)</option>
+                            <option value="price-asc">Price: low to high</option>
+                            <option value="price-desc">Price: high to low</option>
+                            <option value="popularity">Most wishlisted by other users</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="wishlist-status">Status</label>
+                        <select id="wishlist-status" name="status">
+                            <option value="all">All items</option>
+                            <option value="saved">Saved (not purchased)</option>
+                            <option value="purchased">Purchased</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-outline">Apply</button>
+            </form>
+
+            <div class="section-title">
+                <h2>Saved games</h2>
+                <p class="result-count">4 items</p>
+            </div>
+
+            <ul class="card-grid">
+                <li class="game-card wishlist-item" data-purchased="false">
+                    <article>
+                        <div class="game-card__media">
+                            <span class="wishlist-item__status badge badge-saved">Saved</span>
+                            <img src="https://placehold.co/600x450/2b2b3d/ffffff?text=Stellar+Frontier%3A+Reborn" alt="Cover art for Stellar Frontier: Reborn">
+                        </div>
+                        <div class="game-card__body">
+                            <h3 class="game-card__title"><a href="product-detail.html">Stellar Frontier: Reborn</a></h3>
+                            <p class="game-card__genre">Sci-Fi RPG &middot; added 3 Jul 2026</p>
+                            <p class="game-card__price"><span class="old-price">$59.99</span> $49.99</p>
+                        </div>
+                        <div class="stat-pills">
+                            <span class="stat-pill"><strong>1,204</strong>&nbsp;wishlisted</span>
+                            <span class="stat-pill"><strong>87</strong>&nbsp;in carts</span>
+                            <span class="stat-pill"><strong>342</strong>&nbsp;bought</span>
+                        </div>
+                        <div class="game-card__actions" style="flex-direction: column; padding-top: 12px;">
+                            <button type="button" class="btn btn-primary btn-sm btn-block">Move to Cart</button>
+                            <div style="display: flex; gap: 8px; width: 100%;">
+                                <button type="button" class="btn btn-success btn-sm" style="flex: 1;">Mark as Purchased</button>
+                                <button type="button" class="btn btn-danger btn-sm" style="flex: 1;">Remove</button>
+                            </div>
+                        </div>
+                    </article>
+                </li>
+
+                <li class="game-card wishlist-item" data-purchased="false">
+                    <article>
+                        <div class="game-card__media">
+                            <span class="wishlist-item__status badge badge-saved">Saved</span>
+                            <img src="https://placehold.co/600x450/16324f/ffffff?text=Neon+Drift+Circuit" alt="Cover art for Neon Drift Circuit">
+                        </div>
+                        <div class="game-card__body">
+                            <h3 class="game-card__title"><a href="product-detail.html">Neon Drift Circuit</a></h3>
+                            <p class="game-card__genre">Racing &middot; added 28 Jun 2026</p>
+                            <p class="game-card__price">$24.99</p>
+                        </div>
+                        <div class="stat-pills">
+                            <span class="stat-pill"><strong>856</strong>&nbsp;wishlisted</span>
+                            <span class="stat-pill"><strong>41</strong>&nbsp;in carts</span>
+                            <span class="stat-pill"><strong>198</strong>&nbsp;bought</span>
+                        </div>
+                        <div class="game-card__actions" style="flex-direction: column; padding-top: 12px;">
+                            <button type="button" class="btn btn-primary btn-sm btn-block">Move to Cart</button>
+                            <div style="display: flex; gap: 8px; width: 100%;">
+                                <button type="button" class="btn btn-success btn-sm" style="flex: 1;">Mark as Purchased</button>
+                                <button type="button" class="btn btn-danger btn-sm" style="flex: 1;">Remove</button>
+                            </div>
+                        </div>
+                    </article>
+                </li>
+
+                <li class="game-card wishlist-item" data-purchased="false">
+                    <article>
+                        <div class="game-card__media">
+                            <span class="wishlist-item__status badge badge-saved">Saved</span>
+                            <img src="https://placehold.co/600x450/3a5a40/ffffff?text=Pixel+Harvest+Valley" alt="Cover art for Pixel Harvest Valley">
+                        </div>
+                        <div class="game-card__body">
+                            <h3 class="game-card__title"><a href="product-detail.html">Pixel Harvest Valley</a></h3>
+                            <p class="game-card__genre">Simulation &middot; added 19 Jun 2026</p>
+                            <p class="game-card__price">$9.99</p>
+                        </div>
+                        <p class="wishlist-item__note">Price dropped by $5.00 since you added this game.</p>
+                        <div class="stat-pills">
+                            <span class="stat-pill"><strong>512</strong>&nbsp;wishlisted</span>
+                            <span class="stat-pill"><strong>23</strong>&nbsp;in carts</span>
+                            <span class="stat-pill"><strong>109</strong>&nbsp;bought</span>
+                        </div>
+                        <div class="game-card__actions" style="flex-direction: column; padding-top: 12px;">
+                            <button type="button" class="btn btn-primary btn-sm btn-block">Move to Cart</button>
+                            <div style="display: flex; gap: 8px; width: 100%;">
+                                <button type="button" class="btn btn-success btn-sm" style="flex: 1;">Mark as Purchased</button>
+                                <button type="button" class="btn btn-danger btn-sm" style="flex: 1;">Remove</button>
+                            </div>
+                        </div>
+                    </article>
+                </li>
+
+                <li class="game-card wishlist-item" data-purchased="true">
+                    <article>
+                        <div class="game-card__media">
+                            <span class="wishlist-item__status badge badge-purchased">Purchased</span>
+                            <img src="https://placehold.co/600x450/5b2a86/ffffff?text=Skybound+Legends" alt="Cover art for Skybound Legends">
+                        </div>
+                        <div class="game-card__body">
+                            <h3 class="game-card__title"><a href="product-detail.html">Skybound Legends</a></h3>
+                            <p class="game-card__genre">Action RPG &middot; added 2 Jun 2026</p>
+                            <p class="game-card__price">$44.99</p>
+                        </div>
+                        <div class="stat-pills">
+                            <span class="stat-pill"><strong>2,031</strong>&nbsp;wishlisted</span>
+                            <span class="stat-pill"><strong>120</strong>&nbsp;in carts</span>
+                            <span class="stat-pill"><strong>987</strong>&nbsp;bought</span>
+                        </div>
+                        <div class="game-card__actions" style="flex-direction: column; padding-top: 12px;">
+                            <button type="button" class="btn btn-outline btn-sm btn-block" disabled aria-disabled="true">Already purchased</button>
+                            <div style="display: flex; gap: 8px; width: 100%;">
+                                <button type="button" class="btn btn-success btn-sm" style="flex: 1;" disabled aria-disabled="true">Purchased &#10003;</button>
+                                <button type="button" class="btn btn-danger btn-sm" style="flex: 1;">Remove</button>
+                            </div>
+                        </div>
+                    </article>
+                </li>
+            </ul>
+
+            <section aria-labelledby="empty-preview-heading" style="padding-bottom: 56px;">
+                <div class="section-title">
+                    <h2 id="empty-preview-heading">Design reference: empty wishlist state</h2>
+                </div>
+                <p class="wishlist-item__note" style="padding: 0 0 16px;">
+                    Shown below is what this page displays when a user has no saved games yet. It is included here purely
+                    as a design reference for this static prototype.
+                </p>
+                <div class="empty-state">
+                    <div class="empty-state__icon" aria-hidden="true">&#9825;</div>
+                    <h2>Your wishlist is empty</h2>
+                    <p style="margin-bottom: 16px;">Browse the catalogue and tap the heart icon on any game to save it here.</p>
+                    <a href="products.html" class="btn btn-primary">Browse games</a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3>Game Merchandise Store</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">A student project for COSC3060 Web Programming Studio &mdash; discover, discuss and collect your favourite games.</p>
+                </div>
+                <div>
+                    <h3>Explore</h3>
+                    <ul>
+                        <li><a href="products.html">Games</a></li>
+                        <li><a href="index.html">Wishlist</a></li>
+                        <li><a href="reviews.html">Reviews</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Community</h3>
+                    <ul>
+                        <li><a href="forum.html">Discussion forum</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Account</h3>
+                    <ul>
+                        <li><a href="login.html">Log in</a></li>
+                        <li><a href="register.html">Register</a></li>
+                        <li><a href="sitemap.html">Sitemap</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Game Merchandise Store. Built for COSC3060 Web Programming Studio.</p>
+                <p>Module owner: Hoang Xuan Quynh &mdash; Wishlist</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
