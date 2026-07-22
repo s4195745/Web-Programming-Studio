@@ -240,7 +240,7 @@ function displayCart() {
     }
 }
 
-// --- CHECKOUT LOGIC ---
+// --- CHECKOUT  ---
 function displayCheckout() {
     const checkoutForm = document.getElementById("checkout-form");
     if (!checkoutForm) return;
@@ -277,7 +277,7 @@ function displayCheckout() {
     });
 }
 
-// --- CONFIRMATION LOGIC ---
+// --- CONFIRMATION  ---
 function displayConfirmation() {
     const orderBox = document.getElementById("order-summary");
     if (!orderBox) return;
