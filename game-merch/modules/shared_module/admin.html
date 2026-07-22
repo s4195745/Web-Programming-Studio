@@ -3,9 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Admin Dashboard</title>
+    
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/admin.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <span>LootBox.</span>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active"><a href="#"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="#"><i class="fa-solid fa-users"></i> Users</a></li>
+                <li><a href="#"><i class="fa-solid fa-table-cells-large"></i> Projects</a></li>
+                <li><a href="#"><i class="fa-regular fa-file-lines"></i> Reports</a></li>
+                <li><a href="../../landing_page.html"><i class="fa-solid fa-arrow-right-from-bracket"></i> Main Site</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Top Navbar -->
+            <header class="top-navbar">
+                <div class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="top-nav-right">
+                    <i class="fa-regular fa-bell"></i>
+                    <img src="../../assets/images/Nguyen The Chinh.jpg" alt="Admin" class="nav-avatar">
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="dashboard-content">
+                <h2>Dashboard</h2>
+
+                <!-- Summary Cards -->
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-icon bg-purple"><i class="fa-solid fa-users"></i></div>
+                        <div class="card-info">
+                            <h3>8,267</h3>
+                            <p>New Users</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon bg-blue"><i class="fa-solid fa-cart-shopping"></i></div>
+                        <div class="card-info">
+                            <h3>200,521</h3>
+                            <p>Total Pledges</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon bg-pink"><i class="fa-solid fa-box-open"></i></div>
+                        <div class="card-info">
+                            <h3>215,542</h3>
+                            <p>Projects Funded</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon bg-teal"><i class="fa-solid fa-dollar-sign"></i></div>
+                        <div class="card-info">
+                            <h3>$677.89</h3>
+                            <p>This Month</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Management Table -->
+                <div class="table-container">
+                    <table class="dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>NAME</th>
+                                <th>ROLE</th>
+                                <th>STATUS</th>
+                                <th>ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Stimulate Users -->
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="../../assets/images/Nguyen The Chinh.jpg" alt="Sebastion Beryl">
+                                        <div>
+                                            <p class="user-name">Nguyen The Chinh</p>
+                                            <p class="user-email">s67676767@rmit.edu.vn</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="role-title">Administrator</p>
+                                    <p class="role-subtitle">System</p>
+                                </td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td><button class="action-link disabled" disabled>N/A</button></td>
+                            </tr>
+
+                            
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        
+                                        <img src="" alt="Hoang Dang Viet">
+                                        <div>
+                                            <p class="user-name">Hoang Dang Viet</p>
+                                            <p class="user-email">Hoangdangviet123@example.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="role-title">Project Creator</p>
+                                    <p class="role-subtitle">User</p>
+                                </td>
+                                <td><span class="status-badge status-active">Active</span></td>
+                                <td><button class="action-link action-lock" onclick="alert('Lock this user?')">Lock</button></td>
+                            </tr>
+
+                           
+                            <tr>
+                                <td>
+                                    <div class="user-info">
+                                        <img src="" alt="random dude">
+                                        <div>
+                                            <p class="user-name">Random dude</p>
+                                            <p class="user-email">randomdude123@example.com</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p class="role-title">Designer</p>
+                                    <p class="role-subtitle">User</p>
+                                </td>
+                                <td><span class="status-badge status-locked">Locked</span></td>
+                                <td><button class="action-link action-unlock" onclick="alert('Unlock this user?')">Unlock</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
 </body>
 </html>
