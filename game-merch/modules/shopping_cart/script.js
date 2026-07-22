@@ -19,6 +19,7 @@ if (productContainer) {
     displayConfirmation();
 }
 
+// --- CART COUNTER IN NAVBAR ---
 function updateCartCount() {
     const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -40,6 +41,7 @@ function updateCartCount() {
     }
 }
 
+// --- PRODUCT LIST (INDEX PAGE) ---
 function displayProducts() {
     products.forEach(product => {
         const productCard = document.createElement("div");
@@ -52,6 +54,7 @@ function displayProducts() {
             <span class="price">${product.price}</span>
         `;
         productContainer.appendChild(productCard);
+        
         productCard.querySelector(".img-box").addEventListener("click", () => {
             sessionStorage.setItem("selectedProduct", JSON.stringify(product));
             window.location.href = "product-detail.html";
@@ -59,6 +62,7 @@ function displayProducts() {
     });
 }
 
+// --- PRODUCT DETAIL PAGE ---
 function displayProductDetail() {
     const productData = JSON.parse(sessionStorage.getItem("selectedProduct"));
     if (!productData) {
@@ -74,6 +78,7 @@ function displayProductDetail() {
     const thumbnailContainer = document.querySelector(".thumbnail-list");
     const colorContainer = document.querySelector(".color-options");
     const sizeContainer = document.querySelector(".size-options");
+    const addToCartBtn = document.querySelector("#add-cart-btn");
 
     let selectedColor = productData.colors[0];
     let selectedSize = selectedColor.sizes[0];
@@ -120,7 +125,8 @@ function displayProductDetail() {
 
     updateProductDisplay(selectedColor);
 
-    document.querySelector("#add-cart-btn").addEventListener("click", () => {
+    // ADD TO CART WITH ANIMATION
+    addToCartBtn.addEventListener("click", () => {
         let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
         const existingItem = cart.find(item => item.id === productData.id && item.color === selectedColor.name && item.size === selectedSize);
 
@@ -139,11 +145,22 @@ function displayProductDetail() {
         }
         
         sessionStorage.setItem("cart", JSON.stringify(cart));
-        updateCartCount();
-        alert("Added to cart!"); 
+        updateCartCount(); // Instant counter update
+        
+        // Floating +1 Animation
+        addToCartBtn.style.position = "relative"; 
+        const plusOne = document.createElement("span");
+        plusOne.textContent = "+1";
+        plusOne.classList.add("plus-one-anim");
+        addToCartBtn.appendChild(plusOne);
+        
+        setTimeout(() => {
+            plusOne.remove();
+        }, 800);
     });
 }
 
+// --- CART PAGE ---
 function displayCart() {
     const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
     const cartItemsContainer = document.querySelector(".cart-items");
@@ -240,13 +257,13 @@ function displayCart() {
     }
 }
 
-// --- CHECKOUT  ---
+// --- CHECKOUT PAGE LOGIC ---
 function displayCheckout() {
     const checkoutForm = document.getElementById("checkout-form");
     if (!checkoutForm) return;
 
     checkoutForm.addEventListener("submit", (e) => {
-        e.preventDefault(); // Prevents page from instantly refreshing
+        e.preventDefault(); 
         
         const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
         if (cart.length === 0) {
@@ -255,14 +272,11 @@ function displayCheckout() {
             return;
         }
 
-        // Grab customer details
         const name = document.getElementById("name").value;
         const address = document.getElementById("address").value;
         
-        // Calculate total
         const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price.replace("$", "")) * item.quantity), 0);
 
-        // Package order data to send to receipt page
         const orderData = {
             customerName: name,
             customerAddress: address,
@@ -271,13 +285,13 @@ function displayCheckout() {
         };
 
         sessionStorage.setItem("latestOrder", JSON.stringify(orderData));
-        sessionStorage.removeItem("cart"); // Empty the cart!
+        sessionStorage.removeItem("cart"); // Empty the cart
         
         window.location.href = "confirmation.html";
     });
 }
 
-// --- CONFIRMATION  ---
+// --- CONFIRMATION PAGE LOGIC ---
 function displayConfirmation() {
     const orderBox = document.getElementById("order-summary");
     if (!orderBox) return;
@@ -317,4 +331,5 @@ function displayConfirmation() {
     `;
 }
 
+// Run immediately on page load for all pages to ensure navbar count is accurate
 updateCartCount();
