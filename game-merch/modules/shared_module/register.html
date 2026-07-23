@@ -45,7 +45,7 @@
     </nav>
 
     <div class="auth-container">
-        <!-- Chuyển hướng sang login.html sau khi đăng ký thành công (mô phỏng) -->
+        <!-- Form submits to login.html to simulate successful registration -->
         <form class="auth-form" action="login.html" method="GET">
             <h2>Register</h2>
             
@@ -61,6 +61,7 @@
                 <input type="password" id="password" name="password" placeholder="Password" required>
             </div>
 
+            <!-- Mandatory short description field as per assignment requirements -->
             <div class="input-group">
                 <textarea id="description" name="description" placeholder="Short description about yourself..." required></textarea>
             </div>
@@ -70,6 +71,5 @@
             <p class="auth-link">Already have an account? <a href="login.html">Login</a></p>
         </form>
     </div>
-    
 </body>
 </html>

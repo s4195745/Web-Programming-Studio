@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
 </head>
-<body>
+<body class="dashboard-bg">
         <!-- ================= SHARED NAVIGATION ================= -->
     <nav>
         <a href="index.html" class="logo">LootBox.</a>
@@ -72,21 +72,21 @@
                     <div class="form-row">
                         <label class="form-label">Profile Picture</label>
                         <div class="form-input-wrapper">
-                            <input type="file" id="avatar" name="avatar" accept="image/*" style="border:none; padding:0; background:transparent;">
+                            <input type="file" id="avatar" name="avatar" accept="image/*">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <label class="form-label">Username</label>
                         <div class="form-input-wrapper">
-                            <input type="text" value="Sebastion Beryl" required>
+                            <input type="text" value="Nguyen The Chinh" required>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <label class="form-label">Email</label>
                         <div class="form-input-wrapper">
-                            <input type="email" value="sebastion.beryl@rmit.edu.vn" required>
+                            <input type="email" value="nguyenthechinh2807@gmail.com" required>
                         </div>
                     </div>
 
@@ -101,8 +101,8 @@
                         <label class="form-label">Password</label>
                         <div class="form-input-wrapper">
                             <!-- Link to the password verification page -->
-                            <a href="verify_password.html" style="text-decoration: none;">
-                                <button type="button" class="btn-cancel" style="border-color: #333;">Change Password</button>
+                            <a href="verify_password.html" class="no-decoration">
+                                <button type="button" class="btn-cancel dark-border">Change Password</button>
                             </a>
                         </div>
                     </div>
@@ -112,10 +112,10 @@
             <!-- Danger Zone for Account Deletion -->
             <div class="dashboard-card danger-zone">
                 <div class="card-title">Danger Zone</div>
-                <div class="card-subtitle" style="margin-bottom: 20px;">
+                <div class="card-subtitle mb-20">
                     Deactivating or deleting your account will permanently remove your data, wishlist, and forum posts. This action cannot be undone. Are you sure you want to proceed?
                 </div>
-                <a href="register.html" style="text-decoration: none;">
+                <a href="register.html" class="no-decoration">
                     <button type="button" class="btn-danger">Confirm Delete Account</button>
                 </a>
             </div>

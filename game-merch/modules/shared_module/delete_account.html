@@ -45,25 +45,26 @@
     </nav>
 
     <div class="auth-container message-container">
-        <div class="message-icon" style="color: #dc3545;">⚠️</div>
-        <div class="auth-header" style="margin-bottom: 15px;">
-            <h2 style="color: #dc3545;">Delete Account?</h2>
+        <!-- Danger Icon -->
+        <div class="message-icon danger-icon">⚠️</div>
+        <div class="auth-header mb-15">
+            <h2 class="danger-heading">Delete Account?</h2>
         </div>
         
-        <p style="font-size: 15px; color: #555; line-height: 1.5; margin-bottom: 10px;">
+        <p class="warning-text">
             Are you sure you want to delete your account?
         </p>
-        <p style="font-size: 14px; color: #888; margin-bottom: 30px;">
+        <p class="warning-subtext">
             This action cannot be undone. All your data, wishlist, and forum posts will be permanently removed.
         </p>
 
-        <!-- Nút xác nhận xóa sẽ đưa người dùng ra thẳng trang đăng ký -->
-        <a href="register.html" style="text-decoration: none;">
-            <button type="button" class="auth-btn btn-danger" style="margin-top: 0;">Yes, Delete My Account</button>
+        <!-- Confirmed delete action redirects to register page -->
+        <a href="register.html" class="no-decoration">
+            <button type="button" class="auth-btn btn-danger no-margin-top">Yes, Delete My Account</button>
         </a>
         
-        <!-- Nút hủy quay về trang sửa hồ sơ -->
-        <a href="edit_profile.html" style="text-decoration: none;">
+        <!-- Cancel button redirects back to edit profile -->
+        <a href="edit_profile.html" class="no-decoration">
             <button type="button" class="auth-btn btn-outline">Cancel</button>
         </a>
     </div>
