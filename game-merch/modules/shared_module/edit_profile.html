@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Edit</title>
+    
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/auth.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+</head>
+<body>
+        <!-- ================= SHARED NAVIGATION ================= -->
+    <nav>
+        <a href="index.html" class="logo">LootBox.</a>
+        <div class="nav-links">
+            <a href="">Shop</a>
+            <a href="">Forum</a>
+            <a href="">Blog</a>
+            <a href="">Sitemap</a>
+            <a href="">Login/Profile</a>
+            <a href="">Wishlist</a>
+        </div>
+        <!-- Search and Cart Grouping -->
+        <div class="nav-actions">
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" placeholder="Search..." aria-label="Search">
+                <button type="button" aria-label="Submit search"><i class="ri-search-line"></i></button>
+            </div>
+
+            <!-- Cart Icon -->
+            <a href="cart.html" class="cart-icon">
+                <i class="ri-shopping-bag-line"></i>
+                <span class="cart-item-count active">2</span>
+            </a>
+            <!-- User Avatar Link to Profile Page -->
+            <a href="profile.html" class="nav-profile-link">
+                
+                <img src="../../assets/images/Nguyen The Chinh.jpg" alt="User Profile" class="nav-avatar">
+            </a>
+        </div>
+    </nav>
+
+<!-- Dashboard Container -->
+    <div class="dashboard-wrapper">
+        
+        <!-- Sidebar Menu -->
+        <aside class="dashboard-sidebar">
+            <ul>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="edit_profile.html" class="active">Edit Profile</a></li>
+                <li><a href="#">Orders</a></li>
+                <li><a href="#">Wish List</a></li>
+                <li><a href="#">Help / FAQ</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="dashboard-content">
+            
+            <form action="profile.html" method="GET">
+                <!-- Editable Data Form -->
+                <div class="dashboard-card">
+                    <div class="card-header-flex">
+                        <div class="card-title">Account Details</div>
+                        <button type="submit" class="btn-orange">Save Changes</button>
+                    </div>
+
+                    <div class="form-row">
+                        <label class="form-label">Profile Picture</label>
+                        <div class="form-input-wrapper">
+                            <input type="file" id="avatar" name="avatar" accept="image/*" style="border:none; padding:0; background:transparent;">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label class="form-label">Username</label>
+                        <div class="form-input-wrapper">
+                            <input type="text" value="Sebastion Beryl" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label class="form-label">Email</label>
+                        <div class="form-input-wrapper">
+                            <input type="email" value="sebastion.beryl@rmit.edu.vn" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label class="form-label">Short Description</label>
+                        <div class="form-input-wrapper">
+                            <textarea required>Information Technology student focusing on Cybersecurity and Game Development. Passionate about 2D indie games and coding.</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label class="form-label">Password</label>
+                        <div class="form-input-wrapper">
+                            <!-- Link to the password verification page -->
+                            <a href="verify_password.html" style="text-decoration: none;">
+                                <button type="button" class="btn-cancel" style="border-color: #333;">Change Password</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Danger Zone for Account Deletion -->
+            <div class="dashboard-card danger-zone">
+                <div class="card-title">Danger Zone</div>
+                <div class="card-subtitle" style="margin-bottom: 20px;">
+                    Deactivating or deleting your account will permanently remove your data, wishlist, and forum posts. This action cannot be undone. Are you sure you want to proceed?
+                </div>
+                <a href="register.html" style="text-decoration: none;">
+                    <button type="button" class="btn-danger">Confirm Delete Account</button>
+                </a>
+            </div>
+
+        </main>
+    </div>
+</body>
+</html>

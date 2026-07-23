@@ -3,9 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Login</title>
+
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/auth.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
 </head>
 <body>
+        <!-- ================= SHARED NAVIGATION ================= -->
+    <nav>
+        <a href="index.html" class="logo">LootBox.</a>
+        <div class="nav-links">
+            <a href="">Shop</a>
+            <a href="">Forum</a>
+            <a href="">Blog</a>
+            <a href="">Sitemap</a>
+            <a href="">Login/Profile</a>
+            <a href="">Wishlist</a>
+        </div>
+        <!-- Search and Cart Grouping -->
+        <div class="nav-actions">
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" placeholder="Search..." aria-label="Search">
+                <button type="button" aria-label="Submit search"><i class="ri-search-line"></i></button>
+            </div>
+
+            <!-- Cart Icon -->
+            <a href="cart.html" class="cart-icon">
+                <i class="ri-shopping-bag-line"></i>
+                <span class="cart-item-count active">2</span>
+            </a>
+            <!-- User Avatar Link to Profile Page -->
+            <a href="profile.html" class="nav-profile-link">
+                
+                <img src="../../assets/images/Nguyen The Chinh.jpg" alt="User Profile" class="nav-avatar">
+            </a>
+        </div>
+    </nav>
+<div class="auth-container">
+        <div class="auth-header">
+            <p>Please enter your details</p>
+            <h2>Welcome Back</h2>
+        </div>
+
+        <form class="auth-form" action="profile.html" method="GET">
+            <div class="input-group">
+                <input type="email" id="email" name="email" placeholder="Email address" required>
+            </div>
+            
+            <div class="input-group">
+                <input type="password" id="password" name="password" placeholder="Password" required>
+                <!-- Biểu tượng con mắt giả lập bằng text/emoji -->
+    
+            </div>
+
+            <div class="form-options">
+                <label>
+                    <input type="checkbox" name="remember"> Remember me
+                </label>
+                <!-- Dẫn sang trang quên mật khẩu -->
+                <a href="forgot_password.html">Forgot password?</a>
+            </div>
+            
+            <button type="submit" class="auth-btn">Sign In</button>
+            
+            <div class="divider">Or</div>
+
+            <div class="social-login">
+                <!-- Dùng text/emoji tĩnh thay vì chèn thư viện icon nặng -->
+                <button type="button" class="social-btn">Google</button>
+                <button type="button" class="social-btn">Facebook</button>
+                <button type="button" class="social-btn">Apple</button>
+            </div>
+
+            <p class="auth-link">Don't have an account? <a href="register.html">Sign up</a></p>
+        </form>
+    </div>
     
 </body>
 </html>
