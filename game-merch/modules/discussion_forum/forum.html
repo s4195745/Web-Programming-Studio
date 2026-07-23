@@ -53,7 +53,11 @@
                             what response to expect from the team.</p>
                     </div>
                     <div class="card_footer">
-                        <button class="reaction_btn"><i class="ri-heart-line"></i></button>
+                        <input type="checkbox" id="like_pinned_post" class="reaction_toggle_checkbox">
+                        <label for="like_pinned_post" class="reaction_btn">
+                            <i class="ri-heart-line icon_outline"></i>
+                            <i class="ri-heart-fill icon_filled"></i>
+                        </label>
                         <a href="thread_detail.html" class="comment_btn"><i class="ri-chat-3-line">Comment</i></a>
                     </div>
                 </article>
@@ -65,6 +69,17 @@
                         <img src="../../assets/Product Images/avatar.jpg" alt="avatar" class="avatar">
                         <span class="author_name">Oliver Holigate</span>
                         <time class="post_time" datetime="2026-07-19T15:58"> 2 minutes ago</time>
+                        <div class="options_menu">
+                            <input type="checkbox" id="menu_post_1" class="options_toggle_checkbox" hidden>
+                            <label for="menu_post_1" class="options_trigger">
+                                <i class="ri-more-2-fill"></i>
+                            </label>
+                            <div class="options_dropdown">
+                                <a href="#" class="options_item"><i class="ri-edit-line"></i>Edit</a>
+                                <a href="#" class="options_item delete_item"><i class="ri-delete-bin-line"></i>Delete</a>
+                            </div>
+                        </div>
+
                     </div>
                     <h3 class="thread_title">Just got the Garen figure with the glowing sword — is the blade detail as
                         sharp as in the photos?</h3>
@@ -73,7 +88,11 @@
                             class="content_img">
                     </div>
                     <div class="card_footer">
-                        <button class="reaction_btn"><i class="ri-heart-line"></i></button>
+                        <input type="checkbox" id="like_thread_1" class="reaction_toggle_checkbox" hidden>
+                        <label for="like_thread_1" class="reaction_btn">
+                            <i class="ri-heart-line icon_outline"></i>
+                            <i class="ri-heart-fill icon_filled"></i>
+                        </label>
                         <a href="thread_detail.html" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
                     </div>
                 </article>
@@ -91,7 +110,11 @@
                                 photos show. Minor paint overflow near the wing joint, but overall solid quality.</p>
                         </div>
                         <div class="reply_footer">
-                            <button class="reaction_btn"><i class="ri-heart-line"></i></button>
+                            <input type="checkbox" id="like_reply_thread_1" class="reaction_toggle_checkbox" hidden>
+                            <label for="like_reply_thread_1" class="reaction_btn">
+                                <i class="ri-heart-line icon_outline"></i>
+                                <i class="ri-heart-fill icon_filled"></i>
+                            </label>
                         </div>
                     </div>
                     
@@ -104,6 +127,16 @@
                         <img src="../../assets/Product Images/avatar.jpg" alt="avatar" class="avatar">
                         <span class="author_name">Hoang Dang</span>
                         <time class="post_time" datetime="2026-07-19T11:15">4 hours ago</time>
+                        <div class="options_menu">
+                            <input type="checkbox" id="menu_post_2" class="options_toggle_checkbox" hidden>
+                            <label for="menu_post_2" class="options_trigger">
+                                <i class="ri-more-2-fill"></i>
+                            </label>
+                            <div class="options_dropdown">
+                                <a href="#" class="options_item"><i class="ri-edit-line"></i>Edit</a>
+                                <a href="#" class="options_item delete_item"><i class="ri-delete-bin-line"></i>Delete</a>
+                            </div>
+                        </div>
                     </div>
                     <h3 class="thread_title">Can the horned plush be machine washed, or just spot-cleaned?</h3>
                     <div class="thread_content">
@@ -112,7 +145,11 @@
                         </div>                        
                     </div>
                     <div class="card_footer">
-                        <button class="reaction_btn"><i class="ri-heart-line"></i></button>
+                        <input type="checkbox" id="like_thread_2" class="reaction_toggle_checkbox" hidden>
+                        <label for="like_thread_2" class="reaction_btn">
+                            <i class="ri-heart-line icon_outline"></i>
+                            <i class="ri-heart-fill icon_filled"></i>
+                        </label>
                         <a href="thread_detail.html" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
                     </div>
                 </article>
@@ -129,7 +166,11 @@
                                 mild soap and air-dried it flat — worked fine.</p>
                         </div>
                         <div class="reply_footer">
-                            <button class="reaction_btn"><i class="ri-heart-line"></i></button>
+                            <input type="checkbox" id="like_reply_thread_2" class="reaction_toggle_checkbox" hidden>
+                            <label for="like_reply_thread_2" class="reaction_btn">
+                                <i class="ri-heart-line icon_outline"></i>
+                                <i class="ri-heart-fill icon_filled"></i>
+                            </label>
                             <a href="thread_detail.html" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
                         </div>
                     </div>
@@ -142,13 +183,27 @@
                         <img src="../../assets/Product Images/avatar.jpg" alt="avatar" class="avatar">
                         <span class="author_name">Apex</span>
                         <time class="post_time" datetime="2026-07-16T02:00">3 days ago</time>
+                        <div class="options_menu">
+                            <input type="checkbox" id="menu_post_3" class="options_toggle_checkbox" hidden>
+                            <label for="menu_post_3" class="options_trigger">
+                                <i class="ri-more-2-fill"></i>
+                            </label>
+                            <div class="options_dropdown">
+                                <a href="#" class="options_item"><i class="ri-edit-line"></i>Edit</a>
+                                <a href="#" class="options_item delete_item"><i class="ri-delete-bin-line"></i>Delete</a>
+                            </div>
+                        </div>
                     </div>
                     <h3 class="thread_title">Between Garen and Galio, which one has better paint quality?</h3>
                     <div class="thread_content">
                         <img src="../../assets/Product Images/Galio_figure.webp" alt="Galio figure" class="content_img">
                     </div>
                     <div class="card_footer">
-                        <button class="reaction_btn"><i class="ri-heart-line"></i></button>
+                        <input type="checkbox" id="like_thread_3" class="reaction_toggle_checkbox" hidden>
+                        <label for="like_thread_3" class="reaction_btn">
+                            <i class="ri-heart-line icon_outline"></i>
+                            <i class="ri-heart-fill icon_filled"></i>
+                        </label>
                         <a href="thread_detail.html" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
                     </div>
                 </article>
@@ -165,7 +220,11 @@
                                 cleaner overall. Depends if you want detail (Galio) or a dynamic pose (Garen).</p>
                         </div>
                         <div class="reply_footer">
-                            <button class="reaction_btn"><i class="ri-heart-line"></i></button>
+                            <input type="checkbox" id="like_reply_thread_3" class="reaction_toggle_checkbox" hidden>
+                            <label for="like_reply_thread_3" class="reaction_btn">
+                                <i class="ri-heart-line icon_outline"></i>
+                                <i class="ri-heart-fill icon_filled"></i>
+                            </label>
                             <a href="thread_detail.html" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
                         </div>
                     </div>
@@ -178,6 +237,16 @@
                         <img src="../../assets/Product Images/avatar.jpg" alt="avatar" class="avatar">
                         <span class="author_name">Beryl</span>
                         <time class="post_time" datetime="2026-07-10T09:00">9 days ago</time>
+                        <div class="options_menu">
+                            <input type="checkbox" id="menu_post_4" class="options_toggle_checkbox" hidden>
+                            <label for="menu_post_4" class="options_trigger">
+                                <i class="ri-more-2-fill"></i>
+                            </label>
+                            <div class="options_dropdown">
+                                <a href="#" class="options_item"><i class="ri-edit-line"></i>Edit</a>
+                                <a href="#" class="options_item delete_item"><i class="ri-delete-bin-line"></i>Delete</a>
+                            </div>
+                        </div>
                     </div>
                     <h3 class="thread_title">Ordered the bundle of all 3 (Garen, Ornn, Galio) — will they ship safely in
                         one box?</h3>
@@ -187,7 +256,11 @@
                         <img src="../../assets/Product Images/Orn_plush.webp" alt="Orn_plush" class="content_img">
                     </div>
                     <div class="card_footer">
-                        <button class="reaction_btn"><i class="ri-heart-line"></i></button>
+                        <input type="checkbox" id="like_thread_4" class="reaction_toggle_checkbox" hidden>
+                        <label for="like_thread_4" class="reaction_btn">
+                            <i class="ri-heart-line icon_outline"></i>
+                            <i class="ri-heart-fill icon_filled"></i>
+                        </label>
                         <a href="thread_detail.html" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
                     </div>
                 </article>
@@ -205,7 +278,11 @@
                                 all.</p>
                         </div>
                         <div class="reply_footer">
-                            <button class="reaction_btn"><i class="ri-heart-line"></i></button>
+                            <input type="checkbox" id="like_reply_thread_4" class="reaction_toggle_checkbox" hidden>
+                            <label for="like_reply_thread_4" class="reaction_btn">
+                                <i class="ri-heart-line icon_outline"></i>
+                                <i class="ri-heart-fill icon_filled"></i>
+                            </label>
                             <a href="thread_detail.html" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
                         </div>
                     </div>

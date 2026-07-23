@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="../../assets/css/forum.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css">
 </head>
+
 <body>
     <nav class="navbar">
         <a href="../../index.html" class="logo">Lootbox.</a>
@@ -27,21 +29,39 @@
                     <img src="../../assets/Product Images/avatar.jpg" alt="avatar" class="avatar">
                     <span class="author_name">Oliver Holigate</span>
                     <time class="post_time" datetime="2026-07-19T15:58">2 hours ago</time>
-                </div>
-
-                <h1 class="thread_title">Just got the Garen figure with the glowing sword — is the blade detail as sharp as in the photos?</h1>
-
-                <div class="thread_content">
-                    <div class="content_gallery">
-                        <img src="../../assets/Product Images/Garen_figure.webp" alt="Garen figure front view" class="content_img">
-                        <img src="../../assets/Product Images/Garen_figure.webp" alt="Garen figure side view" class="content_img">
+                    <div class="options_menu">
+                        <input type="checkbox" id="menu_post_1" class="options_toggle_checkbox" hidden>
+                        <label for="menu_post_1" class="options_trigger">
+                            <i class="ri-more-2-fill"></i>
+                        </label>
+                        <div class="options_dropdown">
+                            <a href="#" class="options_item"><i class="ri-edit-line"></i>Edit</a>
+                            <a href="#" class="options_item delete_item"><i class="ri-delete-bin-line"></i>Delete</a>
+                        </div>
                     </div>
-                    <p>Ordered this last week after seeing it in the shop banner. The sword looked super sharp and detailed in the product photos, but I know sometimes figures look better online than in person. Anyone who already has it, how does the blade edge actually look up close?</p>
                 </div>
+                    <h1 class="thread_title">Just got the Garen figure with the glowing sword — is the blade detail as
+                        sharp as in the photos?</h1>
 
-                <div class="card_footer">
-                    <button class="reaction_btn"><i class="ri-heart-line"></i> Reaction</button>
-                </div>
+                    <div class="thread_content">
+                        <div class="content_gallery">
+                            <img src="../../assets/Product Images/Garen_figure.webp" alt="Garen figure front view"
+                                class="content_img">
+                            <img src="../../assets/Product Images/Garen_figure.webp" alt="Garen figure side view"
+                                class="content_img">
+                        </div>
+                        <p>Ordered this last week after seeing it in the shop banner. The sword looked super sharp and
+                            detailed in the product photos, but I know sometimes figures look better online than in
+                            person. Anyone who already has it, how does the blade edge actually look up close?</p>
+                    </div>
+
+                    <div class="card_footer">
+                        <input type="checkbox" id="like_thread_1" class="reaction_toggle_checkbox" hidden>
+                        <label for="like_thread_1" class="reaction_btn">
+                            <i class="ri-heart-line icon_outline"></i>
+                            <i class="ri-heart-fill icon_filled"></i>
+                        </label>
+                    </div>
             </article>
 
             <!--REPLIES-->
@@ -56,11 +76,17 @@
                         <time class="post_time" datetime="2026-07-19T16:10">1 hour ago</time>
                     </div>
                     <div class="reply_content">
-                        <img src="../../assets/Product Images/Garen_figure.webp" alt="Customer photo of Garen figure blade close-up" class="content_img">
-                        <p>Got mine today — the blade edge actually has a nice gradient, not flat purple like some photos show. Minor paint overflow near the wing joint, but overall solid quality.</p>
+                        <img src="../../assets/Product Images/reply for garen figure.jpg"
+                            alt="Customer photo of Garen figure blade close-up" class="content_img">
+                        <p>Got mine today — the blade edge actually has a nice gradient, not flat purple like some
+                            photos show. Minor paint overflow near the wing joint, but overall solid quality.</p>
                     </div>
                     <div class="reply_footer">
-                        <button class="reaction_btn"><i class="ri-heart-line"></i> Reaction</button>
+                        <input type="checkbox" id="like_reply_thread_1" class="reaction_toggle_checkbox">
+                        <label for="like_reply_thread_1" class="reaction_btn">
+                            <i class="ri-heart-line icon_outline"></i>
+                            <i class="ri-heart-fill icon_filled"></i>
+                        </label>
                         <button class="reply_to_btn"><i class="ri-reply-line"></i> Reply</button>
                     </div>
 
@@ -72,10 +98,15 @@
                             <time class="post_time" datetime="2026-07-19T16:25">45 minutes ago</time>
                         </div>
                         <div class="reply_content">
-                            <p>Good to know, thanks! Was worried the wing joint paint issue might be common across the whole batch.</p>
+                            <p>Good to know, thanks! Was worried the wing joint paint issue might be common across the
+                                whole batch.</p>
                         </div>
                         <div class="reply_footer">
-                            <button class="reaction_btn"><i class="ri-heart-line"></i> Reaction</button>
+                            <input type="checkbox" id="like_Minh_Tran_comment" class="reaction_toggle_checkbox" hidden>
+                            <label for="like_Minh_Tran_comment" class="reaction_btn">
+                                <i class="ri-heart-line icon_outline"></i>
+                                <i class="ri-heart-fill icon_filled"></i>
+                            </label>
                             <button class="reply_to_btn"><i class="ri-reply-line"></i> Reply</button>
                         </div>
                     </div>
@@ -89,10 +120,15 @@
                         <time class="post_time" datetime="2026-07-19T17:00">30 minutes ago</time>
                     </div>
                     <div class="reply_content">
-                        <p>Same here, blade edge looks great in hand. Definitely sharper looking than I expected from a figure at this price point.</p>
+                        <p>Same here, blade edge looks great in hand. Definitely sharper looking than I expected from a
+                            figure at this price point.</p>
                     </div>
                     <div class="reply_footer">
-                        <button class="reaction_btn"><i class="ri-heart-line"></i> Reaction</button>
+                        <input type="checkbox" id="like_Hoang_Dang_comment" class="reaction_toggle_checkbox" hidden>
+                        <label for="like_Hoang_Dang_comment" class="reaction_btn">
+                            <i class="ri-heart-line icon_outline"></i>
+                            <i class="ri-heart-fill icon_filled"></i>
+                        </label>
                         <button class="reply_to_btn"><i class="ri-reply-line"></i> Reply</button>
                     </div>
                 </div>
@@ -101,7 +137,7 @@
             <!--QUICK REPLY INPUT-->
             <form class="quick_reply_form" action="" method="post">
                 <input type="text" name="reply_text" class="quick_reply_input" placeholder="Join the conversation...">
-                <button type="submit" class="quick_reply_btn"><i class="ri-send-plane-fill"></i></button>
+                <button type="button" class="quick_reply_btn"><i class="ri-send-plane-fill"></i></button>
             </form>
 
         </main>
@@ -190,6 +226,7 @@
 
         <a href="#" class="back_to_top"><i class="ri-arrow-up-line"></i></a>
     </footer>
-    
+
 </body>
+
 </html>

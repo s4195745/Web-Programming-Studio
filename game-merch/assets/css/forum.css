@@ -1,6 +1,4 @@
-/* ============================================================
-   RESET / BASE
-   ============================================================ */
+/* RESET / BASE */
 * {
     margin: 0;
     padding: 0;
@@ -18,9 +16,7 @@ a {
     color: inherit;
 }
 
-/* ============================================================
-   NAVBAR (logo + cart icon)
-   ============================================================ */
+/* NAVBAR (logo + cart icon) */
 .navbar {
     display: flex;
     align-items: center;
@@ -44,9 +40,7 @@ a {
     color: #000;
 }
 
-/* ============================================================
-   PAGE LAYOUT (2 columns: main content + sidebar)
-   ============================================================ */
+/* PAGE LAYOUT (2 columns: main content + sidebar) */
 .page_layout {
     max-width: 1100px;
     margin: 0 auto;
@@ -80,9 +74,7 @@ a {
     color: #222;
 }
 
-/* ============================================================
-   ADVERTISE BANNER
-   ============================================================ */
+/* ADVERTISE BANNER */
 .banner_adv {
     border: 1px solid #e0e0e0;
     border-radius: 4px;
@@ -99,9 +91,7 @@ a {
     letter-spacing: 0.3px;
 }
 
-/* ============================================================
-   FILTER / SORT TOOLBAR (forum.html)
-   ============================================================ */
+/* FILTER / SORT TOOLBAR (forum.html) */
 .filter_content {
     margin-bottom: 12px;
 }
@@ -162,9 +152,7 @@ a {
     color: #444;
 }
 
-/* ============================================================
-   ASK QUESTION FLOATING CTA
-   ============================================================ */
+/* ASK QUESTION FLOATING CTA */
 .ask_question_fab {
     position: fixed;
     right: 28px;
@@ -192,9 +180,7 @@ a {
     transform: translateY(-2px);
 }
 
-/* ============================================================
-   THREAD LIST (forum.html)
-   ============================================================ */
+/* THREAD LIST (forum.html) */
 .thread_list {
     display: flex;
     flex-direction: column;
@@ -208,11 +194,13 @@ a {
     padding: 16px;
     position: relative;
     cursor: pointer;
-    transition: box-shadow 0.15s ease;
+    transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2 ease; 
 }
 
 .thread_card:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transform: translateY(-3px);
+    border-color: #ccc;
 }
 
 .thread_card.pinned {
@@ -230,7 +218,11 @@ a {
     z-index: 1;
 }
 
-.card_header,
+.card_header {
+    position: relative;
+    z-index: 2;
+}
+
 .thread_title,
 .thread_content,
 .pinned_badge {
@@ -326,16 +318,37 @@ a {
     background: none;
     border: none;
     cursor: pointer;
+    transition: color 0.15s ease;
 }
-
-.reaction_btn:hover,
+ 
 .comment_btn:hover {
     color: #222;
 }
 
-/* ============================================================
-   EMPTY STATE (forum.html — shown by JS in A2 when no results)
-   ============================================================ */
+.reaction_btn:hover i {
+    transform: scale(1.15);
+}
+.reaction_btn i {
+    transition: transform 0.15s ease;
+}
+.reaction_toggle_checkbox {
+    display: none;
+}
+.reaction_btn .icon_filled {
+    display: none;
+    color: #e0245e;
+}
+.reaction_toggle_checkbox:checked + .reaction_btn {
+    color: #e0245e
+}
+.reaction_toggle_checkbox:checked + .reaction_btn .icon_outline {
+    display: none;
+}
+.reaction_toggle_checkbox:checked + .reaction_btn .icon_filled {
+    display: inline;
+}
+
+/* EMPTY STATE (forum.html — shown by JS in A2 when no results) */
 .empty_state {
     text-align: center;
     padding: 50px 20px;
@@ -352,9 +365,7 @@ a {
     font-size: 14px;
 }
 
-/* ============================================================
-   LOAD MORE (forum.html)
-   ============================================================ */
+/* LOAD MORE (forum.html) */
 .load_more_btn {
     display: block;
     width: 100%;
@@ -372,9 +383,7 @@ a {
     background: #f5f5f5;
 }
 
-/* ============================================================
-   SIDEBAR — Related Products (forum.html + thread_detail.html)
-   ============================================================ */
+/* SIDEBAR — Related Products (forum.html + thread_detail.html) */
 .sidebar {
     width: 280px;
     flex-shrink: 0;
@@ -485,9 +494,7 @@ a {
     background: #000;
 }
 
-/* ============================================================
-   THREAD DETAIL PAGE (thread_detail.html)
-   ============================================================ */
+/* THREAD DETAIL PAGE (thread_detail.html) */
 
 /* Original post block — no stretch-link, no Comment button,
    since the user is already on this page */
@@ -518,7 +525,7 @@ a {
     margin-bottom: 0;
 }
 
-/* ---- Replies ---- */
+/* Replies */
 .replies_section {
     margin-bottom: 20px;
 }
@@ -584,7 +591,7 @@ a {
     border-left: 2px solid #ddd;
 }
 
-/* ---- Quick reply input ("Join the conversation") ---- */
+/* Quick reply input ("Join the conversation") */
 .quick_reply_form {
     display: flex;
     gap: 10px;
@@ -620,9 +627,7 @@ a {
     background: #000;
 }
 
-/* ============================================================
-   NEW THREAD PAGE (new_thread.html)
-   ============================================================ */
+/* NEW THREAD PAGE (new_thread.html) */
 .new_thread_box {
     border: 1px solid #e0e0e0;
     border-radius: 4px;
@@ -672,6 +677,20 @@ a {
 
 .form_group input[type="file"] {
     font-size: 13px;
+    color: #666;
+}
+
+.form_group input[type="file"]::file-selector-button {
+    padding: 9px 16px;
+    margin-right: 12px;
+    border: 1px solid #222;
+    border-radius: 4px;
+    background: #222;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s ease ;
 }
 
 .form_hint {
@@ -779,9 +798,7 @@ a {
     color: #1a1a1a;
 }
 
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
+/* --- RESPONSIVE --- */
 @media (max-width: 860px) {
     .page_layout {
         flex-direction: column;
@@ -804,4 +821,123 @@ a {
     .search_input {
         flex: 1 1 100%;
     }
+
+    /* Thread_detail page */
+    .thread_detail_post {
+        padding:14px;
+    }
+    .thread_detail_post .thread_title {
+        font-size: 17px;
+    }
+    .content_gallery {
+        grid-template-columns: 1fr;
+    }
+    .content_gallery .content_img {
+        height: 200px;
+    }
+    .reply_item {
+        padding: 10px 0px 10px 10px;
+    }
+    .nested_reply {
+        margin-left: 4px
+    }
+    .quick_reply_form {
+        padding: 4px 4px 4px 12px;
+    }
+    /* Floating "Ask question" button */
+    .ask_question_fab span {
+        display: none;
+    }
+    .ask_question_fab {
+        padding: 14px;
+        right: 16px;
+        bottom: 16px;
+    } 
+    /* new_thread.html */
+    .page_layout .single_column {
+        max-width: 100%;
+    }
+    .new_thread_box {
+        padding: 18px;
+    }
+    .form_actions {
+        flex-direction: column-reverse;
+    }
+    .form_actions .cancel_btn,
+    .form_actions .submit_btn {
+        text-align: center;
+        width: 100%;
+    }
+}
+
+/*Adding EDIT/ DELETE button on earch thread*/
+.card_header {
+    position: relative;
+    z-index: 2;
+}
+
+.options_menu {
+    margin-left: auto;
+    position: relative;
+    z-index: 2;
+}
+
+.options_toggle_checkbox {
+    display: none;
+}
+
+.options_trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 16px;
+    color: #999;
+    cursor: pointer;
+}
+
+.options_trigger:hover {
+    background: #f0f0f0;
+    color: #444;
+}
+
+.options_dropdown {
+    display: none;
+    position: absolute;
+    top: 32px;
+    right: 0;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    min-width: 130px;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.options_toggle_checkbox:checked ~ .options_dropdown {
+    display: block;
+}
+
+.options_item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #333;
+}
+
+.options_item:hover {
+    background: #f5f5f5;
+}
+
+.options_item.delete_item {
+    color: #e0245e;
+}
+
+.options_item.delete_item:hover {
+    background: #fdeaf0;
 }
