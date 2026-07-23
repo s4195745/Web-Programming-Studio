@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | LootBox.</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/account.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+</head>
+
+<body>
+    <nav>
+        <a href="index.html" class="logo">LootBox.</a>
+
+        <a href="cart.html" class="cart-icon">
+            <i class="ri-shopping-bag-line"></i>
+            <span class="cart-item-count" data-visible="true">2</span>
+        </a>
+    </nav>
+
+    <main id="main-content">
+        <section class="page-hero">
+            <div class="container">
+                <p class="breadcrumb"><a href="index.html">Home</a> / My Profile</p>
+                <h1>My Profile</h1>
+                <p>View and update your account details, or manage your account below.</p>
+            </div>
+        </section>
+
+        <div class="container">
+            <div class="profile-layout">
+                <aside class="profile-card">
+                    <div class="profile-avatar">
+                        <img src="https://placehold.co/240x240/e35f26/ffffff?text=QH" alt="Profile picture of Quynh Hoang">
+                    </div>
+                    <h2>Quynh Hoang</h2>
+                    <p>@quynh.hx</p>
+                    <button type="button" class="btn btn-outline btn-sm btn-block">Change Photo</button>
+                </aside>
+
+                <div>
+                    <form action="#" method="post" novalidate>
+                        <section class="profile-section">
+                            <h2>Personal information</h2>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="profile-name">Name</label>
+                                    <input type="text" id="profile-name" name="name" value="Quynh Hoang">
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile-username">Username</label>
+                                    <input type="text" id="profile-username" name="username" value="quynh.hx" disabled aria-disabled="true">
+                                    <span class="hint">Usernames can't be changed after registration.</span>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label for="profile-email">Email address</label>
+                                    <input type="email" id="profile-email" name="email" value="quynh.hx@example.com">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label for="profile-description">Short description</label>
+                                    <textarea id="profile-description" name="description">Anime figure and game merch collector. Always hunting for the next limited-edition piece to add to my shelf.</textarea>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </section>
+
+                        <section class="profile-section">
+                            <h2>Change password</h2>
+                            <div class="form-grid">
+                                <div class="form-group full-width">
+                                    <label for="profile-current-password">Current password</label>
+                                    <input type="password" id="profile-current-password" name="current_password" placeholder="Enter current password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile-new-password">New password</label>
+                                    <input type="password" id="profile-new-password" name="new_password" placeholder="At least 8 characters" minlength="8">
+                                </div>
+                                <div class="form-group">
+                                    <label for="profile-confirm-password">Confirm new password</label>
+                                    <input type="password" id="profile-confirm-password" name="confirm_new_password" placeholder="Re-enter new password" minlength="8">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-outline">Update Password</button>
+                        </section>
+                    </form>
+
+                    <section class="danger-zone" aria-labelledby="danger-zone-heading">
+                        <h2 id="danger-zone-heading">Danger zone</h2>
+                        <p>Deactivating hides your profile and reviews until you log back in. Deleting your account is permanent and cannot be undone &mdash; you will be asked to confirm before either action is completed.</p>
+                        <div class="danger-zone__actions">
+                            <button type="button" class="btn btn-outline btn-sm">Deactivate Account</button>
+                            <button type="button" class="btn btn-danger btn-sm">Delete Account Permanently</button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3>LootBox.</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">A student project for COSC3060 Web Programming Studio &mdash; figures, posters, plushies and decor for anime and game fans.</p>
+                </div>
+                <div>
+                    <h3>Explore</h3>
+                    <ul>
+                        <li><a href="products.html">Shop</a></li>
+                        <li><a href="wishlist.html">Wishlist</a></li>
+                        <li><a href="reviews.html">Reviews</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Community</h3>
+                    <ul>
+                        <li><a href="forum.html">Discussion forum</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Account</h3>
+                    <ul>
+                        <li><a href="login.html">Log in</a></li>
+                        <li><a href="register.html">Register</a></li>
+                        <li><a href="sitemap.html">Sitemap</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 LootBox. Built for COSC3060 Web Programming Studio.</p>
+                <p>Shared module: User Account Management</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
