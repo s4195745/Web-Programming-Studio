@@ -1,45 +1,19 @@
-/* RESET / BASE */
+/*Reset/ Base*/
 * {
-    margin: 0;
-    padding: 0;
+    margin:0;
+    padding:0;
     box-sizing: border-box;
 }
 
 body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    color: #222;
     background: #fff;
+    padding-top: 80px;
 }
 
 a {
     text-decoration: none;
     color: inherit;
 }
-
-/* NAVBAR (logo + cart icon) */
-.navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 32px;
-    border-bottom: 1px solid #eee;
-}
-
-.navbar .logo {
-    font-size: 20px;
-    font-weight: 700;
-    color: #222;
-}
-
-.cart_icon {
-    font-size: 20px;
-    color: #333;
-}
-
-.cart_icon:hover {
-    color: #000;
-}
-
 /* PAGE LAYOUT (2 columns: main content + sidebar) */
 .page_layout {
     max-width: 1100px;
@@ -72,23 +46,6 @@ a {
 
 .back_link:hover {
     color: #222;
-}
-
-/* ADVERTISE BANNER */
-.banner_adv {
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    padding: 18px 20px;
-    text-align: center;
-    margin-bottom: 20px;
-    background: #fafafa;
-}
-
-.banner_adv h2 {
-    font-size: 13px;
-    font-weight: 500;
-    color: #999;
-    letter-spacing: 0.3px;
 }
 
 /* FILTER / SORT TOOLBAR (forum.html) */
@@ -156,7 +113,7 @@ a {
 .ask_question_fab {
     position: fixed;
     right: 28px;
-    bottom: 28px;
+    bottom: 88px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -732,71 +689,22 @@ a {
 .submit_btn:hover {
     background: #000;
 }
-
-/* FOOTER */
-.site_footer {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 32px;
-    background: #1a1a1a;
-    color: #ccc;
-    padding: 40px 32px;
-    position: relative;
-}
-
-.footer_col h4 {
+/*---BACK TO TOP BUTTON---*/
+.back_to_top{
+    position: fixed;
+    right: 35px;
+    bottom: 30px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #222;
     color: #fff;
-    font-size: 14px;
-    margin-bottom: 12px;
-}
-
-.footer_col p,
-.footer_col ul {
-    font-size: 13px;
-    line-height: 1.7;
-    list-style: none;
-}
-
-.footer_col ul li a {
-    color: #ccc;
-}
-
-.footer_col ul li a:hover {
-    color: #fff;
-}
-
-.social_icons {
     display: flex;
-    gap: 14px;
-    font-size: 18px;
-}
-
-.social_icons a {
-    color: #ccc;
-}
-
-.social_icons a:hover {
-    color: #fff;
-}
-
-.back_to_top {
-    position: absolute;
-    right: 32px;
-    bottom: 32px;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
     justify-content: center;
-    border: 1px solid #555;
-    border-radius: 4px;
-    color: #ccc;
+    align-items: center;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
 }
 
-.back_to_top:hover {
-    background: #fff;
-    color: #1a1a1a;
-}
 
 /* --- RESPONSIVE --- */
 @media (max-width: 860px) {
@@ -810,9 +718,6 @@ a {
 }
 
 @media (max-width: 640px) {
-    .site_footer {
-        grid-template-columns: repeat(2, 1fr);
-    }
 
     .filter_form {
         flex-wrap: wrap;
@@ -820,6 +725,11 @@ a {
 
     .search_input {
         flex: 1 1 100%;
+    }
+
+    .footer_container{
+        grid-template-columns: 1fr;
+        gap: 30px;
     }
 
     /* Thread_detail page */

@@ -1,0 +1,65 @@
+/*---SITEMAP---*/
+.sitemap_layout {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+}
+
+.sitemap_heading {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.sitemap_subheading {
+    display: none; 
+}
+
+.sitemap_grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px 32px;
+    margin-top: 32px;
+}
+
+.sitemap_section {
+}
+
+.sitemap_section h3 {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin-bottom: 12px;
+}
+
+.sitemap_section h3 i {
+    display: none; 
+}
+
+.sitemap_section ul li {
+    margin-bottom: 8px;
+}
+
+.sitemap_section ul li a {
+    font-size: 13px;
+    color: #0068c9; 
+}
+
+.sitemap_section ul li a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .sitemap_grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .sitemap_grid {
+        grid-template-columns: 1fr;
+    }
+}
