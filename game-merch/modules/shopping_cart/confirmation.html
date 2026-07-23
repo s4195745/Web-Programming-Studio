@@ -3,33 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
     <link rel="stylesheet" href="../../assets/css/main.css">
     <link rel="stylesheet" href="../../assets/css/cart.css">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
-    <title>Order Confirmation</title>
 </head>
 <body>
+    <!-- SHARED NAVIGATION  -->
     <nav>
         <a href="index.html" class="logo">LootBox.</a>
-        <a href="cart.html" class="cart-icon">
-            <i class="ri-shopping-bag-line"></i>
-            <span class="cart-item-count">0</span>
-        </a>
+        <div class="nav-links">
+            <a href="">Shop</a>
+            <a href="">Forum</a>
+            <a href="">Blog</a>
+            <a href="">Sitemap</a>
+            <a href="">Login/Profile</a>
+            <a href="">Wishlist</a>
+        </div>
+        <!-- Search and Cart Grouping -->
+        <div class="nav-actions">
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" placeholder="Search..." aria-label="Search">
+                <button type="button" aria-label="Submit search"><i class="ri-search-line"></i></button>
+            </div>
+
+            <!-- Cart Icon -->
+            <a href="cart.html" class="cart-icon">
+                <i class="ri-shopping-bag-line"></i>
+                <span class="cart-item-count active">2</span>
+            </a>
+        </div>
     </nav>
 
-    <div class="confirmation-page">
-        <h2 style="color: #e35f26; text-align: center; margin-bottom: 10px;">Payment Successful!</h2>
-        <p style="text-align: center;">Thank you for your purchase. Here is your receipt.</p>
+    <!-- ================= CONFIRMATION SECTION ================= -->
+    <!-- Module: Shopping Cart | Author: Nguyen The Chinh -->
+    <main class="confirmation-page">
+        <h2 class="success-msg">Payment Successful!</h2>
+        <p class="success-desc">Thank you for your purchase. Here is your receipt.</p>
         
-        <div id="order-summary" class="order-summary-box">
-            <!-- JS will inject the receipt here -->
-        </div>
+        <!-- Hardcoded Order Summary -->
+        <section id="order-summary" class="order-summary-box">
+            <h3 class="receipt-title">Shipping To:</h3>
+            <p class="receipt-info"><strong>Nguyen The Chinh</strong></p>
+            <p class="receipt-address">RMIT University Building, Ho Chi Minh City</p>
+            
+            <h3 class="receipt-title">Items Purchased:</h3>
+            
+            <!-- Ordered Item 1 -->
+            <article class="receipt-item">
+                <div class="receipt-product">
+                    <img src="../../assets/cart.images/white/white_hk_main.webp" alt="Hollow Knight">
+                    <div>
+                        <p class="receipt-name">Hollow Knight</p>
+                        <p class="receipt-meta">Qty: 1 | White | M</p>
+                    </div>
+                </div>
+                <span class="receipt-price">$32.00</span>
+            </article>
 
-        <div style="text-align: center; margin-top: 30px;">
-            <a href="index.html" class="btn" style="text-decoration: none;">Continue Shopping</a>
-        </div>
-    </div>
+            <!-- Ordered Item 2 -->
+            <article class="receipt-item">
+                <div class="receipt-product">
+                    <img src="../../assets/cart.images/brown/enfi_brown_main.avif" alt="Arknights Endfield Plushie">
+                    <div>
+                        <p class="receipt-name">Arknights: Endfield - PoofyShan</p>
+                        <p class="receipt-meta">Qty: 2 | Brown | S</p>
+                    </div>
+                </div>
+                <span class="receipt-price">$70.00</span>
+            </article>
+            
+            <div class="receipt-total">
+                <strong>Total Paid:</strong>
+                <strong class="total-amount">$102.00</strong>
+            </div>
+        </section>
 
-    <script src="script.js"></script>
+        <div class="continue-shopping">
+            <a href="index.html" class="btn action-btn">Continue Shopping</a>
+        </div>
+    </main>
+
+    <!-- <script src="script.js"></script> -->
 </body>
 </html>

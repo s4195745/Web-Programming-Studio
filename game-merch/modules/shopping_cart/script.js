@@ -1,3 +1,5 @@
+// JS script for future requirements
+
 const productContainer = document.querySelector(".product-list");
 const isProductDetailPage = document.querySelector(".product-detail");
 const isCartPage = document.querySelector(".cart");
