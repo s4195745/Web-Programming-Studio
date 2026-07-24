@@ -1,15 +1,5 @@
 
 
-/* --- Announcement Bar --- */
-.announcement-bar {
-    background-color: #d12e3e; 
-    color: white;
-    text-align: center;
-    padding: 8px;
-    font-size: 14px;
-    font-weight: 500;
-}
-
 /* --- HERO SECTION --- */
 .hero-section {
     background-color: #ffffff; 
@@ -101,7 +91,7 @@
 }
 
 .btn-home-login {
-    background-color: #d12e3e;
+    background-color: #ff7b00;
     color: white;
     border: none;
     padding: 12px;
