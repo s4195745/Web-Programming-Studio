@@ -13,10 +13,30 @@
     <nav>
         <a href="index.html" class="logo">LootBox.</a>
 
-        <a href="cart.html" class="cart-icon">
-            <i class="ri-shopping-bag-line"></i>
-            <span class="cart-item-count" data-visible="true">2</span>
-        </a>
+        <div class="nav-links">
+            <a href="products.html">Shop</a>
+            <a href="wishlist.html">Wishlist</a>
+            <a href="productreview.html">Reviews</a>
+            <a href="forum.html">Forum</a>
+            <a href="blog.html">Blog</a>
+        </div>
+
+        <div class="nav-actions">
+            <form class="search-bar" role="search" action="#">
+                <label for="nav-search" class="visually-hidden">Search products</label>
+                <input type="search" id="nav-search" name="q" placeholder="Search products...">
+                <button type="submit" aria-label="Search"><i class="ri-search-line"></i></button>
+            </form>
+
+            <a href="cart.html" class="cart-icon" aria-label="View shopping cart, 2 items">
+                <i class="ri-shopping-bag-line"></i>
+                <span class="cart-item-count active">2</span>
+            </a>
+
+            <a href="profile.html" class="nav-profile-link" aria-label="View your profile">
+                <img class="nav-avatar" src="https://placehold.co/80x80/e35f26/ffffff?text=Q" alt="Your profile picture">
+            </a>
+        </div>
     </nav>
 
     <main id="main-content">
@@ -163,7 +183,7 @@
                             <p class="review-card__summary">Bought the Knight and Hornet pair, magnets are strong enough to hold a few postcards and the print hasn't faded.</p>
                         </div>
                         <div class="review-card__meta">
-                            <span>Pham Khanh An <span class="badge badge-saved">You</span></span>
+                            <span>Hoang Xuan Quynh <span class="badge badge-saved">You</span></span>
                             <span>28 Jun 2026</span>
                         </div>
                         <div class="review-card__actions">
@@ -214,39 +234,39 @@
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div>
-                    <h3>LootBox.</h3>
-                    <p style="color: var(--text-muted); font-size: 0.85rem;">A student project for COSC3060 Web Programming Studio &mdash; figures, posters, plushies and decor for anime and game fans.</p>
-                </div>
-                <div>
-                    <h3>Explore</h3>
-                    <ul>
-                        <li><a href="products.html">Shop</a></li>
-                        <li><a href="wishlist.html">Wishlist</a></li>
-                        <li><a href="productreview.html">Reviews</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3>Community</h3>
-                    <ul>
-                        <li><a href="forum.html">Discussion forum</a></li>
-                        <li><a href="blog.html">Blog</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3>Account</h3>
-                    <ul>
-                        <li><a href="login.html">Log in</a></li>
-                        <li><a href="register.html">Register</a></li>
-                        <li><a href="sitemap.html">Sitemap</a></li>
-                    </ul>
+    <footer class="site_footer">
+        <div class="footer_container">
+            <div class="footer_column">
+                <h4>LootBox.</h4>
+                <p>A student project for COSC3060 Web Programming Studio &mdash; figures, posters, plushies and decor for anime and game fans.</p>
+                <div class="social_icons">
+                    <a href="#" aria-label="Facebook"><i class="ri-facebook-fill"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="ri-instagram-line"></i></a>
+                    <a href="#" aria-label="X (Twitter)"><i class="ri-twitter-x-line"></i></a>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 LootBox. Built for COSC3060 Web Programming Studio.</p>
+            <div class="footer_column">
+                <h4>Explore</h4>
+                <ul>
+                    <li><a href="products.html">Shop</a></li>
+                    <li><a href="wishlist.html">Wishlist</a></li>
+                    <li><a href="productreview.html">Reviews</a></li>
+                </ul>
+            </div>
+            <div class="footer_column">
+                <h4>Community</h4>
+                <ul>
+                    <li><a href="forum.html">Discussion forum</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer_column">
+                <h4>Account</h4>
+                <ul>
+                    <li><a href="login.html">Log in</a></li>
+                    <li><a href="register.html">Register</a></li>
+                    <li><a href="sitemap.html" class="view_sitemap">View Sitemap</a></li>
+                </ul>
             </div>
         </div>
     </footer>
