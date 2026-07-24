@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Reviews | LootBox.</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/productreview.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+</head>
+
+<body>
+    <nav>
+        <a href="index.html" class="logo">LootBox.</a>
+
+        <div class="nav-links">
+            <a href="products.html">Shop</a>
+            <a href="wishlist.html">Wishlist</a>
+            <a href="productreview.html">Reviews</a>
+            <a href="forum.html">Forum</a>
+            <a href="blog.html">Blog</a>
+        </div>
+
+        <div class="nav-actions">
+            <form class="search-bar" role="search" action="#">
+                <label for="nav-search" class="visually-hidden">Search products</label>
+                <input type="search" id="nav-search" name="q" placeholder="Search products...">
+                <button type="submit" aria-label="Search"><i class="ri-search-line"></i></button>
+            </form>
+
+            <a href="cart.html" class="cart-icon" aria-label="View shopping cart, 2 items">
+                <i class="ri-shopping-bag-line"></i>
+                <span class="cart-item-count active">2</span>
+            </a>
+
+            <a href="profile.html" class="nav-profile-link" aria-label="View your profile">
+                <img class="nav-avatar" src="https://placehold.co/80x80/e35f26/ffffff?text=Q" alt="Your profile picture">
+            </a>
+        </div>
+    </nav>
+
+    <main id="main-content">
+        <section class="page-hero">
+            <div class="container">
+                <p class="breadcrumb"><a href="index.html">Home</a> / Reviews</p>
+                <h1>Product Reviews</h1>
+                <p>Read what other fans think before you buy, or share your own experience with a product you own.</p>
+            </div>
+        </section>
+
+        <div class="container">
+            <form class="toolbar" aria-label="Search and filter reviews">
+                <div class="toolbar__filters">
+                    <div class="field">
+                        <label for="review-search">Search reviews</label>
+                        <input type="search" id="review-search" name="search" placeholder="Search by title, product or reviewer">
+                    </div>
+                    <div class="field">
+                        <label for="review-rating">Rating</label>
+                        <select id="review-rating" name="rating">
+                            <option value="">All ratings</option>
+                            <option value="5">5 stars</option>
+                            <option value="4">4 stars &amp; up</option>
+                            <option value="3">3 stars &amp; up</option>
+                            <option value="2">2 stars &amp; up</option>
+                            <option value="1">1 star &amp; up</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="review-sort">Sort by</label>
+                        <select id="review-sort" name="sort">
+                            <option value="newest">Newest first</option>
+                            <option value="oldest">Oldest first</option>
+                            <option value="highest">Highest rated</option>
+                            <option value="lowest">Lowest rated</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-outline">Apply</button>
+            </form>
+
+            <section class="review-form-section" aria-labelledby="write-review-heading">
+                <h2 id="write-review-heading">Write a Review</h2>
+                <form action="#" method="post" novalidate>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="review-product">Product</label>
+                            <select id="review-product" name="product" required>
+                                <option value="">Select a product you purchased</option>
+                                <option value="hornet-plush">Hollow Knight Plush - Hornet - 30 cm</option>
+                                <option value="knight-figure">Hollow Knight Figure - The Knight - 12cm/4.7in</option>
+                                <option value="fridge-magnet">Hollow Knight Fridge Magnet &ndash; The Knight &amp; Hornet</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="review-title">Review title</label>
+                            <input type="text" id="review-title" name="title" placeholder="Summarise your experience" required maxlength="80">
+                        </div>
+                        <div class="form-group full-width">
+                            <span class="hint">Star rating</span>
+                            <div class="rating-input" role="radiogroup" aria-label="Star rating">
+                                <input type="radio" id="rate-1" name="rating" value="1"><label for="rate-1" aria-label="1 star">&#9733;</label>
+                                <input type="radio" id="rate-2" name="rating" value="2"><label for="rate-2" aria-label="2 stars">&#9733;</label>
+                                <input type="radio" id="rate-3" name="rating" value="3"><label for="rate-3" aria-label="3 stars">&#9733;</label>
+                                <input type="radio" id="rate-4" name="rating" value="4"><label for="rate-4" aria-label="4 stars">&#9733;</label>
+                                <input type="radio" id="rate-5" name="rating" value="5" checked><label for="rate-5" aria-label="5 stars">&#9733;</label>
+                            </div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="review-description">Your review</label>
+                            <textarea id="review-description" name="description" placeholder="What did you like or dislike about this product?" required></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="review-image">Add a photo (optional)</label>
+                            <input type="file" id="review-image" name="image" accept="image/*">
+                            <span class="hint">Show off your product with a photo of your own.</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                </form>
+            </section>
+
+            <div class="section-title">
+                <h2>All reviews</h2>
+                <p class="result-count">3 reviews</p>
+            </div>
+
+            <ul class="review-list">
+                <li class="review-card">
+                    <article>
+                        <div class="review-card__media">
+                            <img src="https://hollowknight-merch.com/cdn/shop/files/H12a3bc3f739e427589bd15af573128ba9.webp?v=1763901629&width=533" alt="Hollow Knight Plush - Hornet - 30 cm, reviewed by Minh Tran">
+                        </div>
+                        <div class="review-card__body">
+                            <p class="review-card__product">Hollow Knight Plush - Hornet - 30 cm</p>
+                            <h3 class="review-card__title"><a href="#review-detail">Soft, well-made, exactly like the photos</a></h3>
+                            <span class="rating-stars" aria-label="Rated 5 out of 5 stars">
+                                <span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                                <span class="rating-number">5.0</span>
+                            </span>
+                            <p class="review-card__summary">The fabric feels premium and the stitching on Hornet's mask is really clean. Bigger than I expected at 30cm too.</p>
+                        </div>
+                        <div class="review-card__meta">
+                            <span>Minh Tran</span>
+                            <span>10 Jul 2026</span>
+                        </div>
+                    </article>
+                </li>
+
+                <li class="review-card">
+                    <article>
+                        <div class="review-card__media">
+                            <img src="https://hollowknight-merch.com/cdn/shop/files/Sf1ac5c97b9814f63b57dedf37209d1cfF.webp?v=1764412835&width=533" alt="Hollow Knight Figure - The Knight - 12cm/4.7in, reviewed by Anna Pham">
+                        </div>
+                        <div class="review-card__body">
+                            <p class="review-card__product">Hollow Knight Figure - The Knight - 12cm/4.7in</p>
+                            <h3 class="review-card__title"><a href="#review-detail">Great detail for the price</a></h3>
+                            <span class="rating-stars" aria-label="Rated 4 out of 5 stars">
+                                <span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;<span class="star-empty">&#9733;</span></span>
+                                <span class="rating-number">4.0</span>
+                            </span>
+                            <p class="review-card__summary">The nail sculpt and paint work are sharper than I expected at this size, though the base feels a bit light.</p>
+                        </div>
+                        <div class="review-card__meta">
+                            <span>Anna Pham</span>
+                            <span>5 Jul 2026</span>
+                        </div>
+                    </article>
+                </li>
+
+                <li class="review-card" id="review-detail">
+                    <article>
+                        <div class="review-card__media">
+                            <img src="https://hollowknight-merch.com/cdn/shop/files/20250921_1155_Magnets_Styles_sur_Frigo_remix_01k5nv3h37ey5rcfy0j2263ans_1.png?v=1763901332&width=533" alt="Hollow Knight Fridge Magnet - The Knight and Hornet, reviewed by Hoang Xuan Quynh">
+                        </div>
+                        <div class="review-card__body">
+                            <p class="review-card__product">Hollow Knight Fridge Magnet &ndash; The Knight &amp; Hornet</p>
+                            <h3 class="review-card__title">Cute set, sticks well to the fridge</h3>
+                            <span class="rating-stars" aria-label="Rated 5 out of 5 stars">
+                                <span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                                <span class="rating-number">5.0</span>
+                            </span>
+                            <p class="review-card__summary">Bought the Knight and Hornet pair, magnets are strong enough to hold a few postcards and the print hasn't faded.</p>
+                        </div>
+                        <div class="review-card__meta">
+                            <span>Hoang Xuan Quynh <span class="badge badge-saved">You</span></span>
+                            <span>28 Jun 2026</span>
+                        </div>
+                        <div class="review-card__actions">
+                            <button type="button" class="btn btn-outline btn-sm" style="flex:1;">Edit</button>
+                            <button type="button" class="btn btn-danger btn-sm" style="flex:1;">Delete</button>
+                        </div>
+                    </article>
+                </li>
+            </ul>
+
+            <section aria-labelledby="detail-view-heading" style="padding-bottom: 56px;">
+                <div class="section-title">
+                    <h2 id="detail-view-heading">Design reference: detail view</h2>
+                </div>
+                <p class="wishlist-item__note" style="padding: 0 0 16px;">
+                    When a user clicks a review title from the list above, they see the full detail view shown below &mdash;
+                    the complete review text, larger product photo, and edit/delete actions if it is their own review.
+                </p>
+                <div class="review-detail">
+                    <div class="review-detail__media">
+                        <img src="https://hollowknight-merch.com/cdn/shop/files/20250921_1155_Magnets_Styles_sur_Frigo_remix_01k5nv3h37ey5rcfy0j2263ans_1.png?v=1763901332&width=533" alt="Hollow Knight Fridge Magnet - The Knight and Hornet, full-size photo">
+                    </div>
+                    <div>
+                        <div class="review-detail__header">
+                            <h2>Cute set, sticks well to the fridge</h2>
+                            <span class="badge badge-saved">Your review</span>
+                        </div>
+                        <p class="review-detail__meta">
+                            Product: Hollow Knight Fridge Magnet &ndash; The Knight &amp; Hornet &middot; Reviewed by Hoang Xuan Quynh &middot; 28 Jun 2026
+                        </p>
+                        <span class="rating-stars" aria-label="Rated 5 out of 5 stars">
+                            <span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                            <span class="rating-number">5.0 out of 5</span>
+                        </span>
+                        <p class="review-detail__body">
+                            I bought this magnet set as a small gift to myself after finishing the game and it's held up on my fridge for
+                            weeks now without sliding off or fading in the sunlight from the kitchen window. Both the Knight and Hornet
+                            designs are printed sharp with no blurring around the linework, and the magnet strength is strong enough to
+                            pin a couple of postcards underneath as well. Would happily buy the rest of the set.
+                        </p>
+                        <div class="review-detail__actions">
+                            <button type="button" class="btn btn-outline">Edit Review</button>
+                            <button type="button" class="btn btn-danger">Delete Review</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site_footer">
+        <div class="footer_container">
+            <div class="footer_column">
+                <h4>LootBox.</h4>
+                <p>A student project for COSC3060 Web Programming Studio &mdash; figures, posters, plushies and decor for anime and game fans.</p>
+                <div class="social_icons">
+                    <a href="#" aria-label="Facebook"><i class="ri-facebook-fill"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="ri-instagram-line"></i></a>
+                    <a href="#" aria-label="X (Twitter)"><i class="ri-twitter-x-line"></i></a>
+                </div>
+            </div>
+            <div class="footer_column">
+                <h4>Explore</h4>
+                <ul>
+                    <li><a href="products.html">Shop</a></li>
+                    <li><a href="wishlist.html">Wishlist</a></li>
+                    <li><a href="productreview.html">Reviews</a></li>
+                </ul>
+            </div>
+            <div class="footer_column">
+                <h4>Community</h4>
+                <ul>
+                    <li><a href="forum.html">Discussion forum</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer_column">
+                <h4>Account</h4>
+                <ul>
+                    <li><a href="login.html">Log in</a></li>
+                    <li><a href="register.html">Register</a></li>
+                    <li><a href="sitemap.html" class="view_sitemap">View Sitemap</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
