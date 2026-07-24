@@ -10,10 +10,10 @@ This project was collaboratively built by a team of 5 members. Each member was r
 
 | Student ID | Full Name          | Role / Module                           |
 | s4195745   | Nguyen The Chinh   | Shopping Cart, User Account Management  |
-| sXXXXXXX   | Hoang Xuan Quynh   | Wishlist, User Account Management       |
+| s4077090   | Hoang Xuan Quynh   | Wishlist, User Account Management       |
 | s4197975   | Dang Viet Hoang    | Discussion Forum, Sitemap               |
 | s4200917   | Ho Nguyen Thanh    | Blog, Administrator                     |
-| sXXXXXXX   | Pham Khanh An      | Product Review, User Account Management |
+| s4199811   | Pham Khanh An      | Product Review, User Account Management |
 
 ---
 
