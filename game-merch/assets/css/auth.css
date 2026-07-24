@@ -383,7 +383,7 @@ body {
     border-top: 1px solid #eaeaea;
 }
 
-/* Consolidated Profile Avatar (Duplicate removed) */
+/* Consolidated Profile Avatar */
 .profile-avatar {
     width: 80px;
     height: 80px;
@@ -593,3 +593,83 @@ body {
 .mb-15 { margin-bottom: 15px; }
 .mb-20 { margin-bottom: 20px; }
 .mt-25 { margin-top: 25px; }
+
+/* ================= MOBILE RESPONSIVENESS FOR AUTH & DASHBOARD ================= */
+@media (max-width: 768px) {
+    /* Stack the dashboard layout vertically */
+    .dashboard-wrapper {
+        flex-direction: column;
+        gap: 20px;
+        padding: 0 15px 30px;
+        margin-top: 80px; 
+    }
+
+    /* Turn sidebar into a horizontal scrolling row on mobile */
+    .dashboard-sidebar {
+        width: 100%;
+        border-bottom: 1px solid #eaeaea;
+        padding-bottom: 10px;
+    }
+    
+    .dashboard-sidebar ul {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        gap: 20px;
+        padding-bottom: 5px;
+    }
+
+    .dashboard-sidebar li {
+        margin-bottom: 0;
+    }
+
+    /* Stack form rows vertically */
+    .form-row {
+        flex-direction: column;
+    }
+
+    .form-label {
+        width: 100%;
+        padding-bottom: 8px;
+    }
+
+    .form-input-wrapper {
+        width: 100%;
+    }
+
+    /* Allow buttons to take full width on mobile */
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .action-buttons button, 
+    .action-buttons a {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .card-header-flex {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+        .auth-container {
+        padding: 30px 20px;
+        width: 92%; 
+        margin: 20px auto 40px auto; 
+    }
+
+   
+    .social-login {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    
+    .form-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+     
+}
