@@ -3,9 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>My Wishlist | LootBox.</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/wishlist.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
 </head>
+
 <body>
-    
+    <nav>
+        <a href="index.html" class="logo">LootBox.</a>
+
+        <a href="cart.html" class="cart-icon">
+            <i class="ri-shopping-bag-line"></i>
+            <span class="cart-item-count" data-visible="true">2</span>
+        </a>
+    </nav>
+
+    <main id="main-content">
+        <section class="page-hero">
+            <div class="container">
+                <p class="breadcrumb"><a href="index.html">Home</a> / Wishlist</p>
+                <h1>My Wishlist</h1>
+                <p>Items you've saved for later. Move a piece to your cart when you're ready to buy, or mark it as purchased once you own it.</p>
+            </div>
+        </section>
+
+        <div class="container">
+            <div class="wishlist-summary" style="margin-top: 32px;">
+                <div class="wishlist-summary__stat">
+                    <span>Saved items</span>
+                    <strong>3</strong>
+                </div>
+                <div class="wishlist-summary__stat">
+                    <span>Estimated total value</span>
+                    <strong>&euro;119.70</strong>
+                </div>
+                <div class="wishlist-summary__stat">
+                    <span>Already purchased</span>
+                    <strong>1</strong>
+                </div>
+            </div>
+
+            <div class="alert alert-warning" role="note">
+                <span aria-hidden="true">&#9888;</span>
+                <span><strong>Duplicate protection:</strong> if a user tries to add an item that's already on their wishlist (e.g. re-clicking the heart icon on "Hollow Knight Plush - Hornet - 30 cm" from the shop), LootBox. blocks the duplicate and shows a message such as &ldquo;Hollow Knight Plush - Hornet - 30 cm is already in your wishlist.&rdquo; No second entry is created.</span>
+            </div>
+
+            <form class="toolbar" aria-label="Sort wishlist">
+                <div class="toolbar__filters">
+                    <div class="field">
+                        <label for="wishlist-sort">Sort by</label>
+                        <select id="wishlist-sort" name="sort">
+                            <option value="date-added">Date added (newest first)</option>
+                            <option value="price-asc">Price: low to high</option>
+                            <option value="price-desc">Price: high to low</option>
+                            <option value="popularity">Most wishlisted by other users</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="wishlist-status">Status</label>
+                        <select id="wishlist-status" name="status">
+                            <option value="all">All items</option>
+                            <option value="saved">Saved (not purchased)</option>
+                            <option value="purchased">Purchased</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-outline">Apply</button>
+            </form>
+
+            <div class="section-title">
+                <h2>Saved items</h2>
+                <p class="result-count">3 items</p>
+            </div>
+
+            <ul class="card-grid">
+                <li class="product-card wishlist-item" data-purchased="false">
+                    <article>
+                        <div class="product-card__media">
+                            <span class="wishlist-item__status badge badge-saved">Saved</span>
+                            <img src="https://hollowknight-merch.com/cdn/shop/files/H12a3bc3f739e427589bd15af573128ba9.webp?v=1763901629&width=533" alt="Hollow Knight Plush - Hornet - 30 cm">
+                        </div>
+                        <div class="product-card__body">
+                            <h3 class="product-card__title"><a href="product-detail.html">Hollow Knight Plush - Hornet - 30 cm</a></h3>
+                            <p class="product-card__category">Plushies &middot; added 3 Jul 2026</p>
+                            <p class="product-card__price">&euro;34.90</p>
+                        </div>
+                        <div class="stat-pills">
+                            <span class="stat-pill"><strong>1,204</strong>&nbsp;wishlisted</span>
+                            <span class="stat-pill"><strong>87</strong>&nbsp;in carts</span>
+                            <span class="stat-pill"><strong>342</strong>&nbsp;bought</span>
+                        </div>
+                        <div class="product-card__actions" style="flex-direction: column; padding-top: 12px;">
+                            <button type="button" class="btn btn-primary btn-sm btn-block">Move to Cart</button>
+                            <div style="display: flex; gap: 8px; width: 100%;">
+                                <button type="button" class="btn btn-success btn-sm" style="flex: 1;">Mark as Purchased</button>
+                                <button type="button" class="btn btn-danger btn-sm" style="flex: 1;">Remove</button>
+                            </div>
+                        </div>
+                    </article>
+                </li>
+
+                <li class="product-card wishlist-item" data-purchased="false">
+                    <article>
+                        <div class="product-card__media">
+                            <span class="wishlist-item__status badge badge-saved">Saved</span>
+                            <img src="https://hollowknight-merch.com/cdn/shop/files/Sf1ac5c97b9814f63b57dedf37209d1cfF.webp?v=1764412835&width=533" alt="Hollow Knight Figure - The Knight - 12cm/4.7in">
+                        </div>
+                        <div class="product-card__body">
+                            <h3 class="product-card__title"><a href="product-detail.html">Hollow Knight Figure - The Knight - 12cm/4.7in</a></h3>
+                            <p class="product-card__category">Figures &middot; added 28 Jun 2026</p>
+                            <p class="product-card__price">&euro;39.90</p>
+                        </div>
+                        <div class="stat-pills">
+                            <span class="stat-pill"><strong>856</strong>&nbsp;wishlisted</span>
+                            <span class="stat-pill"><strong>41</strong>&nbsp;in carts</span>
+                            <span class="stat-pill"><strong>198</strong>&nbsp;bought</span>
+                        </div>
+                        <div class="product-card__actions" style="flex-direction: column; padding-top: 12px;">
+                            <button type="button" class="btn btn-primary btn-sm btn-block">Move to Cart</button>
+                            <div style="display: flex; gap: 8px; width: 100%;">
+                                <button type="button" class="btn btn-success btn-sm" style="flex: 1;">Mark as Purchased</button>
+                                <button type="button" class="btn btn-danger btn-sm" style="flex: 1;">Remove</button>
+                            </div>
+                        </div>
+                    </article>
+                </li>
+
+                <li class="product-card wishlist-item" data-purchased="true">
+                    <article>
+                        <div class="product-card__media">
+                            <span class="wishlist-item__status badge badge-purchased">Purchased</span>
+                            <img src="https://hollowknight-merch.com/cdn/shop/files/20250921_1155_Magnets_Styles_sur_Frigo_remix_01k5nv3h37ey5rcfy0j2263ans_1.png?v=1763901332&width=533" alt="Hollow Knight Fridge Magnet - The Knight and Hornet">
+                        </div>
+                        <div class="product-card__body">
+                            <h3 class="product-card__title"><a href="product-detail.html">Hollow Knight Fridge Magnet &ndash; The Knight &amp; Hornet</a></h3>
+                            <p class="product-card__category">Decorations &middot; added 2 Jun 2026</p>
+                            <p class="product-card__price">&euro;44.90</p>
+                        </div>
+                        <div class="stat-pills">
+                            <span class="stat-pill"><strong>2,031</strong>&nbsp;wishlisted</span>
+                            <span class="stat-pill"><strong>120</strong>&nbsp;in carts</span>
+                            <span class="stat-pill"><strong>987</strong>&nbsp;bought</span>
+                        </div>
+                        <div class="product-card__actions" style="flex-direction: column; padding-top: 12px;">
+                            <button type="button" class="btn btn-outline btn-sm btn-block" disabled aria-disabled="true">Already purchased</button>
+                            <div style="display: flex; gap: 8px; width: 100%;">
+                                <button type="button" class="btn btn-success btn-sm" style="flex: 1;" disabled aria-disabled="true">Purchased &#10003;</button>
+                                <button type="button" class="btn btn-danger btn-sm" style="flex: 1;">Remove</button>
+                            </div>
+                        </div>
+                    </article>
+                </li>
+            </ul>
+
+            <section aria-labelledby="empty-preview-heading" style="padding-bottom: 56px;">
+                <div class="section-title">
+                    <h2 id="empty-preview-heading">Design reference: empty wishlist state</h2>
+                </div>
+                <p class="wishlist-item__note" style="padding: 0 0 16px;">
+                    Shown below is what this page displays when a user has no saved items yet. It is included here purely
+                    as a design reference for this static prototype.
+                </p>
+                <div class="empty-state">
+                    <div class="empty-state__icon" aria-hidden="true">&#9825;</div>
+                    <h2>Your wishlist is empty</h2>
+                    <p style="margin-bottom: 16px;">Browse the shop and tap the heart icon on any item to save it here.</p>
+                    <a href="products.html" class="btn btn-primary">Browse Shop</a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3>LootBox.</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">A student project for COSC3060 Web Programming Studio &mdash; figures, posters, plushies and decor for anime and game fans.</p>
+                </div>
+                <div>
+                    <h3>Explore</h3>
+                    <ul>
+                        <li><a href="products.html">Shop</a></li>
+                        <li><a href="wishlist.html">Wishlist</a></li>
+                        <li><a href="productreview.html">Reviews</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Community</h3>
+                    <ul>
+                        <li><a href="forum.html">Discussion forum</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Account</h3>
+                    <ul>
+                        <li><a href="login.html">Log in</a></li>
+                        <li><a href="register.html">Register</a></li>
+                        <li><a href="sitemap.html">Sitemap</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 LootBox. Built for COSC3060 Web Programming Studio.</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
