@@ -47,45 +47,47 @@
   <header class="site-header">
     <div class="header-container">
       <div class="brand">
-        <h1 class="site-title">LootBlog</h1>
-        <p class="site-subtitle">Share stories</p>
-      </div>>
-      <a href="UserBlog.html" class="action-btn">Your blog</a>
-    </div>
   </header>
-
+<a href="UserBlog.html" class="fixed-user-blog-btn">
+  <i class="fa-solid fa-pencil"></i>
+  <span>Your Blog</span>
+</a>
   <main class="main-container">
 
     <!-- Search function -->
-    <section class="search-filter-section">
+  <section class="search-filter-section">
       <form class="search-filter-form" onsubmit="event.preventDefault();">
-        <div class="form-group">
-          <select class="search-type-select" aria-label="Search target">
-            <option value="title">Title</option>
-            <option value="author">Author</option>
-          </select>
-        </div>
-        <div class="form-group">
+        <!-- Top Row: Full-width Search Input & Search Button -->
+        <div class="search-bar-row">
           <input 
             type="text" 
             class="search-input" 
             placeholder="Search..." 
             aria-label="Search posts" 
           />
+          <button type="button" class="search-btn">Search</button>
         </div>
-        <div class="form-group">
-          <select class="category-select" aria-label="Filter by category">
-            <option value="">All Categories</option>
-            <option value="Merch">📱 Merch</option>
-            <option value="Fan-art">🎨 Fan-art</option>
-            <option value="Discussion">💬 Discussion</option>
-            <option value="Review">⭐ Review</option>
-          </select>
+
+        <!-- Bottom Row: Target & Categories Dropdowns side-by-side -->
+        <div class="filter-dropdowns-row">
+          <div class="form-group">
+            <select class="search-type-select" aria-label="Search target">
+              <option value="title">Title</option>
+              <option value="author">Author</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <select class="category-select" aria-label="Filter by category">
+              <option value="">All Categories</option>
+              <option value="Merch">📱 Merch</option>
+              <option value="Fan-art">🎨 Fan-art</option>
+              <option value="Discussion">💬 Discussion</option>
+              <option value="Review">⭐ Review</option>
+            </select>
+          </div>
         </div>
-        <button type="button" class="search-btn">Search</button>
       </form>
     </section>
-
     <div class="post-feed" id="postFeed">
 
       <!-- First Post -->
