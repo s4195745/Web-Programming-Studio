@@ -1,0 +1,121 @@
+const products = [
+    {
+        id: 1,
+        title: "Hollow Knight",
+        price: "$32",
+        description: "Find a home for the Knight that's a little less dangerous than Hallownest.",
+        colors: [
+            {
+                name: "White",
+                mainImage: "../../assets/cart.images/white/white_hk_main.webp",
+                thumbnails: [
+                    "../../assets/cart.images/white/white_hk_photo1.webp",
+                    "../../assets/cart.images/white/white_hk_photo2.webp",
+                    "../../assets/cart.images/white/white_hk_photo3.webp"
+                ],
+                sizes: ["S", "M", "L", "XL", "XXL"]
+            },
+            {
+                name: "Yellow",
+                mainImage: "../../assets/cart.images/yellow/yellow_hk_main.jpg",
+                thumbnails: [
+                    "../../assets/cart.images/yellow/yellow_hk_photo1.jpg",
+                    "../../assets/cart.images/yellow/yellow_hk_photo2.jpg",
+                    "../../assets/cart.images/yellow/yellow_hk_photo3.jpg"
+                ],
+                sizes: ["S", "M", "L", "XL", "XXL"]
+            },
+            {
+                name: "Red",
+                mainImage: "../../assets/cart.images/red/red_hk_main.jpg",
+                thumbnails: [
+                    "../../assets/cart.images/red/red_hk_photo1.jpg",
+                    "../../assets/cart.images/red/red_hk_photo1.jpg",
+                    "../../assets/cart.images/red/red_hk_photo1.jpg"
+                ],
+                sizes: ["S", "M", "L", "XL", "XXL"]
+            },
+            {
+                name: "Purple",
+                mainImage: "../../assets/cart.images/purple/purple_hk_main.jpg",
+                thumbnails: [
+                    "../../assets/cart.images/purple/purple_hk_photo1.jpg",
+                    "../../assets/cart.images/purple/purple_hk_photo2.jpg",
+                    "../../assets/cart.images/purple/purple_hk_photo3.jpg"
+                ],
+                sizes: ["S", "L"]
+            },
+            {
+                name: "Black",
+                mainImage: "../../assets/cart.images/black/black_hk_main.jpg",
+                thumbnails: [
+                    "../../assets/cart.images/black/black_hk_photo1.jpg",
+                    "../../assets/cart.images/black/black_hk_photo2.jpg",
+                    "../../assets/cart.images/black/black_hk_photo3.jpg"
+                ],
+                sizes: ["M", "L", "XL"]
+            }
+        ]
+    },
+
+        {
+        id: 2,
+        title: "Arknights: Endfield - PoofyShan Plushie - The Lost Heirloom Inn ",
+        price: "$35",
+        description: "PoofyShan Plushie - The Lost Heirloom Inn",
+        colors: [
+     
+            {
+                name: "Brown",
+                mainImage: "../../assets/cart.images/brown/enfi_brown_main.avif",
+                thumbnails: [
+                    "../../assets/cart.images/brown/enfi_brown_photo1.avif",
+                    "../../assets/cart.images/brown/enfi_brown_photo2.avif",
+                    "../../assets/cart.images/brown/enfi_brown_photo3.avif"
+                ],
+                sizes: ["S", "M", "L"]
+            },
+            {
+                name: "Red",
+                mainImage: "../../assets/cart.images/red/enfi_red_main.webp",
+                thumbnails: [
+                    "../../assets/cart.images/red/enfi_red_photo1.avif",
+                    "../../assets/cart.images/red/enfi_red_photo2.avif",
+                    "../../assets/cart.images/red/enfi_red_photo3.avif"
+                ],
+                sizes: ["S", "M", "L"]
+            },
+    
+            {
+                name: "Blue",
+                mainImage: "../../assets/cart.images/blue/enfi_blue_main.avif",
+                thumbnails: [
+                    "../../assets/cart.images/blue/enfi_blue_photo1.avif",
+                    "../../assets/cart.images/blue/enfi_blue_photo2.avif",
+                    "../../assets/cart.images/blue/enfi_blue_photo3.avif"
+                ],
+                sizes: ["S","M", "L"]
+            }
+        ]
+    },
+
+    {
+        id: 3,
+        title: "Pengu Garen Figure",
+        price: "$35.99",
+        description: "Whether you think Pengu Garen was the best thing to happen to League of Legends since AP Master Yi or a questionable model of champion readability, our Pengu Garen Figure is here to remind you to speak Pengu and carry a big sword.",
+        colors: [
+            {
+                name: "White",
+                mainImage: "../../assets/cart.images/white/pengu_white_main.webp",
+                thumbnails: [
+                    "../../assets/cart.images/white/pengu_white_photo1.webp",
+                    "../../assets/cart.images/white/pengu_white_photo2.webp",
+                    "../../assets/cart.images/white/pengu_white_photo3.webp"
+                ],
+                sizes: ["S", "M", "L"]
+            },
+        
+        ]
+    },
+];

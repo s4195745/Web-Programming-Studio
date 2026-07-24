@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail - Hollow Knight</title>
+    <link rel="stylesheet" href="../../assets/css/cart.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+</head>
+<body>
+    <!-- ================= SHARED NAVIGATION ================= -->
+    <nav>
+        <a href="index.html" class="logo">LootBox.</a>
+        <div class="nav-links">
+            <a href="">Shop</a>
+            <a href="">Forum</a>
+            <a href="">Blog</a>
+            <a href="">Sitemap</a>
+            <a href="">Login/Profile</a>
+            <a href="">Wishlist</a>
+        </div>
+        <!-- Search and Cart Grouping -->
+        <div class="nav-actions">
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" placeholder="Search..." aria-label="Search">
+                <button type="button" aria-label="Submit search"><i class="ri-search-line"></i></button>
+            </div>
+
+            <!-- Cart Icon -->
+            <a href="cart.html" class="cart-icon">
+                <i class="ri-shopping-bag-line"></i>
+                <span class="cart-item-count active">2</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- ================= PRODUCT DETAIL SECTION ================= -->
+    <!-- Module: Shopping Cart | Author: Nguyen The Chinh -->
+    <main class="product-detail">
+        
+        <!-- LEFT COLUMN: Product Images -->
+        <section class="product-img">
+            <div class="thumbnail-list"> 
+                <img src="../../assets/cart.images/white/white_hk_main.webp" alt="Hollow Knight Thumbnail 1">
+                <img src="../../assets/cart.images/white/white_hk_photo1.webp" alt="Hollow Knight Thumbnail 2">
+                <img src="../../assets/cart.images/white/white_hk_photo2.webp" alt="Hollow Knight Thumbnail 3">
+                <img src="../../assets/cart.images/white/white_hk_photo3.webp" alt="Hollow Knight Thumbnail 4">
+            </div>
+            <div class="main-img">
+                <img src="../../assets/cart.images/white/white_hk_main.webp" alt="Hollow Knight Main Image">
+            </div>
+        </section>
+        
+        <!-- RIGHT COLUMN: Product Information -->
+        <section class="product-info">
+            <h2 class="title">Hollow Knight</h2>
+            <div class="rating" aria-label="Rating: 4.8 out of 5 stars">
+                <i class="ri-star-fill"></i>
+                <i class="ri-star-fill"></i>
+                <i class="ri-star-fill"></i>
+                <i class="ri-star-fill"></i>
+                <i class="ri-star-line"></i>
+                <span>(4.8)</span>
+            </div>
+            
+            <span class="price">$32.00</span>
+            <p class="description">Find a home for the Knight that's a little less dangerous than Hallownest.</p>
+            
+            <!-- Static Size Selection -->
+            <div class="size-selection">
+                <p>Select Size</p>
+                <div class="size-options">
+                    <button>S</button>
+                    <button class="selected" aria-pressed="true">M</button>
+                    <button>L</button>
+                    <button>XL</button>
+                    <button>XXL</button>
+                </div>
+            </div>
+            
+            <!-- Static Color Selection -->
+            <div class="color-selection">
+                <p>Select Color</p>
+                <div class="color-options">
+                    <img src="../../assets/cart.images/white/white_hk_main.webp" alt="White Variant" class="selected">
+                    <img src="../../assets/cart.images/yellow/yellow_hk_main.jpg" alt="Yellow Variant">
+                    <img src="../../assets/cart.images/red/red_hk_main.jpg" alt="Red Variant">
+                    <img src="../../assets/cart.images/black/black_hk_main.jpg" alt="Black Variant">
+                </div>
+            </div>
+
+            <!-- Static action link for evaluation -->
+            <a href="cart.html" class="btn action-btn" id="add-cart-btn">Add to Cart</a>
+            
+            <div class="product-policy">
+                <p>100% Original Product</p>
+                <p>Easy return and exchange policy within 14 days</p>
+            </div>
+        </section> 
+    </main>
+
+    <!-- <script src="products.js"></script> -->
+    <!-- <script src="script.js"></script> -->
+</body>
+</html>
