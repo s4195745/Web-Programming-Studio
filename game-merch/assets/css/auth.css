@@ -6,11 +6,9 @@
 body {
     background-color: #eaedf2; 
     min-height: 100vh; 
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; 
     padding-top: 120px; 
-    padding-bottom: 50px; 
+    display: flex;
+    flex-direction: column; 
 }
 
 /* ================= AUTHENTICATION CONTAINER ================= */
@@ -21,6 +19,7 @@ body {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
     width: 100%;
     max-width: 420px;
+    margin: 0 auto 50px auto; 
 }
 
 /* Authentication Header */
@@ -274,11 +273,13 @@ body {
 .dashboard-wrapper {
     margin-top: 100px; 
     max-width: 1200px;
+    width: 100%; 
     margin-left: auto;
     margin-right: auto;
     padding: 0 20px 50px;
     display: flex;
     gap: 50px;
+    flex: 1; 
 }
 
 /* Sidebar Navigation */
