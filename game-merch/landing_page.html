@@ -9,13 +9,37 @@
     <link rel="stylesheet" href="assets/css/landing_page.css"> 
 </head>
 <body>
+        <!-- ================= SHARED NAVIGATION ================= -->
     <nav>
-        <a href="landing_page.html" class="logo">LootBox.</a>
-        <a href="cart.html" class="cart-icon">
-            <i class="ri-shopping-bag-line"></i>
-        </a>
-    </nav>
+        <a href="index.html" class="logo">LootBox.</a>
+        <div class="nav-links">
+            <a href="">Shop</a>
+            <a href="">Forum</a>
+            <a href="">Blog</a>
+            <a href="">Sitemap</a>
+            <a href="">Login/Profile</a>
+            <a href="">Wishlist</a>
+        </div>
+        <!-- Search and Cart Grouping -->
+        <div class="nav-actions">
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" placeholder="Search..." aria-label="Search">
+                <button type="button" aria-label="Submit search"><i class="ri-search-line"></i></button>
+            </div>
 
+            <!-- Cart Icon -->
+            <a href="cart.html" class="cart-icon">
+                <i class="ri-shopping-bag-line"></i>
+                <span class="cart-item-count active">2</span>
+            </a>
+            <!-- User Avatar Link to Profile Page -->
+            <a href="profile.html" class="nav-profile-link">
+                
+                <img src="assets/images/Nguyen The Chinh.jpg" alt="User Profile" class="nav-avatar">
+            </a>
+        </div>
+    </nav>
     <main>
         <!-- Hero Section (Top Banner) -->
         <section class="hero-section">
