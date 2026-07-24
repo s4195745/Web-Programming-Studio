@@ -140,3 +140,80 @@ nav .cart-icon .cart-item-count.active {
     border-color: #e35f26;
     box-shadow: 0 0 8px rgba(227, 95, 38, 0.3);
 }
+
+/*---FOOTER---*/
+/* Footer */
+.site_footer {
+    background: #1a1a1a;
+    color: #ccc;
+    padding: 50px 0;
+}
+
+.footer_container {
+    width: 90%;
+    max-width: 1200px;
+    margin:0 auto;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 0.8fr 0.8fr;
+    gap: 40px;
+}
+
+.footer_column h4 {
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 18px;
+}
+
+.footer_column p {
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.footer_column ul{
+    list-style: none;
+    padding: 0;
+}
+
+.footer_column li{
+    margin-bottom: 10px;
+}
+
+.footer_column a{
+    color: #ccc;
+    text-decoration: none;
+    transition: .3s;
+}
+
+.footer_column a:hover{
+    color: #fff;
+}
+
+.social_icons {
+    display: flex;
+    gap: 20px;
+}
+
+.social_icons a{
+    font-size: 24px;
+    color: #ccc;
+}
+
+.social_icons a:hover{
+    color: #fff;
+}
+
+.view_sitemap{
+    color: #fff;
+    font-weight: 600;
+    transition: 0.3s;
+}
+.view_sitemap:hover{
+    color: #f5f5f5;
+    padding-left: 6px;
+}
+/* Add this css to your responsive of footer
+.footer_container{
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+*/
