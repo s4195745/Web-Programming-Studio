@@ -1,11 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog</title>
+  <link rel="stylesheet" type="text/css" href="../../assets/css/blog.css" />
 </head>
 <body>
-    
+
+<body>
+  <nav>
+    <a href="landingpage.html" class="logo">LootBox</a>
+    <a href="blog.html" target="_self" class="nav-link">Blog <i class="ri-shopping-bag-line"></i></a>
+  </nav>
+</body>
+  <header class="site-header">
+    <div class="header-container">
+      <div class="brand">
+        <h1 class="site-title">LootBlog</h1>
+        <p class="site-subtitle">Share stories</p>
+      </div>>
+      <a href="UserBlog.html" class="action-btn">Your blog</a>
+    </div>
+  </header>
+
+  <main class="main-container">
+
+    <!-- Search function -->
+    <section class="search-filter-section">
+      <form class="search-filter-form" onsubmit="event.preventDefault();">
+        <div class="form-group">
+          <select class="search-type-select" aria-label="Search target">
+            <option value="title">Title</option>
+            <option value="author">Author</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Search..." 
+            aria-label="Search posts" 
+          />
+        </div>
+        <div class="form-group">
+          <select class="category-select" aria-label="Filter by category">
+            <option value="">All Categories</option>
+            <option value="Merch">📱 Merch</option>
+            <option value="Fan-art">🎨 Fan-art</option>
+            <option value="Discussion">💬 Discussion</option>
+            <option value="Review">⭐ Review</option>
+          </select>
+        </div>
+        <button type="button" class="search-btn">Search</button>
+      </form>
+    </section>
+
+    <div class="post-feed" id="postFeed">
+
+      <!-- First Post -->
+      <article class="blog-card">
+        <div class="card-image-wrapper">
+          <img src="https://www.radicalfishgames.com/wp-content/uploads/plush-header-600x338.jpg" alt="Limited Edition Lea Plush" class="card-image" />
+        </div>
+        <div class="category">
+          <span class="icon">📱</span>
+          <span class="category-name">Merch</span>
+        </div>
+        <h2 class="card-title">Lea Plushie</h2>
+        <p class="card-description">
+          Lea Plushie pre-order is live on Makeship now!
+        </p>
+        <div class="card-meta">June 18, 2026</div>
+        <a href="post1.html" class="read-link">Read More</a>
+      </article>
+
+      <!-- Second Post -->
+      <article class="blog-card">
+        <div class="card-image-wrapper">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0UFw4m4xmzPauBwlyDQUHxCZHGCUsVzRrbd-TaQUghNse_dKngKO7TAk&s=10" alt="Fan-art illustration of an enemy bug" class="card-image" />
+        </div>
+        <div class="category">
+          <span class="icon">🎨</span>
+          <span class="category-name">Fan-art</span>
+        </div>
+        <h2 class="card-title">I got angry!</h2>
+        <p class="card-description">
+          This fat fuck killed me ten times over.
+        </p>
+        <div class="card-meta">Sep 30, 202</div>
+        <a href="post2.html" class="read-link">Read More</a>
+      </article>
+
+    </div>
+  </main>
+
+  <script src="script.js"></script>
 </body>
 </html>
