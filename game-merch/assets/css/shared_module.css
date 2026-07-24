@@ -6,7 +6,7 @@
 }
 
 .sitemap_heading {
-    font-size: 26px;
+    font-size: 30px;
     font-weight: 600;
     margin-bottom: 20px;
     padding-bottom: 20px;
@@ -24,27 +24,27 @@
     margin-top: 32px;
 }
 
-.sitemap_section {
-}
-
 .sitemap_section h3 {
-    display: block;
-    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
     font-weight: 600;
     color: #1d1d1f;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
 .sitemap_section h3 i {
-    display: none; 
+    font-size: 16px;
+    color: #666; 
 }
 
 .sitemap_section ul li {
-    margin-bottom: 8px;
+    margin-bottom: 11px;
 }
 
 .sitemap_section ul li a {
-    font-size: 13px;
+    font-size: 15px;
     color: #0068c9; 
 }
 

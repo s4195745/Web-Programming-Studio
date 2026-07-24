@@ -14,7 +14,7 @@ a {
     text-decoration: none;
     color: inherit;
 }
-/* PAGE LAYOUT (2 columns: main content + sidebar) */
+/* PAGE LAYOUT */
 .page_layout {
     max-width: 1100px;
     margin: 0 auto;
@@ -151,7 +151,7 @@ a {
     padding: 16px;
     position: relative;
     cursor: pointer;
-    transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2 ease; 
+    transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease; 
 }
 
 .thread_card:hover {
@@ -177,6 +177,10 @@ a {
 
 .card_header {
     position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
     z-index: 2;
 }
 
@@ -197,13 +201,6 @@ a {
     background: #222;
     padding: 3px 8px;
     border-radius: 3px;
-    margin-bottom: 10px;
-}
-
-.card_header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
     margin-bottom: 10px;
 }
 
