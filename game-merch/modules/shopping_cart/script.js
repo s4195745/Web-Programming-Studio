@@ -36,7 +36,7 @@ function updateCartCount() {
         }
         if (totalItems > 0) {
             countSpan.textContent = totalItems;
-            countSpan.style.display = "block";
+            countSpan.style.display = "flex";
         } else {
             countSpan.style.display = "none";
         }
