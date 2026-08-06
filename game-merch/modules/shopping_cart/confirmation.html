@@ -40,54 +40,20 @@
         </div>
     </nav>
 
-    <!-- ================= CONFIRMATION SECTION ================= -->
-    <!-- Module: Shopping Cart | Author: Nguyen The Chinh -->
-    <main class="confirmation-page">
-        <h2 class="success-msg">Payment Successful!</h2>
-        <p class="success-desc">Thank you for your purchase. Here is your receipt.</p>
+    <div class="confirmation-page">
+        <h2 style="color: #e35f26; text-align: center; margin-bottom: 10px;">Payment Successful!</h2>
+        <p style="text-align: center;">Thank you for your purchase. Here is your receipt.</p>
         
-        <!-- Hardcoded Order Summary -->
-        <section id="order-summary" class="order-summary-box">
-            <h3 class="receipt-title">Shipping To:</h3>
-            <p class="receipt-info"><strong>Nguyen The Chinh</strong></p>
-            <p class="receipt-address">RMIT University Building, Ho Chi Minh City</p>
-            
-            <h3 class="receipt-title">Items Purchased:</h3>
-            
-            <!-- Ordered Item 1 -->
-            <article class="receipt-item">
-                <div class="receipt-product">
-                    <img src="../../assets/cart.images/white/white_hk_main.webp" alt="Hollow Knight">
-                    <div>
-                        <p class="receipt-name">Hollow Knight</p>
-                        <p class="receipt-meta">Qty: 1 | White | M</p>
-                    </div>
-                </div>
-                <span class="receipt-price">$32.00</span>
-            </article>
-
-            <!-- Ordered Item 2 -->
-            <article class="receipt-item">
-                <div class="receipt-product">
-                    <img src="../../assets/cart.images/brown/enfi_brown_main.avif" alt="Arknights Endfield Plushie">
-                    <div>
-                        <p class="receipt-name">Arknights: Endfield - PoofyShan</p>
-                        <p class="receipt-meta">Qty: 2 | Brown | S</p>
-                    </div>
-                </div>
-                <span class="receipt-price">$70.00</span>
-            </article>
-            
-            <div class="receipt-total">
-                <strong>Total Paid:</strong>
-                <strong class="total-amount">$102.00</strong>
-            </div>
-        </section>
-
-        <div class="continue-shopping">
-            <a href="index.html" class="btn action-btn">Continue Shopping</a>
+        <div id="order-summary" class="order-summary-box">
+            <!-- JS will inject the receipt here -->
         </div>
-    </main>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="index.html" class="btn" style="text-decoration: none;">Continue Shopping</a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 
             <!--FOOTER-->
     <footer class="site_footer">

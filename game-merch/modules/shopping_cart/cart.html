@@ -41,82 +41,46 @@
     </nav>
 
 
-    <!-- ================= CART SECTION ================= -->
-    <!-- Module: Shopping Cart | Author: Nguyen The Chinh -->
-    <main class="cart">
-        <!-- Sorting Controls -->
-        <section class="cart-controls">
-            <label for="cart-sort">Sort by:</label>
-            <select id="cart-sort" name="cart-sort">
+
+    <div class="cart">
+        <!-- Sorting -->
+        <div class="cart-controls" style="display: flex; justify-content: flex-end; margin-bottom: 15px; gap: 10px; align-items: center;">
+            <label for="cart-sort" style="font-weight: 600;">Sort by:</label>
+            <select id="cart-sort" style="padding: 8px; border: 1px solid #ccc; outline: none; font-family: 'Outfit', serif;">
                 <option value="default">Recently Added</option>
                 <option value="title-asc">Title (A-Z)</option>
                 <option value="title-desc">Title (Z-A)</option>
                 <option value="price-asc">Price (Low to High)</option>
                 <option value="price-desc">Price (High to Low)</option>
+                <option value="qty-asc">Quantity (Low to High)</option>
+                <option value="qty-desc">Quantity (High to Low)</option>
             </select>
-        </section>
+        </div>
 
-        <header class="cart-header">
+        <div class="cart-header">
             <span>Products</span>
             <span>Price</span>
             <span>Quantity</span>
             <span>Total</span>
             <span>Remove</span>
-        </header>
+        </div>
 
-        <!-- Hardcoded Cart Items -->
-        <section class="cart-items">
-            <!-- Item 1 -->
-            <article class="cart-item">
-                <div class="product">
-                    <img src="../../assets/cart.images/white/white_hk_main.webp" alt="Hollow Knight T-Shirt - White Color">
-                    <div class="item-detail">
-                        <p>Hollow Knight</p>
-                        <div class="item-variants">
-                            <span class="size">M</span>
-                            <span class="color">White</span>
-                        </div>
-                    </div>
-                </div>
-                <span class="price">$32.00</span>
-                <div class="quantity">
-                    <input type="number" value="1" min="1" name="quantity_hk_white" aria-label="Quantity for Hollow Knight">
-                </div>
-                <span class="total-price">$32.00</span>
-                <button class="remove" aria-label="Remove item"><i class="ri-close-line"></i></button>
-            </article>
+        <div class="cart-items"></div>
 
-            <!-- Item 2 -->
-            <article class="cart-item">
-                <div class="product">
-                    <img src="../../assets/cart.images/brown/enfi_brown_main.avif" alt="Arknights Endfield PoofyShan Plushie - Brown">
-                    <div class="item-detail">
-                        <p>Arknights: Endfield - PoofyShan Plushie</p>
-                        <div class="item-variants">
-                            <span class="size">S</span>
-                            <span class="color">Brown</span>
-                        </div>
-                    </div>
-                </div>
-                <span class="price">$35.00</span>
-                <div class="quantity">
-                    <input type="number" value="2" min="1" name="quantity_arknights_brown" aria-label="Quantity for Arknights Plushie">
-                </div>
-                <span class="total-price">$70.00</span>
-                <button class="remove" aria-label="Remove item"><i class="ri-close-line"></i></button>
-            </article>
-        </section>
-
-        <!-- Cart Summary -->
-        <section class="cart-total">
+        <div class="cart-total">
             <h3>Cart Total</h3>
-            <p>Subtotal <span class="Subtotal">$102.00</span></p>
+            <p>Subtotal <span class="Subtotal"></span></p>
             <p>Delivery Fee <span>Free</span></p>
-            <p>Grand Total <span class="grand-total">$102.00</span></p>
-            <a href="checkout.html" class="btn action-btn">Proceed to checkout</a>
-        </section>
-    </main>
-        <!--FOOTER-->
+            <p>Grand Total <span class="grand-total"></span></p>
+            <button class="btn">Proceed to checkout</button>
+        </div>
+    </div>
+
+    <script src="products.js"></script>
+    <script src="script.js"></script>
+
+    
+            <!--FOOTER-->
     <footer class="site_footer">
         <div class="footer_container">
             <div class="footer_column">
@@ -163,8 +127,5 @@
             </a>
         </div>
     </footer>
-
-    <!-- <script src="products.js"></script> -->
-    <!-- <script src="script.js"></script> -->
 </body>
 </html>
