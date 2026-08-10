@@ -44,31 +44,43 @@
     </nav>
     <div class="auth-container">
         <!-- Form submits to login.html to simulate successful registration -->
-        <form class="auth-form" action="login.html" method="GET">
+        <form class="auth-form" id="register-form" action="login.html" method="GET">
             <h2>Register</h2>
             
             <div class="input-group">
-                <input type="text" id="username" name="username" placeholder="Username" required>
+                <input type="text" id="reg-username" name="username" placeholder="Username" required>
+                <span class="error-msg" id="reg-username-error"></span>
             </div>
             
             <div class="input-group">
-                <input type="email" id="email" name="email" placeholder="Email" required>
+                <input type="email" id="reg-email" name="email" placeholder="Email" required>
+                <span class="error-msg" id="reg-email-error"></span>
             </div>
             
             <div class="input-group">
-                <input type="password" id="password" name="password" placeholder="Password" required>
+                <input type="password" id="reg-password" name="password" placeholder="Password" required>
+                <span class="error-msg" id="reg-password-error"></span>
             </div>
 
-            <!-- Mandatory short description field as per assignment requirements -->
+            <!-- NEW: Confirm Password Field -->
             <div class="input-group">
-                <textarea id="description" name="description" placeholder="Short description about yourself..." required></textarea>
+                <input type="password" id="reg-confirm-password" name="confirm-password" placeholder="Confirm Password" required>
+                <span class="error-msg" id="reg-confirm-error"></span>
+            </div>
+
+            <!-- Mandatory short description field -->
+            <div class="input-group">
+                <textarea id="reg-description" name="description" placeholder="Short description about yourself..." required></textarea>
+                <span class="error-msg" id="reg-desc-error"></span>
             </div>
             
-            <button type="submit" class="auth-btn">Register</button>
-            
+            <button type="submit" class="auth-btn" id="reg-submit">Register</button>
             <p class="auth-link">Already have an account? <a href="login.html">Login</a></p>
         </form>
     </div>
+
+    <script src="auth-validation.js"></script>
+    
             <!--FOOTER-->
     <footer class="site_footer">
         <div class="footer_container">

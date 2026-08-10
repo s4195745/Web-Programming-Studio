@@ -42,6 +42,7 @@
             </a>
         </div>
     </nav>
+    
     <div class="auth-container">
         <div class="auth-header">
             <p>Please enter your details</p>
@@ -50,12 +51,13 @@
 
         <form class="auth-form" action="profile.html" method="GET">
             <div class="input-group">
-                <input type="email" id="email" name="email" placeholder="Email address" required>
-            </div>
-            
-            <div class="input-group">
-                <input type="password" id="password" name="password" placeholder="Password" required>
-                <!-- Mock Eye Icon Placeholder -->
+                    <input type="email" id="login-email" name="email" placeholder="Email address" required>
+                    <span class="error-msg" id="login-email-error"></span>
+                </div>
+                
+                <div class="input-group">
+                    <input type="password" id="login-password" name="password" placeholder="Password" required>
+                    <span class="error-msg" id="login-password-error"></span>
             </div>
 
             <div class="form-options">
@@ -80,6 +82,9 @@
             <p class="auth-link">Don't have an account? <a href="register.html">Sign up</a></p>
         </form>
     </div>
+
+    <script src="auth-validation.js"></script>
+    
             <!--FOOTER-->
     <footer class="site_footer">
         <div class="footer_container">
