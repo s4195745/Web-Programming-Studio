@@ -264,6 +264,47 @@ function displayCheckout() {
     const checkoutForm = document.getElementById("checkout-form");
     if (!checkoutForm) return;
 
+    // --- LIVE FORM VALIDATION ---
+    const cardInput = document.getElementById("card");
+    const expiryInput = document.getElementById("expiry");
+    const cvvInput = document.getElementById("cvv");
+
+    //  UI errors
+    function showError(input, isValid) {
+        if (!isValid) {
+            input.style.borderColor = "red";
+            input.style.backgroundColor = "#ffe6e6"; // Màu nền cảnh báo
+        } else {
+            input.style.borderColor = "green";
+            input.style.backgroundColor = "transparent";
+        }
+    }
+
+    // Live check credit (only numbers and blank, 19 numbers)
+    if (cardInput) {
+        cardInput.addEventListener("input", (e) => {
+            const isValid = /^[0-9\s]+$/.test(e.target.value) && e.target.value.length >= 16;
+            showError(cardInput, isValid);
+        });
+    }
+
+    // Live check expried date (MM/YY)
+    if (expiryInput) {
+        expiryInput.addEventListener("input", (e) => {
+            const isValid = /^(0[1-9]|1[0-2])\/[0-9]{2}$/.test(e.target.value);
+            showError(expiryInput, isValid);
+        });
+    }
+
+    // Live check CVV (3 or 4 numbers)
+    if (cvvInput) {
+        cvvInput.addEventListener("input", (e) => {
+            const isValid = /^[0-9]{3,4}$/.test(e.target.value);
+            showError(cvvInput, isValid);
+        });
+    }
+    // --- Additionally Final Check ---
+
     checkoutForm.addEventListener("submit", (e) => {
         e.preventDefault(); 
         
@@ -271,6 +312,12 @@ function displayCheckout() {
         if (cart.length === 0) {
             alert("Your cart is empty!");
             window.location.href = "cart.html";
+            return;
+        }
+
+        // check all before go to confirmation page 
+        if (!/^[0-9\s]+$/.test(cardInput.value) || !/^(0[1-9]|1[0-2])\/[0-9]{2}$/.test(expiryInput.value)) {
+            alert("Vui lòng kiểm tra lại thông tin thẻ thanh toán!");
             return;
         }
 
