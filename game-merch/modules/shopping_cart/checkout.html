@@ -9,9 +9,10 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
 </head>
 <body>
-        <!-- ================= SHARED NAVIGATION ================= -->
+    <!-- ================= SHARED NAVIGATION ================= -->
     <nav>
         <a href="../../landing_page.html" class="logo">LootBox.</a>
+        
         <div class="nav-links">
             <a href="../shopping_cart/index.html">Shop</a>
             <a href="../discussion_forum/forum.html">Forum</a>
@@ -19,8 +20,14 @@
             <a href="../review/productreview.html">Review</a>
             <a href="../wishlist/wishlist.html">Wishlist</a>
         </div>
+        
         <!-- Search and Cart Grouping -->
         <div class="nav-actions">
+            <!-- Hamburger Menu Toggle  -->
+            <div class="menu-toggle" aria-label="Toggle Navigation">
+                <i class="ri-menu-line"></i>
+            </div>
+
             <!-- Search Bar -->
             <div class="search-bar">
                 <input type="text" placeholder="Search..." aria-label="Search">
@@ -28,21 +35,24 @@
             </div>
 
             <!-- Cart Icon -->
-            <a href="cart.html" class="cart-icon">
+            <a href="../shopping_cart/cart.html" class="cart-icon" aria-label="View Cart">
                 <i class="ri-shopping-bag-line"></i>
-                <span class="cart-item-count active">2</span>
+                <span class="cart-item-count active">0</span>
             </a>
+            
             <!-- User Avatar Link to Profile Page -->
-            <a href="../shared_module/profile.html" class="nav-profile-link">
-                
+            <a href="../user_account_manage/profile.html" class="nav-profile-link" aria-label="User Profile">
                 <img src="../../assets/images/Nguyen The Chinh.jpg" alt="User Profile" class="nav-avatar">
             </a>
         </div>
     </nav>
+
+    <!-- ================= CHECKOUT PAGE ================= -->
     <div class="checkout-page">
-        <h2>Complete Your Order</h2>
+        <h2 style="text-align: center;">Complete Your Order</h2>
         
         <form id="checkout-form" class="checkout-form">
+            <!-- Delivery Section -->
             <h3>Delivery Information</h3>
             <div class="form-group">
                 <label for="name">Full Name</label>
@@ -53,29 +63,28 @@
                 <input type="text" id="address" required placeholder="123 LootBox Street, Gaming City">
             </div>
 
-            <h3 style="margin-top: 20px;">Payment Details</h3>
+            <!-- Payment Section -->
+            <h3 class="payment-title">Payment Details</h3>
             <div class="form-group">
                 <label for="card">Credit Card Number</label>
                 <input type="text" id="card" required placeholder="1234 5678 9101 1121" maxlength="16">
             </div>
-            <div style="display: flex; gap: 15px;">
-                <div class="form-group" style="flex: 1;">
+            <div class="payment-group">
+                <div class="form-group flex-1">
                     <label for="expiry">Expiry Date</label>
                     <input type="text" id="expiry" required placeholder="MM/YY">
                 </div>
-                <div class="form-group" style="flex: 1;">
+                <div class="form-group flex-1">
                     <label for="cvv">CVV</label>
                     <input type="text" id="cvv" required placeholder="123" maxlength="3">
                 </div>
             </div>
 
-            <button type="submit" class="btn">Pay Now & Place Order</button>
+            <button type="submit" class="btn full-width-btn">Pay Now & Place Order</button>
         </form>
     </div>
 
-    <script src="script.js"></script>
-
-            <!--FOOTER-->
+    <!--FOOTER-->
     <footer class="site_footer">
         <div class="footer_container">
             <div class="footer_column">
@@ -112,17 +121,17 @@
                     <li><a href="../blog/blog.html">Blog</a></li>
                     <li><a href="../shopping_cart/index.html">Shop all</a></li>
                     <li><a href="../discussion_forum/forum.html">Forum</a></li>
-                    <li><a href="../shared_module/sitemap.html" class="view_sitemap">View Sitemap →</a></li>
+                    <li><a href="../sitemap/sitemap.html" class="view_sitemap">View Sitemap →</a></li>
                 </ul>
             </div>
         </div>
-        <div class="back_to_top"> <!--Because this is static so the Back_to_top button will appear in whole page-->
-            <a href="#">
+        <div class="back_to_top">
+            <a href="#" aria-label="Back to top">
                 <i class="ri-arrow-up-line"></i>
             </a>
         </div>
     </footer>
 
-  
+    <script src="script.js"></script>
 </body>
 </html>

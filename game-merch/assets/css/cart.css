@@ -1,4 +1,3 @@
-
 /* ================= PRODUCT COLLECTION (INDEX) ================= */
 .product-collection {
     padding: 100px 9% 30px ;
@@ -344,6 +343,8 @@
     border: 1px solid #ccc;
     outline: none;
     font-size: 16px;
+    width: 100%; 
+    box-sizing: border-box; 
 }
 
 .payment-title {
@@ -360,8 +361,10 @@
 }
 
 .full-width-btn {
-    margin-top: 20px;
     width: 100%;
+    margin-top: 20px;
+    font-size: 18px;
+    padding: 15px;
 }
 
 /* ================= CONFIRMATION PAGE ================= */
@@ -389,74 +392,19 @@
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
-.receipt-title {
-    margin-bottom: 15px;
-}
-
-.receipt-info {
-    margin-bottom: 5px;
-}
-
-.receipt-address {
-    margin-bottom: 25px;
-    color: #555;
-}
-
-.receipt-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #eee;
-}
-
-.receipt-product {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-}
-
-.receipt-product img {
-    width: 50px;
-    border-radius: 5px;
-}
-
-.receipt-name {
-    font-weight: 600;
-    margin-bottom: 5px;
-}
-
-.receipt-meta {
-    font-size: 14px;
-    color: #666;
-}
-
-.receipt-price {
-    font-weight: bold;
-}
-
-.receipt-total {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    font-size: 20px;
-}
-
-.total-amount {
-    color: #e35f26;
-}
-
 .continue-shopping {
     text-align: center;
     margin-top: 30px;
 }
 
+.action-btn {
+    text-decoration: none; 
+    display: inline-block; 
+    text-align: center;
+}
+
 /* ================= MEDIA QUERIES (Responsive) ================= */
 @media (max-width: 768px) {
-    .nav-links {
-        display: none; 
-    }
-
     .product-detail {
         grid-template-columns: 1fr;
         padding-top: 100px;

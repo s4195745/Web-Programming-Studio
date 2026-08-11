@@ -289,19 +289,101 @@ footer.site_footer {
 }
 
 /* ================= MOBILE RESPONSIVENESS FOR GLOBAL SHARED COMPONENTS ================= */
+
+/* ================= UTILITY CLASSES (Moved from auth.css) ================= */
+.no-decoration { text-decoration: none; }
+.mb-15 { margin-bottom: 15px; }
+.mb-20 { margin-bottom: 20px; }
+.mt-25 { margin-top: 25px; }
+.no-margin-top { margin-top: 0 !important; }
+
+/* ================= MOBILE MENU TOGGLE ================= */
+.menu-toggle {
+    display: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #333;
+}
+
+/* ================= MOBILE MENU TOGGLE ================= */
+.menu-toggle {
+    display: none;
+    font-size: 26px;
+    cursor: pointer;
+    color: #333;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    transition: color 0.2s ease;
+}
+
+.menu-toggle:hover {
+    color: #e35f26;
+}
+
+/* ================= MOBILE RESPONSIVENESS ================= */
 @media (max-width: 900px) {
+    /* Show hamburger icon in mobile view */
+    .menu-toggle {
+        display: flex;
+    }
+
+    /* Convert nav-links into a full-width vertical dropdown window */
     .nav-links {
-        display: none; 
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%; /* Position right below the fixed header */
+        left: 0;
+        width: 100%;
+        background-color: #ffffff;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        border-top: 1px solid #eee;
+        padding: 0;
+        gap: 0; /* Clear flex gap for full-width list items */
+        
+        /* Smooth slide & reveal animation */
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease-in-out;
+        z-index: 999;
     }
-    
-  
-    .search-bar input {
-        width: 100px; 
+
+    /* Active state triggered when hamburger is clicked */
+    .nav-links.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
     }
-    
-    
+
+    /* Style menu items as full-width list rows like your example image */
+    .nav-links a {
+        width: 100%;
+        padding: 16px 25px;
+        font-size: 16px;
+        text-align: center;
+        border-bottom: 1px solid #f0f0f0;
+        background-color: #ffffff;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .nav-links a:last-child {
+        border-bottom: none;
+    }
+
+    .nav-links a:hover {
+        background-color: #f9f9f9;
+        color: #e35f26;
+    }
+
+    /* Adjust navbar spacing on mobile screens */
     nav {
         padding: 15px 5%;
+    }
+
+    .search-bar input {
+        width: 100px;
     }
 }
 
