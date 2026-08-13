@@ -1,11 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
+
   const postFeed = document.getElementById('postFeed');
   const searchInput = document.querySelector('.search-input');
   const searchBtn = document.querySelector('.search-btn');
   const searchTypeSelect = document.querySelector('.search-type-select');
   const categorySelect = document.querySelector('.category-select');
 
-  // Elements UserBlog.html
+  // forms for user blog
   const postForm = document.querySelector('.post-form');
   const postIdInput = document.getElementById('post-id');
   const titleInput = document.getElementById('post-title');
@@ -14,9 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const contentInput = document.getElementById('post-content');
   const cancelBtn = document.querySelector('.cancel-btn');
   const formTitle = document.getElementById('form-title');
+  const submitBtn = postForm ? postForm.querySelector('.submit-btn') : null;
   const userPostsList = document.querySelector('.user-posts-list');
 
-  // main feed
+  // currently logged 
+  const CURRENT_USER = 'You';
+
+  // blog.html - main feed
   if (postFeed) {
     const fetchAndRenderFeed = () => {
       const query = searchInput ? searchInput.value.trim() : '';
@@ -46,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <p class="card-description">${post.summary}</p>
               <div class="card-meta">${post.dateAdded} • By ${post.author}</div>
               
-              <!-- Inline Detailed Content Area (Hidden by Default) -->
+              <!-- Inline Detailed Content Area -->
               <div class="detailed-content" id="detail-${post.id}" style="display: none; margin-top: 15px;">
                 <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ccc;" />
                 <div class="article-body">
@@ -74,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(err => {
           console.error('Error fetching posts:', err);
-          postFeed.innerHTML = '<p class="error-msg">Failed to load posts from storage.</p>';
+          postFeed.innerHTML = '<p class="error-msg">Failed to load posts.</p>';
         });
     };
 
@@ -89,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // details drop down
+  // drop down toggle
   window.togglePostDetail = function(id) {
     const detailElem = document.getElementById(`detail-${id}`);
     const cardElem = document.getElementById(`card-${id}`);
@@ -106,10 +111,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // comment html 
+  // comments render
   function renderCommentsHtml(comments) {
     if (!comments || comments.length === 0) {
-      return '<p>No comments yet. Be the first to comment!</p>';
+      return '<p>No comments.</p>';
     }
     return comments.map(c => `
       <div class="comment-item">
@@ -120,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
-  //comment submission
+  // comment submission
   window.submitComment = function(e, postId) {
     e.preventDefault();
     const input = document.getElementById(`commentInput-${postId}`);
@@ -131,11 +136,10 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch(`/api/posts/${postId}/comments`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ author: 'You', text })
+      body: JSON.stringify({ author: CURRENT_USER, text })
     })
     .then(res => res.json())
     .then(() => {
-      // Update the container after comment
       fetch(`/api/posts/${postId}`)
         .then(res => res.json())
         .then(post => {
@@ -147,19 +151,23 @@ document.addEventListener('DOMContentLoaded', () => {
     .catch(err => console.error('Error posting comment:', err));
   };
 
-  // user manager
+  // User blog manager
   if (postForm) {
     const loadUserPosts = () => {
       fetch('/api/posts')
         .then(res => res.json())
         .then(posts => {
           if (!userPostsList) return;
-          if (posts.length === 0) {
-            userPostsList.innerHTML = '<p>You have not published any posts yet.</p>';
+
+          // filter post only from user
+          const userOnlyPosts = posts.filter(post => post.author && post.author.toLowerCase() === CURRENT_USER.toLowerCase());
+
+          if (userOnlyPosts.length === 0) {
+            userPostsList.innerHTML = '<p class="no-posts">You have not created any posts yet.</p>';
             return;
           }
 
-          userPostsList.innerHTML = posts.map(post => `
+          userPostsList.innerHTML = userOnlyPosts.map(post => `
             <div class="user-post-item" data-id="${post.id}">
               <div class="user-post-thumb">
                 <img src="${post.imageUrl}" alt="${post.title}" onerror="this.src='https://via.placeholder.com/150'" />
@@ -170,8 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="card-meta">${post.dateAdded} • By ${post.author}</p>
               </div>
               <div class="menu-dropdown">
-                <button type="button" class="three-dots-btn" aria-label="Post Options">⋮</button>
-                <div class="dropdown-menu">
+                <button type="button" class="three-dots-btn" onclick="toggleDropdown(event, '${post.id}')" aria-label="Post Options">⋮</button>
+                <div class="dropdown-menu" id="dropdown-${post.id}" style="display: none;">
                   <button type="button" class="dropdown-item edit-btn" onclick="triggerEdit('${post.id}')">Edit</button>
                   <button type="button" class="dropdown-item delete-btn" onclick="triggerDelete('${post.id}')">Delete</button>
                 </div>
@@ -182,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(err => console.error('Error loading posts list:', err));
     };
 
+    //form for create/update
     postForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const id = postIdInput.value;
@@ -189,7 +198,8 @@ document.addEventListener('DOMContentLoaded', () => {
         title: titleInput.value.trim(),
         category: categoryInput.value,
         imageUrl: imageInput.value.trim(),
-        content: contentInput.value.trim()
+        content: contentInput.value.trim(),
+        author: CURRENT_USER
       };
 
       const method = id ? 'PUT' : 'POST';
@@ -216,12 +226,39 @@ document.addEventListener('DOMContentLoaded', () => {
       imageInput.value = '';
       contentInput.value = '';
       if (formTitle) formTitle.textContent = 'Create a New Post';
+      if (submitBtn) submitBtn.textContent = 'Publish Post';
       if (cancelBtn) cancelBtn.style.display = 'none';
     }
 
+    // drop down menu visilibty
+    window.toggleDropdown = function(e, id) {
+      e.stopPropagation();
+      const currentDropdown = document.getElementById(`dropdown-${id}`);
+      
+      // only let 1 menu open
+      document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        if (menu !== currentDropdown) menu.style.display = 'none';
+      });
+
+      if (currentDropdown) {
+        currentDropdown.style.display = (currentDropdown.style.display === 'none' || !currentDropdown.style.display) ? 'block' : 'none';
+      }
+    };
+
+    // cloes options when clicking outside
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.style.display = 'none';
+      });
+    });
+
+    // handler for edit/delete
     window.triggerEdit = function(id) {
       fetch(`/api/posts/${id}`)
-        .then(res => res.json())
+        .then(res => {
+          if (!res.ok) throw new Error('Post not found');
+          return res.json();
+        })
         .then(post => {
           postIdInput.value = post.id;
           titleInput.value = post.title;
@@ -229,6 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
           imageInput.value = post.imageUrl;
           contentInput.value = post.content;
           if (formTitle) formTitle.textContent = 'Edit Post';
+          if (submitBtn) submitBtn.textContent = 'Save Changes';
           if (cancelBtn) cancelBtn.style.display = 'inline-block';
           window.scrollTo({ top: postForm.offsetTop - 100, behavior: 'smooth' });
         })
@@ -236,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.triggerDelete = function(id) {
-      if (confirm('Are you sure you want to delete this blog post?')) {
+      if (confirm('Delete post? This action cannot be undone.')) {
         fetch(`/api/posts/${id}`, { method: 'DELETE' })
           .then(() => loadUserPosts())
           .catch(err => console.error('Error deleting post:', err));

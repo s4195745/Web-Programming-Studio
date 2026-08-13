@@ -138,6 +138,13 @@ app.post('/api/posts/:id/comments', (req, res) => {
   res.status(201).json(newComment);
 });
 
+app.get('/api/posts/:id', (req, res) => {
+  const posts = loadPosts();
+  const post = posts.find(p => p.id === req.params.id);
+  if (!post) return res.status(404).json({ error: "Post not found" });
+  res.json(post);
+});
+
 loadPosts();
 
 app.listen(PORT, () => {
