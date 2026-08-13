@@ -62,7 +62,7 @@ app.get('/api/posts', (req, res) => {
 //  create post api
 app.post('/api/posts', (req, res) => {
   const posts = loadPosts();
-  const { title, author, category, imageUrl, content } = req.body;
+  const { title, author, category, imageUrl, content, summary } = req.body;
 
   const newPost = {
     id: `post-${Date.now()}`,
@@ -71,7 +71,7 @@ app.post('/api/posts', (req, res) => {
     dateAdded: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
     category,
     categoryIcon: getCategoryIcon(category),
-    summary: content.length > 80 ? content.substring(0, 80) + '...' : content,
+    summary: summary || (content.length > 80 ? content.substring(0, 80) + '...' : content),
     content,
     imageUrl: imageUrl || "https://via.placeholder.com/600x338",
     secondaryImage: "",
@@ -90,7 +90,7 @@ app.put('/api/posts/:id', (req, res) => {
 
   if (idx === -1) return res.status(404).json({ error: "Post not found" });
 
-  const { title, category, imageUrl, content } = req.body;
+  const { title, category, imageUrl, content, summary } = req.body;
 
   posts[idx] = {
     ...posts[idx],
@@ -99,7 +99,7 @@ app.put('/api/posts/:id', (req, res) => {
     categoryIcon: category ? getCategoryIcon(category) : posts[idx].categoryIcon,
     imageUrl: imageUrl || posts[idx].imageUrl,
     content: content || posts[idx].content,
-    summary: content ? (content.length > 80 ? content.substring(0, 80) + '...' : content) : posts[idx].summary
+    summary: summary !== undefined ? summary : posts[idx].summary
   };
 
   savePosts(posts);

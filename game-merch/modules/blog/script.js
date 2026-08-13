@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const titleInput = document.getElementById('post-title');
   const categoryInput = document.getElementById('post-category');
   const imageInput = document.getElementById('post-image');
+  const summaryInput = document.getElementById('post-summary'); // New Summary Input
   const contentInput = document.getElementById('post-content');
   const cancelBtn = document.querySelector('.cancel-btn');
   const formTitle = document.getElementById('form-title');
@@ -159,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(posts => {
           if (!userPostsList) return;
 
-          // filter post only from user
           const userOnlyPosts = posts.filter(post => post.author && post.author.toLowerCase() === CURRENT_USER.toLowerCase());
 
           if (userOnlyPosts.length === 0) {
@@ -194,11 +194,27 @@ document.addEventListener('DOMContentLoaded', () => {
     postForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const id = postIdInput.value;
+      const contentVal = contentInput.value.trim();
+      let summaryVal = summaryInput ? summaryInput.value.trim() : '';
+
+      // Fallback to the first sentence if no summary is provided
+      if (!summaryVal) {
+        // Regex matches everything up to the first period, exclamation point, or question mark
+        const firstSentenceMatch = contentVal.match(/^[^.!?]*[.!?]/);
+        if (firstSentenceMatch) {
+          summaryVal = firstSentenceMatch[0].trim();
+        } else {
+          // If no punctuation exists, take the first 80 characters
+          summaryVal = contentVal.length > 80 ? contentVal.substring(0, 80) + '...' : contentVal;
+        }
+      }
+
       const payload = {
         title: titleInput.value.trim(),
         category: categoryInput.value,
         imageUrl: imageInput.value.trim(),
-        content: contentInput.value.trim(),
+        summary: summaryVal,
+        content: contentVal,
         author: CURRENT_USER
       };
 
@@ -225,6 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
       titleInput.value = '';
       imageInput.value = '';
       contentInput.value = '';
+      if (summaryInput) summaryInput.value = '';
       if (formTitle) formTitle.textContent = 'Create a New Post';
       if (submitBtn) submitBtn.textContent = 'Publish Post';
       if (cancelBtn) cancelBtn.style.display = 'none';
@@ -235,7 +252,6 @@ document.addEventListener('DOMContentLoaded', () => {
       e.stopPropagation();
       const currentDropdown = document.getElementById(`dropdown-${id}`);
       
-      // only let 1 menu open
       document.querySelectorAll('.dropdown-menu').forEach(menu => {
         if (menu !== currentDropdown) menu.style.display = 'none';
       });
@@ -265,6 +281,8 @@ document.addEventListener('DOMContentLoaded', () => {
           categoryInput.value = post.category;
           imageInput.value = post.imageUrl;
           contentInput.value = post.content;
+          if (summaryInput) summaryInput.value = post.summary || '';
+          
           if (formTitle) formTitle.textContent = 'Edit Post';
           if (submitBtn) submitBtn.textContent = 'Save Changes';
           if (cancelBtn) cancelBtn.style.display = 'inline-block';
