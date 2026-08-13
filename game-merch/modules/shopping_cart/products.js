@@ -2,7 +2,8 @@ const products = [
     {
         id: 1,
         title: "Hollow Knight",
-        price: "$32",
+        price: 32.00,
+        category: "Plushies", 
         description: "Find a home for the Knight that's a little less dangerous than Hallownest.",
         colors: [
             {
@@ -57,14 +58,13 @@ const products = [
             }
         ]
     },
-
-        {
+    {
         id: 2,
         title: "Arknights: Endfield - PoofyShan Plushie - The Lost Heirloom Inn ",
-        price: "$35",
+        price: 35.00,
+        category: "Plushies",
         description: "PoofyShan Plushie - The Lost Heirloom Inn",
         colors: [
-     
             {
                 name: "Brown",
                 mainImage: "../../assets/cart.images/brown/enfi_brown_main.avif",
@@ -85,7 +85,6 @@ const products = [
                 ],
                 sizes: ["S", "M", "L"]
             },
-    
             {
                 name: "Blue",
                 mainImage: "../../assets/cart.images/blue/enfi_blue_main.avif",
@@ -98,11 +97,11 @@ const products = [
             }
         ]
     },
-
     {
         id: 3,
         title: "Pengu Garen Figure",
-        price: "$35.99",
+        price: 35.99,
+        category: "Figures", 
         description: "Whether you think Pengu Garen was the best thing to happen to League of Legends since AP Master Yi or a questionable model of champion readability, our Pengu Garen Figure is here to remind you to speak Pengu and carry a big sword.",
         colors: [
             {
@@ -114,8 +113,7 @@ const products = [
                     "../../assets/cart.images/white/pengu_white_photo3.webp"
                 ],
                 sizes: ["S", "M", "L"]
-            },
-        
+            }
         ]
-    },
+    }
 ];

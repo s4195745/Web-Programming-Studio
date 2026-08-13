@@ -12,7 +12,7 @@
 
 .product-collection .product-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
 }
 
@@ -403,6 +403,41 @@
     text-align: center;
 }
 
+/* ================= UPDATE PRODUCT FILTERRING ON INDEX ================= */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ================= TOAST NOTIFICATION ================= */
+.toast-message {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #333;
+    color: #fff;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    z-index: 9999;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.toast-message.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
 /* ================= MEDIA QUERIES (Responsive) ================= */
 @media (max-width: 768px) {
     .product-detail {
@@ -467,3 +502,4 @@
         margin: 30px auto 0 auto;
     }
 }
+

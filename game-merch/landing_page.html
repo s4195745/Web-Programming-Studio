@@ -6,13 +6,12 @@
     <title>Game Merch Store - Home</title>
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/landing_page.css"> 
-
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
 </head>
 <body>
     <!-- ================= SHARED NAVIGATION ================= -->
     <nav>
-        <a href="../../landing_page.html" class="logo">LootBox.</a>
+        <a href="./landing_page.html" class="logo">LootBox.</a>
         
         <div class="nav-links">
             <a href="./modules/shopping_cart/index.html">Shop</a>
@@ -29,10 +28,11 @@
                 <i class="ri-menu-line"></i>
             </div>
 
-            <!-- Search Bar -->
+            <!-- Search Bar with Accessibility Fixes -->
             <div class="search-bar">
-                <input type="text" placeholder="Search..." aria-label="Search">
-                <button type="button" aria-label="Submit search"><i class="ri-search-line"></i></button>
+                <label for="global-search" class="sr-only">Search products</label>
+                <input type="text" id="global-search" placeholder="Search..." aria-label="Search">
+                <button type="button" class="search-btn" aria-label="Submit search"><i class="ri-search-line"></i></button>
             </div>
 
             <!-- Cart Icon -->
@@ -52,17 +52,14 @@
         <!-- Hero Section (Top Banner) -->
         <section class="hero-section">
             <div class="hero-content">
-                
                 <div class="hero-graphics">
                     <h1 class="hero-title">LootBox.</h1>
                 </div>
                 
-               
-
                 <div class="hero-login-box">
                     <h2>Welcome Back</h2>
-                  
-                    <form action="modules/shared_module/profile.html" method="GET">
+                    <!-- FIXED: Form Action Path -->
+                    <form action="./modules/user_account_manage/profile.html" method="GET">
                         <div class="home-form-group">
                             <label for="login-username">Username or Email</label>
                             <input type="text" id="login-username" name="username" placeholder="Enter your username" required>
@@ -77,6 +74,7 @@
                     </form>
                     
                     <div class="home-login-links">
+                        <!-- FIXED: Auth Links Paths -->
                         <a href="./modules/user_account_manage/register.html">Create account</a>
                         <a href="./modules/user_account_manage/forgot_password.html">Forgot password?</a>
                     </div>
@@ -84,57 +82,51 @@
             </div>
         </section>
 
-        <!-- Featured Collections (The 3 Cards) -->
+        <!-- Featured Collections -->
         <section class="collections-section">
             <div class="cards-grid">
-                
-              
                 <article class="collection-card">
                     <div class="card-image-bg" style="background-image: url('assets/images/card1-bg.jpg');">
                         <img src="assets/images/hk.jpg" alt="Classic Shirts" class="card-item-image">
                     </div>
                     <div class="card-footer footer-red">
                         <p>Plushies</p>
-                        <a href="#" class="btn-card">SHOP NOW</a>
+                        <a href="./modules/shopping_cart/index.html" class="btn-card">SHOP NOW</a>
                     </div>
                 </article>
 
-               
                 <article class="collection-card">
                     <div class="card-image-bg" style="background-image: url('assets/images/card2-bg.jpg');">
                         <img src="assets/images/lol.jpg" alt="Expedition Collection" class="card-item-image">
                     </div>
                     <div class="card-footer footer-gold">
                         <p>More plushies</p>
-                        <a href="#" class="btn-card">SHOP NOW</a>
+                        <a href="./modules/shopping_cart/index.html" class="btn-card">SHOP NOW</a>
                     </div>
                 </article>
 
-                
                 <article class="collection-card">
                     <div class="card-image-bg" style="background-image: url('assets/images/card3-bg.jpg');">
                         <img src="assets/images/endfield.jpg" alt="New Plushes" class="card-item-image">
                     </div>
                     <div class="card-footer footer-red">
                         <p>EVEN MORE PLUSHIES</p>
-                        <a href="#" class="btn-card">SHOP NOW</a>
+                        <a href="./modules/shopping_cart/index.html" class="btn-card">SHOP NOW</a>
                     </div>
                 </article>
-
             </div>
         </section>
     </main>
 
     <script src="./modules/shopping_cart/script.js"></script>
 
-            <!--FOOTER-->
+    <!--FOOTER-->
     <footer class="site_footer">
         <div class="footer_container">
             <div class="footer_column">
                 <h4>About Us</h4>
                 <p>LootBox. is a marketplace for game merchandise, from apparel to collectible figures. Follow us on Facebook or Instagram for a weekly dose of news, updates, helpful tips, and exclusive offers. </p>
             </div>
-
             <div class="footer_column">
                 <h4>Quick Links</h4>
                 <ul>
@@ -147,7 +139,6 @@
                     <li><a href="#">Terms of Service</a></li>
                 </ul>
             </div>
-
             <div class="footer_column">
                 <h4>Follow Us</h4>
                 <div class="social_icons">
@@ -156,19 +147,19 @@
                     <a href="#"><i class="ri-instagram-line"></i></a>
                 </div>
             </div>
-
             <div class="footer_column">
                 <h4>Sitemap</h4>
                 <ul>
-                    <li><a href="../../landing_page.html">Home</a></li>
-                    <li><a href="../blog/blog.html">Blog</a></li>
-                    <li><a href="../shopping_cart/index.html">Shop all</a></li>
-                    <li><a href="../discussion_forum/forum.html">Forum</a></li>
-                    <li><a href="../shared_module/sitemap.html" class="view_sitemap">View Sitemap →</a></li>
+                    <!-- Sitemap Footer Links Paths -->
+                    <li><a href="landing_page.html">Home</a></li>
+                    <li><a href="./modules/blog/blog.html">Blog</a></li>
+                    <li><a href="./modules/shopping_cart/index.html">Shop all</a></li>
+                    <li><a href="./modules/discussion_forum/forum.html">Forum</a></li>
+                    <li><a href="./modules/sitemap/sitemap.html" class="view_sitemap">View Sitemap →</a></li>
                 </ul>
             </div>
         </div>
-        <div class="back_to_top"> <!--Because this is static so the Back_to_top button will appear in whole page-->
+        <div class="back_to_top">
             <a href="#">
                 <i class="ri-arrow-up-line"></i>
             </a>

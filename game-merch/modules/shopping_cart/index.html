@@ -49,9 +49,22 @@
 
     <section class="product-collection">
         <h1>Latest Collection</h1>
+        
+        <!-- Filter UI -->
+        <div class="shop-controls" style="display: flex; justify-content: space-between; margin-bottom: 25px; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+            <p id="search-result-text" style="color: #666; font-size: 15px;">Showing all products</p>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <label for="category-filter" style="font-weight: 600;">Filter by:</label>
+                <select id="category-filter" style="padding: 8px; border: 1px solid #ccc; outline: none; font-family: 'Outfit', serif; border-radius: 4px;">
+                    <option value="all">All Categories</option>
+                    <option value="Plushies">Plushies</option>
+                    <option value="Figures">Figures</option>
+                </select>
+            </div>
+        </div>
+
         <div class="product-list"></div>
-    
-    </section>   
+    </section>
 
     <script src="products.js"></script>
     <script src="script.js"></script>
