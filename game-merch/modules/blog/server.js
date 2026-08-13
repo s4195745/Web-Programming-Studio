@@ -15,51 +15,7 @@ app.get('/', (req, res) => {
   res.redirect('/blog.html');
 });
 
-// Initial seed data merged from post1Blog.html and post2Blog.html
-const initialPosts = [
-  {
-    id: "post-1",
-    title: "Lea Plushie",
-    author: "RadicalFishGames",
-    dateAdded: "June 18, 2026",
-    category: "Merch",
-    categoryIcon: "📱",
-    summary: "Lea Plushie pre-order is live on Makeship now!",
-    content: "Presenting: The smug Lea plush!\n\nAfter years of passionate fan demand we can finally present the new and extra smug Lea plush, in partnership with Makeship! And there will be as many as there is demand… If you preorder yours within the next 3 weeks!",
-    imageUrl: "https://www.radicalfishgames.com/wp-content/uploads/plush-header-600x338.jpg",
-    secondaryImage: "http://www.radicalfishgames.com/wp-content/uploads/LeaPlush-Launch-Post.png",
-    comments: [
-      {
-        id: "c1",
-        author: "Mungids",
-        date: "June 19, 2026",
-        text: "ik i live in SEA but man. shipping time of doom and despair bro."
-      }
-    ]
-  },
-  {
-    id: "post-2",
-    title: "I got angry!",
-    author: "GamerUser",
-    dateAdded: "Sep 30, 2025",
-    category: "Fan-art",
-    categoryIcon: "🎨",
-    summary: "This fat fuck killed me ten times over.",
-    content: "This fat fuck killed me ten times over, so I had to sit down and draw it to vent my frustration.\n\nEvil ass lava arena bro. I railed it with 100 needeles",
-    imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0UFw4m4xmzPauBwlyDQUHxCZHGCUsVzRrbd-TaQUghNse_dKngKO7TAk&s=10",
-    secondaryImage: "",
-    comments: [
-      {
-        id: "c2",
-        author: "SilkDaughter",
-        date: "Oct 01, 2025",
-        text: "Skill Issue lmaooooo."
-      }
-    ]
-  }
-];
-
-// Helper to initialize data storage
+// initialize data storage
 function loadPosts() {
   if (!fs.existsSync(DATA_FILE)) {
     fs.writeFileSync(DATA_FILE, JSON.stringify(initialPosts, null, 2), 'utf8');
@@ -77,10 +33,7 @@ function getCategoryIcon(cat) {
   const icons = { 'Merch': '📱', 'Fan-art': '🎨', 'Discussion': '💬', 'Review': '⭐' };
   return icons[cat] || '📝';
 }
-
-// REST API Endpoints
-
-// GET /api/posts - Get all posts with optional filtering & search
+// GET posts
 app.get('/api/posts', (req, res) => {
   let posts = loadPosts();
   const { query, searchType, category } = req.query;
@@ -106,15 +59,7 @@ app.get('/api/posts', (req, res) => {
   res.json(posts);
 });
 
-// GET /api/posts/:id - Detailed View
-app.get('/api/posts/:id', (req, res) => {
-  const posts = loadPosts();
-  const post = posts.find(p => p.id === req.params.id);
-  if (!post) return res.status(404).json({ error: "Post not found" });
-  res.json(post);
-});
-
-// POST /api/posts - Create Post
+//  create post api
 app.post('/api/posts', (req, res) => {
   const posts = loadPosts();
   const { title, author, category, imageUrl, content } = req.body;
@@ -138,7 +83,7 @@ app.post('/api/posts', (req, res) => {
   res.status(201).json(newPost);
 });
 
-// PUT /api/posts/:id - Edit Post
+// edit post 
 app.put('/api/posts/:id', (req, res) => {
   const posts = loadPosts();
   const idx = posts.findIndex(p => p.id === req.params.id);
@@ -174,7 +119,7 @@ app.delete('/api/posts/:id', (req, res) => {
   res.json({ success: true, message: "Post deleted" });
 });
 
-// POST /api/posts/:id/comments - Add Comment
+// comment 
 app.post('/api/posts/:id/comments', (req, res) => {
   const posts = loadPosts();
   const post = posts.find(p => p.id === req.params.id);
@@ -193,7 +138,6 @@ app.post('/api/posts/:id/comments', (req, res) => {
   res.status(201).json(newComment);
 });
 
-// Initialize storage file on startup
 loadPosts();
 
 app.listen(PORT, () => {
