@@ -403,6 +403,39 @@
     text-align: center;
 }
 
+/* Filter UI Styles */
+.shop-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+#search-result-text {
+    color: #666;
+    font-size: 15px;
+}
+
+.filter-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.filter-group label {
+    font-weight: 600;
+}
+
+#category-filter {
+    padding: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+    font-family: inherit;
+    border-radius: 4px;
+}
+
 /* ================= UPDATE PRODUCT FILTERRING ON INDEX ================= */
 .sr-only {
     position: absolute;
@@ -437,6 +470,7 @@
     transform: translateY(0);
     opacity: 1;
 }
+
 
 /* ================= MEDIA QUERIES (Responsive) ================= */
 @media (max-width: 768px) {

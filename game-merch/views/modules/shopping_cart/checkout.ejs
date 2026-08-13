@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/cart.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+</head>
+<body>
+    
+ <%- include('../../partials/navbar') %>
+
+    <!-- ================= CHECKOUT PAGE ================= -->
+    <div class="checkout-page">
+        <h2 style="text-align: center;">Complete Your Order</h2>
+        
+        <form id="checkout-form" class="checkout-form">
+            <!-- Delivery Section -->
+            <h3>Delivery Information</h3>
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" required placeholder="John Doe">
+            </div>
+            <div class="form-group">
+                <label for="address">Shipping Address</label>
+                <input type="text" id="address" required placeholder="123 LootBox Street, Gaming City">
+            </div>
+
+            <!-- Payment Section -->
+            <h3 class="payment-title">Payment Details</h3>
+            <div class="form-group">
+                <label for="card">Credit Card Number</label>
+                <input type="text" id="card" required placeholder="1234 5678 9101 1121" maxlength="16">
+            </div>
+            <div class="payment-group">
+                <div class="form-group flex-1">
+                    <label for="expiry">Expiry Date</label>
+                    <input type="text" id="expiry" required placeholder="MM/YY">
+                </div>
+                <div class="form-group flex-1">
+                    <label for="cvv">CVV</label>
+                    <input type="text" id="cvv" required placeholder="123" maxlength="3">
+                </div>
+            </div>
+
+            <button type="submit" class="btn full-width-btn">Pay Now & Place Order</button>
+        </form>
+    </div>
+
+    <script src="/assets/js/products.js"></script>
+    <script src="/assets/js/script.js"></script>
+
+
+  <%- include('../../partials/footer') %>
+</body>
+</html>

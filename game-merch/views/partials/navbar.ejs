@@ -1,0 +1,36 @@
+<nav>
+    <!-- Link to the home route '/' -->
+    <a href="/" class="logo">LootBox.</a>
+    
+    <div class="nav-links">
+        <!-- server routes -->
+        <a href="/shop">Shop</a>
+        <a href="/forum">Forum</a>
+        <a href="/blog">Blog</a>
+        <a href="/review">Review</a>
+        <a href="/wishlist">Wishlist</a>
+    </div>
+    
+    <div class="nav-actions">
+        <div class="menu-toggle" aria-label="Toggle Navigation">
+            <i class="ri-menu-line"></i>
+        </div>
+
+        <div class="search-bar">
+            <label for="global-search" class="sr-only"></label>
+            <input type="text" id="global-search" placeholder="Search..." aria-label="Search">
+            <button type="button" class="search-btn" aria-label="Submit search"><i class="ri-search-line"></i></button>
+        </div>
+
+        <!-- Link to the cart route -->
+        <a href="/cart" class="cart-icon" aria-label="View Cart">
+            <i class="ri-shopping-bag-line"></i>
+            <span class="cart-item-count active">0</span>
+        </a>
+        
+        <a href="/profile" class="nav-profile-link" aria-label="User Profile">
+            <!-- Absolute path to the image using /assets/ -->
+            <img src="/assets/images/Nguyen The Chinh.jpg" alt="User Profile" class="nav-avatar">
+        </a>
+    </div>
+</nav>
