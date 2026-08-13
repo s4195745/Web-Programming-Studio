@@ -628,7 +628,31 @@ footer.site_footer {
 }
 
 
-
 .fixed-user-blog-btn i {
   font-size: 1.1rem;
+}
+/* Back to to top arrow */
+.back_to_top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999; 
+}
+
+.back_to_top a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  background-color: #333; 
+  color: #fff;
+  border-radius: 50%;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.3s ease, background-color 0.3s ease;
+}
+
+.back_to_top a:hover {
+  background-color: #555;
 }
