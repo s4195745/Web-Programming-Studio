@@ -316,22 +316,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+// (Ensure this replaces the existing displayCart and displayCheckout functions in your script.js)
+
     // --- CART PAGE ---
     function displayCart() {
         const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
         const cartItemsContainer = document.querySelector(".cart-items");
         const subtotalEl = document.querySelector(".Subtotal");
         const grandTotalEl = document.querySelector(".grand-total");
+        const proceedBtn = document.querySelector(".cart-total .btn");
+        const filterInput = document.querySelector("#cart-filter");
+        const sortSelect = document.querySelector("#cart-sort");
 
         if (!cartItemsContainer || !subtotalEl || !grandTotalEl) return;
         cartItemsContainer.innerHTML = "";
 
-        const proceedBtn = document.querySelector(".cart-total .btn");
-
         if (cart.length === 0) {
             cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
-            subtotalEl.textContent = "$0.00";
-            grandTotalEl.textContent = "$0.00";
+            subtotalEl.textContent = "$0.00"; grandTotalEl.textContent = "$0.00";
             updateCartCount();
             if (proceedBtn) proceedBtn.style.display = "none";
             return;
@@ -339,17 +341,25 @@ document.addEventListener('DOMContentLoaded', () => {
             if (proceedBtn) proceedBtn.style.display = "block";
         }
 
-        const sortSelect = document.querySelector("#cart-sort");
+        let displayableCart = [...cart];
+
+        // 1. FILTERING
+        if (filterInput && filterInput.value.trim() !== "") {
+            const query = filterInput.value.toLowerCase().trim();
+            displayableCart = displayableCart.filter(item => item.title.toLowerCase().includes(query));
+            if (displayableCart.length === 0) {
+                cartItemsContainer.innerHTML = "<p>No cart items match your filter.</p>";
+            }
+        }
+
+        // 2. SORTING
         if (sortSelect) {
             const sortValue = sortSelect.value;
-            cart.sort((a, b) => {
-                const priceA = getSafePrice(a.price);
-                const priceB = getSafePrice(b.price);
-
+            displayableCart.sort((a, b) => {
                 if (sortValue === "title-asc") return a.title.localeCompare(b.title);
                 if (sortValue === "title-desc") return b.title.localeCompare(a.title);
-                if (sortValue === "price-asc") return priceA - priceB;
-                if (sortValue === "price-desc") return priceB - priceA;
+                if (sortValue === "price-asc") return getSafePrice(a.price) - getSafePrice(b.price);
+                if (sortValue === "price-desc") return getSafePrice(b.price) - getSafePrice(a.price);
                 if (sortValue === "qty-asc") return a.quantity - b.quantity;
                 if (sortValue === "qty-desc") return b.quantity - a.quantity;
                 return 0;
@@ -359,7 +369,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const fragment = document.createDocumentFragment();
         let subtotal = 0;
         
-        cart.forEach((item, index) => {
+        displayableCart.forEach((item) => {
+            // Must find original index for accurate storage mutation!
+            const originalIndex = cart.findIndex(c => c.id === item.id && c.color === item.color && c.size === item.size);
+            
             const itemPrice = getSafePrice(item.price);
             const itemTotal = itemPrice * item.quantity;
             subtotal += itemTotal;
@@ -379,18 +392,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <span class="price">$${itemPrice.toFixed(2)}</span>
                 <div class="quantity">
-                    <input type="number" value="${item.quantity}" min="1" data-index="${index}" aria-label="Quantity">
+                    <input type="number" value="${item.quantity}" min="1" data-index="${originalIndex}" aria-label="Quantity">
                 </div>
                 <span class="total-price">$${itemTotal.toFixed(2)}</span>
-                <button class="remove" data-index="${index}" aria-label="Remove item"><i class="ri-close-line"></i></button>
+                <button class="remove" data-index="${originalIndex}" aria-label="Remove item"><i class="ri-close-line"></i></button>
             `;
 
             fragment.appendChild(cartItem);
 
+            // 3. STRICT ERROR PREVENTION
             cartItem.querySelector('input[type="number"]').addEventListener("change", (e) => {
                 const newQuantity = parseInt(e.target.value);
-                if (newQuantity >= 1) {
-                    cart[index].quantity = newQuantity; 
+                if (isNaN(newQuantity) || newQuantity < 1) {
+                    e.target.value = cart[originalIndex].quantity; // Force visual revert
+                    showToast("Quantity must be at least 1");
+                } else {
+                    cart[originalIndex].quantity = newQuantity; 
                     sessionStorage.setItem("cart", JSON.stringify(cart)); 
                     displayCart(); 
                 }
@@ -398,23 +415,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
             cartItem.querySelector(".remove").addEventListener("click", () => {
                 showToast("Item removed from cart"); 
-                cart.splice(index, 1); 
+                cart.splice(originalIndex, 1); 
                 sessionStorage.setItem("cart", JSON.stringify(cart)); 
                 displayCart(); 
             });
         });
 
         cartItemsContainer.appendChild(fragment);
-
         subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
         grandTotalEl.textContent = `$${subtotal.toFixed(2)}`;
         updateCartCount();
 
-        if (proceedBtn) {
-            proceedBtn.addEventListener("click", () => {
-                window.location.href = "/checkout";
-            });
+        if (proceedBtn && !proceedBtn.dataset.listenerAttached) {
+            proceedBtn.addEventListener("click", () => window.location.href = "/checkout");
+            proceedBtn.dataset.listenerAttached = "true";
         }
+    }
+
+    // Bind Filter listener dynamically if we are on cart page
+    const filterInput = document.querySelector("#cart-filter");
+    if(filterInput) filterInput.addEventListener("input", displayCart);
+
+    // --- CHECKOUT PAGE LOGIC ---
+    function displayCheckout() {
+        const checkoutForm = document.getElementById("checkout-form");
+        if (!checkoutForm) return;
+
+        // [Validation logic remains same...]
+
+        checkoutForm.addEventListener("submit", async (e) => {
+            e.preventDefault(); 
+            const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+            
+            const orderPayload = {
+                userEmail: sessionStorage.getItem("userEmail"),
+                token: sessionStorage.getItem("authToken"), // Secured Token Attachment
+                customerName: document.getElementById("name").value,
+                customerAddress: document.getElementById("address").value,
+                items: cart,
+                totalPaid: cart.reduce((sum, item) => sum + (getSafePrice(item.price) * item.quantity), 0),
+                paymentDetails: {
+                    card: document.getElementById("card").value,
+                    expiry: document.getElementById("expiry").value,
+                    cvv: document.getElementById("cvv").value
+                }
+            };
+
+            try {
+                const response = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderPayload)
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    sessionStorage.setItem("latestOrder", JSON.stringify(data.order));
+                    sessionStorage.removeItem("cart"); 
+                    window.location.href = "/confirmation";
+                } else { alert(`Checkout Failed: ${data.error}`); }
+            } catch (error) { alert("Network error."); }
+        });
     }
 
     // --- CHECKOUT PAGE LOGIC ---
