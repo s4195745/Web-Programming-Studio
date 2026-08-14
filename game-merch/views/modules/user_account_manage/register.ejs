@@ -16,8 +16,8 @@
     <%- include('../../partials/navbar') %>
 
     <div class="auth-container">
-        <!-- Form submits to login page to simulate successful registration -->
-        <form class="auth-form" id="register-form" action="/login." method="GET">
+        <!-- FIXED: Removed the stray period from the action attribute -->
+        <form class="auth-form" id="register-form" action="/login" method="GET">
             <h2>Register</h2>
             
             <div class="input-group">
@@ -35,16 +35,15 @@
                 <span class="error-msg" id="reg-password-error"></span>
             </div>
 
-            <!-- NEW: Confirm Password Field -->
             <div class="input-group">
                 <input type="password" id="reg-confirm-password" name="confirm-password" placeholder="Confirm Password" required>
-                <span class="error-msg" id="reg-confirm-error"></span>
+                <!-- FIXED: Renamed ID to match the showError() '-error' appending logic -->
+                <span class="error-msg" id="reg-confirm-password-error"></span>
             </div>
 
-            <!-- Mandatory short description field -->
             <div class="input-group">
                 <textarea id="reg-description" name="description" placeholder="Short description about yourself..." required></textarea>
-                <span class="error-msg" id="reg-desc-error"></span>
+                <span class="error-msg" id="reg-description-error"></span>
             </div>
             
             <button type="submit" class="auth-btn" id="reg-submit">Register</button>
@@ -52,10 +51,9 @@
         </form>
     </div>
     
-    <script src="/assets/auth-validation.js"></script>
+    <script src="/assets/js/auth-validation.js"></script>
     <script src="/assets/js/script.js"></script>
     
-
   <%- include('../../partials/footer') %>
 </body>
 </html>

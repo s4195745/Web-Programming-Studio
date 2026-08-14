@@ -97,15 +97,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         confirmInput.addEventListener('input', () => {
-            if (confirmInput.value !== passInput.value) {
-                showError('reg-confirm-error', 'Passwords do not match.'); 
-                document.getElementById('reg-confirm-password').style.borderColor = '#d32f2f';
-            } else {
-                const errorSpan = document.getElementById('reg-confirm-error');
-                if (errorSpan) errorSpan.textContent = '';
-                document.getElementById('reg-confirm-password').style.borderColor = '#2e7d32';
-            }
-        });
+                    if (confirmInput.value !== passInput.value) {               
+                        showError('reg-confirm-password', 'Passwords do not match.'); 
+                    } else {
+                        clearError('reg-confirm-password');
+                    }
+                });
 
         regForm.addEventListener('submit', async (e) => {
             e.preventDefault(); 
@@ -358,4 +355,26 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = "/login";
         });
     });
+
+    // --- 10. VERIFY CURRENT PASSWORD LOGIC ---
+    const verifyPassForm = document.querySelector('form[action="/change_password"]');
+    if (verifyPassForm) {
+        verifyPassForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // Stop the automatic redirect
+
+            const passwordInput = verifyPassForm.querySelector('input[type="password"]');
+            const enteredPassword = passwordInput.value;
+            const formCard = verifyPassForm.querySelector('.dashboard-card');
+            
+            // Check against the session token
+            if (enteredPassword === currentPass) {
+                showAuthMessage(formCard, "Password verified. Redirecting...", false);
+                setTimeout(() => window.location.href = "/change_password", 1000);
+            } else {
+                showAuthMessage(formCard, "Incorrect current password. Please try again.", true);
+                passwordInput.style.borderColor = '#d32f2f';
+            }
+        });
+    }
+
 });

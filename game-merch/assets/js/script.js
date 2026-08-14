@@ -144,7 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
         productContainer.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #666;'>Loading products...</p>";
         
         try {
-            // Fetch dynamically from your NodeJS server
             const response = await fetch('/api/products');
             if (!response.ok) throw new Error("Failed to fetch products");
             
@@ -171,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
     
-            productContainer.innerHTML = ""; // Clear loading state
+            productContainer.innerHTML = ""; 
             const fragment = document.createDocumentFragment();
     
             filteredProducts.forEach(product => {
@@ -305,7 +304,6 @@ document.addEventListener('DOMContentLoaded', () => {
             updateCartCount(); 
             showToast(`${productData.title} added to cart!`); 
             
-            // Floating +1 Animation
             addToCartBtn.style.position = "relative"; 
             const plusOne = document.createElement("span");
             plusOne.textContent = "+1";
@@ -419,14 +417,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- CHECKOUT PAGE LOGIC (Connecting to Node.js Backend) ---
+    // --- CHECKOUT PAGE LOGIC ---
     function displayCheckout() {
         const checkoutForm = document.getElementById("checkout-form");
         if (!checkoutForm) return;
 
+        const nameInput = document.getElementById("name");
+        const addressInput = document.getElementById("address");
         const cardInput = document.getElementById("card");
         const expiryInput = document.getElementById("expiry");
         const cvvInput = document.getElementById("cvv");
+
+        // 1. ADDED: Web Storage API for Checkout Form Retention
+        const checkoutFields = [
+            { el: nameInput, key: "checkout-name" },
+            { el: addressInput, key: "checkout-address" }
+        ];
+
+        checkoutFields.forEach(field => {
+            if (field.el) {
+                const savedData = sessionStorage.getItem(field.key);
+                if (savedData) field.el.value = savedData;
+                
+                field.el.addEventListener('input', (e) => {
+                    sessionStorage.setItem(field.key, e.target.value);
+                });
+            }
+        });
 
         function showError(input, isValid) {
             if (!isValid) {
@@ -469,7 +486,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Client-side validation check
             if (!/^[0-9\s]+$/.test(cardInput.value) || 
                 !/^(0[1-9]|1[0-2])\/[0-9]{2}$/.test(expiryInput.value) || 
                 !/^[0-9]{3,4}$/.test(cvvInput.value)) {
@@ -477,14 +493,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const name = document.getElementById("name").value;
-            const address = document.getElementById("address").value;
             const subtotal = cart.reduce((sum, item) => sum + (getSafePrice(item.price) * item.quantity), 0);
 
-            // Construct payload for the backend API
             const orderPayload = {
-                customerName: name,
-                customerAddress: address,
+                customerName: nameInput.value,
+                customerAddress: addressInput.value,
                 items: cart,
                 totalPaid: subtotal,
                 paymentDetails: {
@@ -495,7 +508,6 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             try {
-                // Send POST request to Checkout API
                 const response = await fetch('/api/checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -505,12 +517,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Success: Store returned order data and redirect
                     sessionStorage.setItem("latestOrder", JSON.stringify(data.order));
                     sessionStorage.removeItem("cart"); 
+                    // Clear the form retention data upon successful order
+                    sessionStorage.removeItem("checkout-name");
+                    sessionStorage.removeItem("checkout-address");
                     window.location.href = "/confirmation";
                 } else {
-                    // Fail: Show server-side validation error
                     alert(`Checkout Failed: ${data.error}`);
                 }
             } catch (error) {
@@ -560,7 +573,5 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    // Run immediately on page load
     updateCartCount();
-
-}); // End of DOMContentLoaded wrapper
+});
