@@ -184,12 +184,13 @@ app.post('/api/register', (req, res) => {
 
 // 5. User Profile Update (Update)
 app.put('/api/profile', (req, res) => {
-    const { currentEmail, newUsername, newEmail, newDescription } = req.body;
+    const { currentEmail, currentPassword, newUsername, newEmail, newDescription } = req.body;
 
-    if (!currentEmail) return res.status(400).json({ error: "User identification required." });
+    if (!currentEmail || !currentPassword) return res.status(400).json({ error: "User identification required." });
 
-    const userIndex = users.findIndex(u => u.email === currentEmail);
-    if (userIndex === -1) return res.status(404).json({ error: "User not found." });
+    // Server-Side Validation: Ensure the user owns the account they are trying to edit
+    const userIndex = users.findIndex(u => u.email === currentEmail && u.password === currentPassword);
+    if (userIndex === -1) return res.status(401).json({ error: "Unauthorized request. Session may be invalid." });
 
     if (newEmail && newEmail !== currentEmail) {
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) return res.status(400).json({ error: "Invalid email format!" });
@@ -205,15 +206,16 @@ app.put('/api/profile', (req, res) => {
 
 // 6. User Password Update (Update)
 app.put('/api/change-password', (req, res) => {
-    const { email, newPassword } = req.body;
+    const { email, currentPassword, newPassword } = req.body;
 
-    if (!email || !newPassword) return res.status(400).json({ error: "Email and new password are required." });
+    if (!email || !currentPassword || !newPassword) return res.status(400).json({ error: "Missing required fields." });
     if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(newPassword)) {
         return res.status(400).json({ error: "Password must be at least 8 characters with 1 letter and 1 number." });
     }
 
-    const user = users.find(u => u.email === email);
-    if (!user) return res.status(404).json({ error: "User account not found." });
+    // Server-Side Validation: Ensure the user owns the account
+    const user = users.find(u => u.email === email && u.password === currentPassword);
+    if (!user) return res.status(401).json({ error: "Unauthorized request. Session may be invalid." });
 
     user.password = newPassword;
     res.status(200).json({ message: "Password updated successfully." });
@@ -221,12 +223,13 @@ app.put('/api/change-password', (req, res) => {
 
 // 7. User Account Deletion (Delete)
 app.delete('/api/account', (req, res) => {
-    const { email } = req.body;
+    const { email, currentPassword } = req.body;
 
-    if (!email) return res.status(400).json({ error: "Email is required to delete account." });
+    if (!email || !currentPassword) return res.status(400).json({ error: "Missing required fields." });
 
-    const userIndex = users.findIndex(u => u.email === email);
-    if (userIndex === -1) return res.status(404).json({ error: "User not found." });
+    // Server-Side Validation: Ensure the user owns the account
+    const userIndex = users.findIndex(u => u.email === email && u.password === currentPassword);
+    if (userIndex === -1) return res.status(401).json({ error: "Unauthorized request. Session may be invalid." });
 
     users.splice(userIndex, 1);
     res.status(200).json({ message: "Account deleted successfully." });

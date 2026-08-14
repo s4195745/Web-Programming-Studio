@@ -140,57 +140,68 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- PRODUCT LIST & FILTERING (INDEX PAGE) ---
-    function displayProducts() {
-        productContainer.innerHTML = "";
+    async function displayProducts() {
+        productContainer.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #666;'>Loading products...</p>";
         
-        if (typeof products === 'undefined') return;
-
-        const filteredProducts = products.filter(product => {
-            const matchesCategory = currentCategoryFilter === "all" || product.category === currentCategoryFilter;
-            const matchesSearch = product.title.toLowerCase().includes(currentSearchQuery) || 
-                                  product.description.toLowerCase().includes(currentSearchQuery);
-            return matchesCategory && matchesSearch;
-        });
-
-        const resultText = document.getElementById("search-result-text");
-        if (resultText) {
-            if (currentSearchQuery !== "") {
-                resultText.textContent = `Found ${filteredProducts.length} results for "${currentSearchQuery}"`;
-            } else {
-                resultText.textContent = `Showing ${filteredProducts.length} products`;
-            }
-        }
-
-        if (filteredProducts.length === 0) {
-            productContainer.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #666;'>No products found matching your criteria.</p>";
-            return;
-        }
-
-        const fragment = document.createDocumentFragment();
-
-        filteredProducts.forEach(product => {
-            const productCard = document.createElement("div");
-            productCard.classList.add("product-card");
+        try {
+            // Fetch dynamically from your NodeJS server
+            const response = await fetch('/api/products');
+            if (!response.ok) throw new Error("Failed to fetch products");
             
-            const safePrice = getSafePrice(product.price);
-
-            productCard.innerHTML = `
-                <div class="img-box">
-                    <img src="${product.colors[0].mainImage}" alt="${product.title}">
-                </div>
-                <h2 class="title">${product.title}</h2>
-                <span class="price">$${safePrice.toFixed(2)}</span>
-            `;
-            
-            fragment.appendChild(productCard);
-            
-            productCard.querySelector(".img-box").addEventListener("click", () => {
-                sessionStorage.setItem("selectedProduct", JSON.stringify(product));
-                window.location.href = "/product_detail";
+            const products = await response.json();
+    
+            const filteredProducts = products.filter(product => {
+                const matchesCategory = currentCategoryFilter === "all" || product.category === currentCategoryFilter;
+                const matchesSearch = product.title.toLowerCase().includes(currentSearchQuery) || 
+                                      product.description.toLowerCase().includes(currentSearchQuery);
+                return matchesCategory && matchesSearch;
             });
-        });
-
-        productContainer.appendChild(fragment);
+    
+            const resultText = document.getElementById("search-result-text");
+            if (resultText) {
+                if (currentSearchQuery !== "") {
+                    resultText.textContent = `Found ${filteredProducts.length} results for "${currentSearchQuery}"`;
+                } else {
+                    resultText.textContent = `Showing ${filteredProducts.length} products`;
+                }
+            }
+    
+            if (filteredProducts.length === 0) {
+                productContainer.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #666;'>No products found matching your criteria.</p>";
+                return;
+            }
+    
+            productContainer.innerHTML = ""; // Clear loading state
+            const fragment = document.createDocumentFragment();
+    
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement("div");
+                productCard.classList.add("product-card");
+                
+                const safePrice = getSafePrice(product.price);
+    
+                productCard.innerHTML = `
+                    <div class="img-box">
+                        <img src="${product.colors[0].mainImage}" alt="${product.title}">
+                    </div>
+                    <h2 class="title">${product.title}</h2>
+                    <span class="price">$${safePrice.toFixed(2)}</span>
+                `;
+                
+                fragment.appendChild(productCard);
+                
+                productCard.querySelector(".img-box").addEventListener("click", () => {
+                    sessionStorage.setItem("selectedProduct", JSON.stringify(product));
+                    window.location.href = "/product_detail";
+                });
+            });
+    
+            productContainer.appendChild(fragment);
+            
+        } catch (error) {
+            console.error("Error loading products:", error);
+            productContainer.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: red;'>Unable to load products. Please try again later.</p>";
+        }
     }
 
     // --- PRODUCT DETAIL PAGE ---
@@ -462,7 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!/^[0-9\s]+$/.test(cardInput.value) || 
                 !/^(0[1-9]|1[0-2])\/[0-9]{2}$/.test(expiryInput.value) || 
                 !/^[0-9]{3,4}$/.test(cvvInput.value)) {
-                alert("Please verify your payment details!"); // Fixed strictly to English
+                alert("Please verify your payment details!");
                 return;
             }
 
