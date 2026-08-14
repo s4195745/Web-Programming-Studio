@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/cart.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+</head>
+<body>
+    
+ <%- include('../../partials/navbar') %>
+
+    <div class="cart">
+        <!-- Sorting -->
+        <div class="cart-controls" style="display: flex; justify-content: flex-end; margin-bottom: 15px; gap: 10px; align-items: center;">
+            <label for="cart-sort" style="font-weight: 600;">Sort by:</label>
+            <select id="cart-sort" style="padding: 8px; border: 1px solid #ccc; outline: none; font-family: 'Outfit', serif;">
+                <option value="default">Recently Added</option>
+                <option value="title-asc">Title (A-Z)</option>
+                <option value="title-desc">Title (Z-A)</option>
+                <option value="price-asc">Price (Low to High)</option>
+                <option value="price-desc">Price (High to Low)</option>
+                <option value="qty-asc">Quantity (Low to High)</option>
+                <option value="qty-desc">Quantity (High to Low)</option>
+            </select>
+        </div>
+
+        <div class="cart-header">
+            <span>Products</span>
+            <span>Price</span>
+            <span>Quantity</span>
+            <span>Total</span>
+            <span>Remove</span>
+        </div>
+
+        <div class="cart-items"></div>
+
+        <div class="cart-total">
+            <h3>Cart Total</h3>
+            <p>Subtotal <span class="Subtotal"></span></p>
+            <p>Delivery Fee <span>Free</span></p>
+            <p>Grand Total <span class="grand-total"></span></p>
+            <button class="btn">Proceed to checkout</button>
+        </div>
+    </div>
+
+    <script src="/assets/js/products.js"></script>
+    <script src="/assets/js/script.js"></script>
+
+
+  <%- include('../../partials/footer') %>
+
+</body>
+</html>
