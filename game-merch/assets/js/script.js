@@ -12,6 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- TOAST NOTIFICATION ---
     function showToast(message) {
+        const existingToast = document.querySelector(".toast-message");
+        if (existingToast) {
+            existingToast.remove();
+        }
+
         const toast = document.createElement("div");
         toast.className = "toast-message";
         toast.textContent = message;
@@ -54,17 +59,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function executeSearch(query) {
         currentSearchQuery = query.toLowerCase().trim();
         if (productContainer) {
-            // We are on the shop page, just filter immediately
             displayProducts();
         } else {
-            // We are on another page, save search query and redirect to shop
             sessionStorage.setItem("pendingSearch", currentSearchQuery);
-            
-            // Safe redirect handling depending on where the user is
             if(window.location.pathname.includes("landing_page.html")) {
-                window.location.href = "/index";
+                window.location.href = "/shop";
             } else {
-                window.location.href = "/index";
+                window.location.href = "/shop";
             }
         }
     }
@@ -87,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
             displayProducts();
         });
     }
-
 
     // --- HELPER: BULLETPROOF PRICE PARSER ---
     function getSafePrice(priceVal) {
@@ -120,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- ROUTER ---
     if (productContainer) {
-        // Check for pending search from another page
         const pendingSearch = sessionStorage.getItem("pendingSearch");
         if (pendingSearch) {
             currentSearchQuery = pendingSearch;
@@ -146,7 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (typeof products === 'undefined') return;
 
-        // Apply Search and Category Filters
         const filteredProducts = products.filter(product => {
             const matchesCategory = currentCategoryFilter === "all" || product.category === currentCategoryFilter;
             const matchesSearch = product.title.toLowerCase().includes(currentSearchQuery) || 
@@ -154,7 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return matchesCategory && matchesSearch;
         });
 
-        // Update UI Result Text
         const resultText = document.getElementById("search-result-text");
         if (resultText) {
             if (currentSearchQuery !== "") {
@@ -169,7 +166,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Render Filtered Products
+        const fragment = document.createDocumentFragment();
+
         filteredProducts.forEach(product => {
             const productCard = document.createElement("div");
             productCard.classList.add("product-card");
@@ -183,20 +181,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h2 class="title">${product.title}</h2>
                 <span class="price">$${safePrice.toFixed(2)}</span>
             `;
-            productContainer.appendChild(productCard);
+            
+            fragment.appendChild(productCard);
             
             productCard.querySelector(".img-box").addEventListener("click", () => {
                 sessionStorage.setItem("selectedProduct", JSON.stringify(product));
                 window.location.href = "/product_detail";
             });
         });
+
+        productContainer.appendChild(fragment);
     }
 
     // --- PRODUCT DETAIL PAGE ---
     function displayProductDetail() {
         const productData = JSON.parse(sessionStorage.getItem("selectedProduct"));
         if (!productData) {
-            window.location.href = "/index";
+            window.location.href = "/shop";
             return;
         }
 
@@ -291,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             sessionStorage.setItem("cart", JSON.stringify(cart));
             updateCartCount(); 
-            showToast(`${productData.title} added to cart!`); // NEW TOAST FEEDBACK
+            showToast(`${productData.title} added to cart!`); 
             
             // Floating +1 Animation
             addToCartBtn.style.position = "relative"; 
@@ -316,12 +317,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!cartItemsContainer || !subtotalEl || !grandTotalEl) return;
         cartItemsContainer.innerHTML = "";
 
+        const proceedBtn = document.querySelector(".cart-total .btn");
+
         if (cart.length === 0) {
             cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
             subtotalEl.textContent = "$0.00";
             grandTotalEl.textContent = "$0.00";
             updateCartCount();
+            if (proceedBtn) proceedBtn.style.display = "none";
             return;
+        } else {
+            if (proceedBtn) proceedBtn.style.display = "block";
         }
 
         const sortSelect = document.querySelector("#cart-sort");
@@ -341,6 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        const fragment = document.createDocumentFragment();
         let subtotal = 0;
         
         cart.forEach((item, index) => {
@@ -369,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="remove" data-index="${index}" aria-label="Remove item"><i class="ri-close-line"></i></button>
             `;
 
-            cartItemsContainer.appendChild(cartItem);
+            fragment.appendChild(cartItem);
 
             cartItem.querySelector('input[type="number"]').addEventListener("change", (e) => {
                 const newQuantity = parseInt(e.target.value);
@@ -381,18 +388,19 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             cartItem.querySelector(".remove").addEventListener("click", () => {
-                showToast("Item removed from cart"); // NEW TOAST FEEDBACK
+                showToast("Item removed from cart"); 
                 cart.splice(index, 1); 
                 sessionStorage.setItem("cart", JSON.stringify(cart)); 
                 displayCart(); 
             });
         });
 
+        cartItemsContainer.appendChild(fragment);
+
         subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
         grandTotalEl.textContent = `$${subtotal.toFixed(2)}`;
         updateCartCount();
 
-        const proceedBtn = document.querySelector(".cart-total .btn");
         if (proceedBtn) {
             proceedBtn.addEventListener("click", () => {
                 window.location.href = "/checkout";
@@ -400,7 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- CHECKOUT PAGE LOGIC ---
+    // --- CHECKOUT PAGE LOGIC (Connecting to Node.js Backend) ---
     function displayCheckout() {
         const checkoutForm = document.getElementById("checkout-form");
         if (!checkoutForm) return;
@@ -440,7 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        checkoutForm.addEventListener("submit", (e) => {
+        checkoutForm.addEventListener("submit", async (e) => {
             e.preventDefault(); 
             
             const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
@@ -450,10 +458,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // Client-side validation check
             if (!/^[0-9\s]+$/.test(cardInput.value) || 
                 !/^(0[1-9]|1[0-2])\/[0-9]{2}$/.test(expiryInput.value) || 
                 !/^[0-9]{3,4}$/.test(cvvInput.value)) {
-                alert("Vui lòng kiểm tra lại thông tin thẻ thanh toán!");
+                alert("Please verify your payment details!"); // Fixed strictly to English
                 return;
             }
 
@@ -461,17 +470,42 @@ document.addEventListener('DOMContentLoaded', () => {
             const address = document.getElementById("address").value;
             const subtotal = cart.reduce((sum, item) => sum + (getSafePrice(item.price) * item.quantity), 0);
 
-            const orderData = {
+            // Construct payload for the backend API
+            const orderPayload = {
                 customerName: name,
                 customerAddress: address,
                 items: cart,
-                totalPaid: subtotal
+                totalPaid: subtotal,
+                paymentDetails: {
+                    card: cardInput.value,
+                    expiry: expiryInput.value,
+                    cvv: cvvInput.value
+                }
             };
 
-            sessionStorage.setItem("latestOrder", JSON.stringify(orderData));
-            sessionStorage.removeItem("cart"); 
-            
-            window.location.href = "/confirmation";
+            try {
+                // Send POST request to Checkout API
+                const response = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderPayload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Success: Store returned order data and redirect
+                    sessionStorage.setItem("latestOrder", JSON.stringify(data.order));
+                    sessionStorage.removeItem("cart"); 
+                    window.location.href = "/confirmation";
+                } else {
+                    // Fail: Show server-side validation error
+                    alert(`Checkout Failed: ${data.error}`);
+                }
+            } catch (error) {
+                console.error("Error during checkout:", error);
+                alert("An error occurred while processing your order. Please try again.");
+            }
         });
     }
 

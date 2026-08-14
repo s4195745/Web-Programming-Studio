@@ -186,11 +186,15 @@
 }
 
 .footer-red {
-    background-color: #d12e3e;
+    background-color: #3900e6;
 }
 
 .footer-gold {
     background-color: #b59846; 
+}
+
+.footer-yellow {
+    background-color: #fdbc08;
 }
 
 .btn-card {

@@ -78,7 +78,7 @@ nav {
     outline: none;
     background: transparent;
     font-size: 15px;
-    width: 160px;
+    width: 250px;
 }
 
 .search-bar button {
@@ -290,7 +290,20 @@ footer.site_footer {
 
 /* ================= MOBILE RESPONSIVENESS FOR GLOBAL SHARED COMPONENTS ================= */
 
-/* ================= UTILITY CLASSES (Moved from auth.css) ================= */
+/* ================= UTILITY CLASSES ================= */
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 .no-decoration { text-decoration: none; }
 .mb-15 { margin-bottom: 15px; }
 .mb-20 { margin-bottom: 20px; }
@@ -383,7 +396,7 @@ footer.site_footer {
     }
 
     .search-bar input {
-        width: 100px;
+        width: 200px;
     }
 }
 
