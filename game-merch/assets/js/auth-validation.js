@@ -119,4 +119,41 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // --- 4. LOGIN FORM LOGIC (Mock Authentication & Routing) ---
+    const loginForm = document.getElementById('login-form'); // Ensure your HTML form has id="login-form"
+    if (loginForm) {
+        const loginEmailInput = document.getElementById('login-email');
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // Stop the form from refreshing the page
+
+            const userInput = loginEmailInput ? loginEmailInput.value.trim() : '';
+
+            // Client-side validation: Check if empty
+            if (userInput === "") {
+                alert("Please enter a username or email!");
+                return;
+            }
+
+            // Mock Security Routing
+            if (userInput === "admin") {
+                // Set Admin State
+                sessionStorage.setItem("isLoggedIn", "true");
+                sessionStorage.setItem("userRole", "admin");
+                sessionStorage.setItem("username", "Admin");
+                
+                // Redirect to teammate's admin module
+                window.location.href = "/admin"; 
+            } else {
+                // Set Customer State
+                sessionStorage.setItem("isLoggedIn", "true");
+                sessionStorage.setItem("userRole", "customer");
+                sessionStorage.setItem("username", userInput);
+                
+                // Redirect to user profile
+                window.location.href = "/profile"; 
+            }
+        });
+    }
 });

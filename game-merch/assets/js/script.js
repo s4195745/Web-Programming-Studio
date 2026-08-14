@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             productCard.querySelector(".img-box").addEventListener("click", () => {
                 sessionStorage.setItem("selectedProduct", JSON.stringify(product));
-                window.location.href = "/product-detail";
+                window.location.href = "/product_detail";
             });
         });
     }

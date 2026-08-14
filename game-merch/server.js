@@ -15,35 +15,81 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
-// 2. Shop Page (Index)
+// --- SHOPPING CART ROUTE---
+
+// Shop Page (Index)
 app.get('/shop', (req, res) => {
     res.render('modules/shopping_cart/index');
 });
 
-// 3. Cart Page
+// Cart Page
 app.get('/cart', (req, res) => {
     res.render('modules/shopping_cart/cart'); 
 });
 
-// 4. Product Detail Page
-app.get('/product-detail', (req, res) => {
-    res.render('modules/shopping_cart/product-detail'); 
+// Product Detail Page
+app.get('/product_detail', (req, res) => {
+    res.render('modules/shopping_cart/product_detail'); 
 });
 
-// 5. Checkout Page
+// Checkout Page
 app.get('/checkout', (req, res) => {
     res.render('modules/shopping_cart/checkout'); 
 });
 
-// 6. Confirmation Page
+// Confirmation Page
 app.get('/confirmation', (req, res) => {
     res.render('modules/shopping_cart/confirmation'); 
 });
 
-// 7. Login Page
+// --- USER ACCOUNT ROUTES ---
+
+// Login Page
 app.get('/login', (req, res) => {
     res.render('modules/user_account_manage/login');
 });
+
+// Register Page
+app.get('/register', (req, res) => {
+    res.render('modules/user_account_manage/register');
+});
+
+// Profile Page
+app.get('/profile', (req, res) => {
+    res.render('modules/user_account_manage/profile');
+});
+
+// Edit Profile Page
+app.get('/edit_profile', (req, res) => {
+    res.render('modules/user_account_manage/edit_profile');
+});
+
+// Change Password Page
+app.get('/change_password', (req, res) => {
+    res.render('modules/user_account_manage/change_password');
+});
+
+// Verify Password Page
+app.get('/verify_password', (req, res) => {
+    res.render('modules/user_account_manage/verify_password');
+});
+
+// Forgot Password Page
+app.get('/forgot_password', (req, res) => {
+    res.render('modules/user_account_manage/forgot_password');
+});
+
+// Forgot Password Confirm Page
+app.get('/forgot_password_confirm', (req, res) => {
+    res.render('modules/user_account_manage/forgot_password_confirm'); 
+});
+
+// Delete Account Page
+app.get('/delete_account', (req, res) => {
+    res.render('modules/user_account_manage/delete_account');
+});
+
+
 
 // Start the server
 app.listen(PORT, () => {
