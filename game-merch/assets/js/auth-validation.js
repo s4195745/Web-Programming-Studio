@@ -61,34 +61,80 @@ document.addEventListener('DOMContentLoaded', () => {
     const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     const isStrongPassword = (password) => /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password);
 
-    // --- 3. REGISTRATION ---
+    // --- 3. REGISTRATION LOGIC ---
     const regForm = document.getElementById('register-form');
     if (regForm) {
-        // [Existing real-time validation listeners remain unchanged]
+        const usernameInput = document.getElementById('reg-username');
+        const emailInput = document.getElementById('reg-email');
+        const passInput = document.getElementById('reg-password');
+        const confirmInput = document.getElementById('reg-confirm-password');
+        const descInput = document.getElementById('reg-description');
+
+        // LIVE VALIDATION: Triggers the red border while you type
+        emailInput.addEventListener('input', () => {
+            if (!isValidEmail(emailInput.value)) showError('reg-email', 'Please enter a valid email format.');
+            else clearError('reg-email');
+        });
+
+        passInput.addEventListener('input', () => {
+            if (!isStrongPassword(passInput.value)) showError('reg-password', 'Password must be at least 8 chars with 1 letter & 1 number.');
+            else clearError('reg-password');
+            if (confirmInput.value) confirmInput.dispatchEvent(new Event('input'));
+        });
+
+        // LIVE VALIDATION: This handles your confirm password red border immediately
+        confirmInput.addEventListener('input', () => {
+            if (confirmInput.value !== passInput.value) {
+                showError('reg-confirm-password', 'Passwords do not match.'); 
+            } else {
+                clearError('reg-confirm-password');
+            }
+        });
+
+        // SUBMIT LOGIC: Blocks redirect if errors exist
         regForm.addEventListener('submit', async (e) => {
             e.preventDefault(); 
-            const payload = {
-                username: document.getElementById('reg-username').value.trim(),
-                email: document.getElementById('reg-email').value.trim(),
-                password: document.getElementById('reg-password').value.trim(),
-                description: document.getElementById('reg-description').value.trim()
-            };
+            
+            const username = usernameInput.value.trim();
+            const email = emailInput.value.trim();
+            const password = passInput.value.trim();
+            const confirmPassword = confirmInput.value.trim();
+            const description = descInput.value.trim();
 
-            if (!isValidEmail(payload.email) || !isStrongPassword(payload.password)) {
-                showAuthMessage(regForm, 'Fix highlighted errors.', true); return;
+            let hasError = false;
+
+            // Final safety check on submit
+            if (!isValidEmail(email)) { showError('reg-email', 'Please enter a valid email format.'); hasError = true; }
+            if (!isStrongPassword(password)) { showError('reg-password', 'Password must be at least 8 chars with 1 letter & 1 number.'); hasError = true; }
+            if (confirmPassword !== password || confirmPassword === "") { showError('reg-confirm-password', 'Passwords do not match.'); hasError = true; }
+
+            // If there is an error, stop everything untill no errors
+            if (hasError) {
+                showAuthMessage(regForm, 'Please fix the highlighted errors before submitting.', true);
+                return;
             }
 
+            // If everything is correct, save to backend and redirect
             try {
-                const response = await fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password, description })
+                });
+
+                const data = await response.json();
+
                 if (response.ok) {
                     sessionStorage.clear(); 
-                    showAuthMessage(regForm, "Registration successful! Redirecting...", false);
+                    showAuthMessage(regForm, "Registration successful! Redirecting to login...", false);
                     setTimeout(() => window.location.href = "/login", 1500);
                 } else {
-                    const data = await response.json();
-                    showAuthMessage(regForm, `Failed: ${data.error}`, true);
+                    showAuthMessage(regForm, `Registration Failed: ${data.error}`, true);
                 }
-            } catch (error) { showAuthMessage(regForm, "Network error.", true); }
+            } catch (error) {
+                console.error("Error during registration:", error);
+                showAuthMessage(regForm, "A network error occurred. Please try again.", true);
+            }
         });
     }
 

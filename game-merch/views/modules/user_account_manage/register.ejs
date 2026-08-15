@@ -16,8 +16,8 @@
     <%- include('../../partials/navbar') %>
 
     <div class="auth-container">
-        <!-- FIXED: Removed the stray period from the action attribute -->
-        <form class="auth-form" id="register-form" action="/login" method="GET">
+        
+        <form class="auth-form" id="register-form">
             <h2>Register</h2>
             
             <div class="input-group">
@@ -37,7 +37,7 @@
 
             <div class="input-group">
                 <input type="password" id="reg-confirm-password" name="confirm-password" placeholder="Confirm Password" required>
-                <!-- FIXED: Renamed ID to match the showError() '-error' appending logic -->
+                
                 <span class="error-msg" id="reg-confirm-password-error"></span>
             </div>
 
