@@ -10,14 +10,124 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // --- MOCK IN-MEMORY DATABASE ---
 const products = [
     {
-        id: 1, title: "Hollow Knight Plushie", price: 32.00, category: "Plushies", 
+        id: 1,
+        title: "Hollow Knight",
+        price: 32.00,
+        category: "Plushies", 
         description: "Find a home for the Knight that's a little less dangerous than Hallownest.",
         colors: [
-            { name: "White", mainImage: "/assets/cart.images/white/white_hk_main.webp", thumbnails: ["/assets/cart.images/white/white_hk_photo1.webp"], sizes: ["S", "M", "L"] }
+            {
+                name: "White",
+                mainImage: "../../assets/cart.images/white/white_hk_main.webp",
+                thumbnails: [
+                    "../../assets/cart.images/white/white_hk_photo1.webp",
+                    "../../assets/cart.images/white/white_hk_photo2.webp",
+                    "../../assets/cart.images/white/white_hk_photo3.webp"
+                ],
+                sizes: ["S", "M", "L", "XL", "XXL"]
+            },
+            {
+                name: "Yellow",
+                mainImage: "../../assets/cart.images/yellow/yellow_hk_main.jpg",
+                thumbnails: [
+                    "../../assets/cart.images/yellow/yellow_hk_photo1.jpg",
+                    "../../assets/cart.images/yellow/yellow_hk_photo2.jpg",
+                    "../../assets/cart.images/yellow/yellow_hk_photo3.jpg"
+                ],
+                sizes: ["S", "M", "L", "XL", "XXL"]
+            },
+            {
+                name: "Red",
+                mainImage: "../../assets/cart.images/red/red_hk_main.jpg",
+                thumbnails: [
+                    "../../assets/cart.images/red/red_hk_photo1.jpg",
+                    "../../assets/cart.images/red/red_hk_photo1.jpg",
+                    "../../assets/cart.images/red/red_hk_photo1.jpg"
+                ],
+                sizes: ["S", "M", "L", "XL", "XXL"]
+            },
+            {
+                name: "Purple",
+                mainImage: "../../assets/cart.images/purple/purple_hk_main.jpg",
+                thumbnails: [
+                    "../../assets/cart.images/purple/purple_hk_photo1.jpg",
+                    "../../assets/cart.images/purple/purple_hk_photo2.jpg",
+                    "../../assets/cart.images/purple/purple_hk_photo3.jpg"
+                ],
+                sizes: ["S", "L"]
+            },
+            {
+                name: "Black",
+                mainImage: "../../assets/cart.images/black/black_hk_main.jpg",
+                thumbnails: [
+                    "../../assets/cart.images/black/black_hk_photo1.jpg",
+                    "../../assets/cart.images/black/black_hk_photo2.jpg",
+                    "../../assets/cart.images/black/black_hk_photo3.jpg"
+                ],
+                sizes: ["M", "L", "XL"]
+            }
+        ]
+    },
+    {
+        id: 2,
+        title: "Arknights: Endfield - PoofyShan Plushie - The Lost Heirloom Inn ",
+        price: 35.00,
+        category: "Plushies",
+        description: "PoofyShan Plushie - The Lost Heirloom Inn",
+        colors: [
+            {
+                name: "Brown",
+                mainImage: "../../assets/cart.images/brown/enfi_brown_main.avif",
+                thumbnails: [
+                    "../../assets/cart.images/brown/enfi_brown_photo1.avif",
+                    "../../assets/cart.images/brown/enfi_brown_photo2.avif",
+                    "../../assets/cart.images/brown/enfi_brown_photo3.avif"
+                ],
+                sizes: ["S", "M", "L"]
+            },
+            {
+                name: "Red",
+                mainImage: "../../assets/cart.images/red/enfi_red_main.webp",
+                thumbnails: [
+                    "../../assets/cart.images/red/enfi_red_photo1.avif",
+                    "../../assets/cart.images/red/enfi_red_photo2.avif",
+                    "../../assets/cart.images/red/enfi_red_photo3.avif"
+                ],
+                sizes: ["S", "M", "L"]
+            },
+            {
+                name: "Blue",
+                mainImage: "../../assets/cart.images/blue/enfi_blue_main.avif",
+                thumbnails: [
+                    "../../assets/cart.images/blue/enfi_blue_photo1.avif",
+                    "../../assets/cart.images/blue/enfi_blue_photo2.avif",
+                    "../../assets/cart.images/blue/enfi_blue_photo3.avif"
+                ],
+                sizes: ["S","M", "L"]
+            }
+        ]
+    },
+    {
+        id: 3,
+        title: "Pengu Garen Figure",
+        price: 35.99,
+        category: "Figures", 
+        description: "Whether you think Pengu Garen was the best thing to happen to League of Legends since AP Master Yi or a questionable model of champion readability, our Pengu Garen Figure is here to remind you to speak Pengu and carry a big sword.",
+        colors: [
+            {
+                name: "White",
+                mainImage: "../../assets/cart.images/white/pengu_white_main.webp",
+                thumbnails: [
+                    "../../assets/cart.images/white/pengu_white_photo1.webp",
+                    "../../assets/cart.images/white/pengu_white_photo2.webp",
+                    "../../assets/cart.images/white/pengu_white_photo3.webp"
+                ],
+                sizes: ["S", "M", "L"]
+            }
         ]
     }
-    // (Assume rest of products array remains exactly as you had it)
 ];
+
 
 const users = [
     { id: 1, email: "nguyenthechinh2807@gmail.com", password: "Password123!", role: "customer", username: "Nguyen The Chinh", description: "Information Technology student.", avatar: null, token: null },
@@ -52,6 +162,36 @@ app.get('/api/products/:id', (req, res) => {
     res.status(200).json(product);
 });
 
+// REGISTER: Create a new user account
+app.post('/api/register', (req, res) => {
+    const { username, email, password, description } = req.body;
+
+    // 1. Validate inputs
+    if (!username || !email || !password || !description) return res.status(400).json({ error: "All fields are required!" });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: "Invalid email format!" });
+    if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password)) {
+        return res.status(400).json({ error: "Password must be at least 8 characters with 1 letter and 1 number." });
+    }
+
+    // 2. Check if user already exists
+    if (users.find(u => u.email === email)) return res.status(409).json({ error: "Email is already registered." });
+
+    // 3. Create and store new user
+    const newUser = { 
+        id: users.length + 1, 
+        username, 
+        email, 
+        password, 
+        description, 
+        role: "customer",
+        avatar: null,
+        token: null
+    };
+    users.push(newUser);
+
+    res.status(201).json({ message: "Registration successful" });
+});
+
 // LOGIN: Generates and returns a secure token
 app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
@@ -71,17 +211,6 @@ app.post('/api/login', (req, res) => {
     } else {
         return res.status(401).json({ error: "Invalid email or password." });
     }
-});
-
-app.post('/api/register', (req, res) => {
-    const { username, email, password, description } = req.body;
-    if (!username || !email || !password || !description) return res.status(400).json({ error: "All fields are required!" });
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: "Invalid email format!" });
-    if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password)) return res.status(400).json({ error: "Password must be at least 8 characters with 1 letter and 1 number." });
-    if (users.find(u => u.email === email)) return res.status(409).json({ error: "Email is already registered." });
-
-    users.push({ id: users.length + 1, username, email, password, description, role: "customer", avatar: null, token: null });
-    res.status(201).json({ message: "Registration successful" });
 });
 
 // PROFILE UPDATE: Now processes Base64 Avatar uploads securely via Token
@@ -143,21 +272,57 @@ app.post('/api/forgot-password', (req, res) => {
     res.status(200).json({ message: "Reset link sent." });
 });
 
-// CHECKOUT: Secured with Token
+// CHECKOUT: Secured with Token AND Server-Side Price Calculation
 app.post('/api/checkout', (req, res) => {
-    const { userEmail, token, customerName, customerAddress, items, totalPaid, paymentDetails } = req.body;
+    const { userEmail, token, customerName, customerAddress, items, paymentDetails } = req.body;
 
+    // 1. Authentication Check
     if (!userEmail || !token) return res.status(401).json({ error: "Authentication required." });
     const user = users.find(u => u.email === userEmail && u.token === token);
-    if (!user) return res.status(401).json({ error: "Session expired." });
-    if (!customerName || !customerAddress || !items || items.length === 0) return res.status(400).json({ error: "Missing order info." });
-    if (!paymentDetails || !/^[0-9\s]{16,}$/.test(paymentDetails.card) || !/^(0[1-9]|1[0-2])\/[0-9]{2}$/.test(paymentDetails.expiry) || !/^[0-9]{3,4}$/.test(paymentDetails.cvv)) {
+    if (!user) return res.status(401).json({ error: "Session expired or invalid." });
+
+    // 2. Input Validation
+    if (!customerName || !customerAddress || !items || items.length === 0) {
+        return res.status(400).json({ error: "Missing order information or cart is empty." });
+    }
+
+    if (!paymentDetails || 
+        !/^[0-9\s]{16,}$/.test(paymentDetails.card) || 
+        !/^(0[1-9]|1[0-2])\/[0-9]{2}$/.test(paymentDetails.expiry) || 
+        !/^[0-9]{3,4}$/.test(paymentDetails.cvv)) {
         return res.status(400).json({ error: "Invalid payment details." });
     }
 
-    const newOrder = { id: orders.length + 1, userId: user.id, customerName, customerAddress, items, totalPaid, date: new Date() };
-    orders.push(newOrder);
-    res.status(200).json({ message: "Order placed", order: newOrder });
+    try {
+        // 3. SERVER-SIDE VALIDATION: Recalculate total securely using DB prices
+        let secureTotalPaid = 0;
+        const verifiedItems = items.map(clientItem => {
+            const dbProduct = products.find(p => p.id === clientItem.id);
+            if (!dbProduct) throw new Error(`Product ${clientItem.id} not found in database.`);
+            
+            secureTotalPaid += (dbProduct.price * clientItem.quantity);
+            
+            // Enforce the server's price, ignore the client's price
+            return { ...clientItem, price: dbProduct.price };
+        });
+
+        // 4. Create Order
+        const newOrder = { 
+            id: orders.length + 1, 
+            userId: user.id, // Tie the order to the authenticated user
+            customerName, 
+            customerAddress, 
+            items: verifiedItems, 
+            totalPaid: secureTotalPaid, 
+            date: new Date() 
+        };
+        
+        orders.push(newOrder);
+        res.status(200).json({ message: "Order placed successfully", order: newOrder });
+        
+    } catch (error) {
+        return res.status(400).json({ error: error.message });
+    }
 });
 
 app.listen(PORT, () => { console.log(`Server is running at http://localhost:${PORT}`); });

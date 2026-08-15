@@ -23,16 +23,16 @@
                 
                 <div class="hero-login-box">
                     <h2>Welcome Back</h2>
-                    <!-- FIXED: Form Action Path -->
-                    <form action="/profile" method="GET">
+                    <!-- Login form  -->
+                    <form id="landing-login-form">
                         <div class="home-form-group">
-                            <label for="login-username">Username or Email</label>
-                            <input type="text" id="login-username" name="username" placeholder="Enter your username" required>
+                            <label for="landing-login-email">Email Address</label>
+                            <input type="email" id="landing-login-email" placeholder="Enter your email" required>
                         </div>
                         
                         <div class="home-form-group">
-                            <label for="login-password">Password</label>
-                            <input type="password" id="login-password" name="password" placeholder="Enter your password" required>
+                            <label for="landing-login-password">Password</label>
+                            <input type="password" id="landing-login-password" placeholder="Enter your password" required>
                         </div>
                         
                         <button type="submit" class="btn-home-login">Secure Login</button>
@@ -83,11 +83,13 @@
         </section>
     </main>
 
+        
+    <script src="/assets/js/auth-validation.js"></script>
+    <script src="/assets/js/script.js"></script>
+
+
     <%- include('partials/footer') %>
 
-    
-    <script src="./modules/shopping_cart/script.js"></script>
-    <script src="/assets/js/script.js"></script>
 
 
 </body>

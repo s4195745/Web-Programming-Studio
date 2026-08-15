@@ -316,24 +316,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-// (Ensure this replaces the existing displayCart and displayCheckout functions in your script.js)
-
     // --- CART PAGE ---
     function displayCart() {
         const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
         const cartItemsContainer = document.querySelector(".cart-items");
         const subtotalEl = document.querySelector(".Subtotal");
         const grandTotalEl = document.querySelector(".grand-total");
-        const proceedBtn = document.querySelector(".cart-total .btn");
-        const filterInput = document.querySelector("#cart-filter");
-        const sortSelect = document.querySelector("#cart-sort");
 
         if (!cartItemsContainer || !subtotalEl || !grandTotalEl) return;
         cartItemsContainer.innerHTML = "";
 
+        const proceedBtn = document.querySelector(".cart-total .btn");
+
         if (cart.length === 0) {
             cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
-            subtotalEl.textContent = "$0.00"; grandTotalEl.textContent = "$0.00";
+            subtotalEl.textContent = "$0.00";
+            grandTotalEl.textContent = "$0.00";
             updateCartCount();
             if (proceedBtn) proceedBtn.style.display = "none";
             return;
@@ -341,25 +339,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if (proceedBtn) proceedBtn.style.display = "block";
         }
 
-        let displayableCart = [...cart];
-
-        // 1. FILTERING
-        if (filterInput && filterInput.value.trim() !== "") {
-            const query = filterInput.value.toLowerCase().trim();
-            displayableCart = displayableCart.filter(item => item.title.toLowerCase().includes(query));
-            if (displayableCart.length === 0) {
-                cartItemsContainer.innerHTML = "<p>No cart items match your filter.</p>";
-            }
-        }
-
-        // 2. SORTING
+        const sortSelect = document.querySelector("#cart-sort");
         if (sortSelect) {
             const sortValue = sortSelect.value;
-            displayableCart.sort((a, b) => {
+            cart.sort((a, b) => {
+                const priceA = getSafePrice(a.price);
+                const priceB = getSafePrice(b.price);
+
                 if (sortValue === "title-asc") return a.title.localeCompare(b.title);
                 if (sortValue === "title-desc") return b.title.localeCompare(a.title);
-                if (sortValue === "price-asc") return getSafePrice(a.price) - getSafePrice(b.price);
-                if (sortValue === "price-desc") return getSafePrice(b.price) - getSafePrice(a.price);
+                if (sortValue === "price-asc") return priceA - priceB;
+                if (sortValue === "price-desc") return priceB - priceA;
                 if (sortValue === "qty-asc") return a.quantity - b.quantity;
                 if (sortValue === "qty-desc") return b.quantity - a.quantity;
                 return 0;
@@ -369,10 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fragment = document.createDocumentFragment();
         let subtotal = 0;
         
-        displayableCart.forEach((item) => {
-            // Must find original index for accurate storage mutation!
-            const originalIndex = cart.findIndex(c => c.id === item.id && c.color === item.color && c.size === item.size);
-            
+        cart.forEach((item) => {
             const itemPrice = getSafePrice(item.price);
             const itemTotal = itemPrice * item.quantity;
             subtotal += itemTotal;
@@ -392,89 +379,56 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <span class="price">$${itemPrice.toFixed(2)}</span>
                 <div class="quantity">
-                    <input type="number" value="${item.quantity}" min="1" data-index="${originalIndex}" aria-label="Quantity">
+                    <input type="number" value="${item.quantity}" min="1" aria-label="Quantity">
                 </div>
                 <span class="total-price">$${itemTotal.toFixed(2)}</span>
-                <button class="remove" data-index="${originalIndex}" aria-label="Remove item"><i class="ri-close-line"></i></button>
+                <button class="remove" aria-label="Remove item"><i class="ri-close-line"></i></button>
             `;
 
             fragment.appendChild(cartItem);
 
-            // 3. STRICT ERROR PREVENTION
             cartItem.querySelector('input[type="number"]').addEventListener("change", (e) => {
-                const newQuantity = parseInt(e.target.value);
+                let newQuantity = Math.floor(Number(e.target.value));
                 if (isNaN(newQuantity) || newQuantity < 1) {
-                    e.target.value = cart[originalIndex].quantity; // Force visual revert
-                    showToast("Quantity must be at least 1");
-                } else {
-                    cart[originalIndex].quantity = newQuantity; 
-                    sessionStorage.setItem("cart", JSON.stringify(cart)); 
-                    displayCart(); 
+                    newQuantity = 1;
+                    e.target.value = 1; 
+                }
+                
+                let freshCart = JSON.parse(sessionStorage.getItem("cart")) || [];
+                let itemIndex = freshCart.findIndex(c => c.id === item.id && c.color === item.color && c.size === item.size);
+                
+                if (itemIndex !== -1) {
+                    freshCart[itemIndex].quantity = newQuantity;
+                    sessionStorage.setItem("cart", JSON.stringify(freshCart));
+                    displayCart();
                 }
             });
 
             cartItem.querySelector(".remove").addEventListener("click", () => {
                 showToast("Item removed from cart"); 
-                cart.splice(originalIndex, 1); 
-                sessionStorage.setItem("cart", JSON.stringify(cart)); 
-                displayCart(); 
+                
+                let freshCart = JSON.parse(sessionStorage.getItem("cart")) || [];
+                let itemIndex = freshCart.findIndex(c => c.id === item.id && c.color === item.color && c.size === item.size);
+                
+                if (itemIndex !== -1) {
+                    freshCart.splice(itemIndex, 1);
+                    sessionStorage.setItem("cart", JSON.stringify(freshCart));
+                    displayCart();
+                }
             });
         });
 
         cartItemsContainer.appendChild(fragment);
+
         subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
         grandTotalEl.textContent = `$${subtotal.toFixed(2)}`;
         updateCartCount();
 
-        if (proceedBtn && !proceedBtn.dataset.listenerAttached) {
-            proceedBtn.addEventListener("click", () => window.location.href = "/checkout");
-            proceedBtn.dataset.listenerAttached = "true";
+        if (proceedBtn) {
+            proceedBtn.addEventListener("click", () => {
+                window.location.href = "/checkout";
+            });
         }
-    }
-
-    // Bind Filter listener dynamically if we are on cart page
-    const filterInput = document.querySelector("#cart-filter");
-    if(filterInput) filterInput.addEventListener("input", displayCart);
-
-    // --- CHECKOUT PAGE LOGIC ---
-    function displayCheckout() {
-        const checkoutForm = document.getElementById("checkout-form");
-        if (!checkoutForm) return;
-
-        // [Validation logic remains same...]
-
-        checkoutForm.addEventListener("submit", async (e) => {
-            e.preventDefault(); 
-            const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
-            
-            const orderPayload = {
-                userEmail: sessionStorage.getItem("userEmail"),
-                token: sessionStorage.getItem("authToken"), // Secured Token Attachment
-                customerName: document.getElementById("name").value,
-                customerAddress: document.getElementById("address").value,
-                items: cart,
-                totalPaid: cart.reduce((sum, item) => sum + (getSafePrice(item.price) * item.quantity), 0),
-                paymentDetails: {
-                    card: document.getElementById("card").value,
-                    expiry: document.getElementById("expiry").value,
-                    cvv: document.getElementById("cvv").value
-                }
-            };
-
-            try {
-                const response = await fetch('/api/checkout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(orderPayload)
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    sessionStorage.setItem("latestOrder", JSON.stringify(data.order));
-                    sessionStorage.removeItem("cart"); 
-                    window.location.href = "/confirmation";
-                } else { alert(`Checkout Failed: ${data.error}`); }
-            } catch (error) { alert("Network error."); }
-        });
     }
 
     // --- CHECKOUT PAGE LOGIC ---
@@ -488,7 +442,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const expiryInput = document.getElementById("expiry");
         const cvvInput = document.getElementById("cvv");
 
-        // 1. ADDED: Web Storage API for Checkout Form Retention
+        // CLEAN INLINE UI MESSAGE HELPER (Uses External CSS Classes)
+        function showCheckoutMessage(message, isError = true) {
+            let existingMsg = document.querySelector('.system-msg');
+            if (existingMsg) existingMsg.remove();
+
+            const msgDiv = document.createElement('div');
+            // Assigns the CSS classes defined in your external stylesheet
+            msgDiv.className = `system-msg ${isError ? 'msg-error' : 'msg-success'}`;
+            msgDiv.textContent = message;
+
+            checkoutForm.insertBefore(msgDiv, checkoutForm.firstChild);
+        }
+
+        // Web Storage API for Checkout Form Retention
         const checkoutFields = [
             { el: nameInput, key: "checkout-name" },
             { el: addressInput, key: "checkout-address" }
@@ -505,13 +472,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // CLEAN INPUT VALIDATION (Uses External CSS Classes)
         function showError(input, isValid) {
             if (!isValid) {
-                input.style.borderColor = "red";
-                input.style.backgroundColor = "#ffe6e6"; 
+                input.classList.add('input-error');
+                input.classList.remove('input-success');
             } else {
-                input.style.borderColor = "green";
-                input.style.backgroundColor = "transparent";
+                input.classList.add('input-success');
+                input.classList.remove('input-error');
             }
         }
 
@@ -541,25 +509,29 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
             if (cart.length === 0) {
-                alert("Your cart is empty!");
-                window.location.href = "/cart";
+                showCheckoutMessage("Your cart is empty!", true);
+                setTimeout(() => window.location.href = "/cart", 2000);
                 return;
             }
 
             if (!/^[0-9\s]+$/.test(cardInput.value) || 
                 !/^(0[1-9]|1[0-2])\/[0-9]{2}$/.test(expiryInput.value) || 
                 !/^[0-9]{3,4}$/.test(cvvInput.value)) {
-                alert("Please verify your payment details!");
+                showCheckoutMessage("Please verify your payment details!", true);
                 return;
             }
 
-            const subtotal = cart.reduce((sum, item) => sum + (getSafePrice(item.price) * item.quantity), 0);
+            // FETCH CREDENTIALS FROM SESSION STORAGE
+            const userEmail = sessionStorage.getItem("userEmail");
+            const token = sessionStorage.getItem("token") || sessionStorage.getItem("userPass"); 
 
+            // SECURE PAYLOAD
             const orderPayload = {
+                userEmail: userEmail,
+                token: token,
                 customerName: nameInput.value,
                 customerAddress: addressInput.value,
                 items: cart,
-                totalPaid: subtotal,
                 paymentDetails: {
                     card: cardInput.value,
                     expiry: expiryInput.value,
@@ -579,16 +551,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     sessionStorage.setItem("latestOrder", JSON.stringify(data.order));
                     sessionStorage.removeItem("cart"); 
-                    // Clear the form retention data upon successful order
                     sessionStorage.removeItem("checkout-name");
                     sessionStorage.removeItem("checkout-address");
-                    window.location.href = "/confirmation";
+                    
+                    showCheckoutMessage("Payment Successful! Redirecting to receipt...", false);
+                    setTimeout(() => window.location.href = "/confirmation", 1500);
                 } else {
-                    alert(`Checkout Failed: ${data.error}`);
+                    showCheckoutMessage(`Checkout Failed: ${data.error}`, true);
                 }
             } catch (error) {
                 console.error("Error during checkout:", error);
-                alert("An error occurred while processing your order. Please try again.");
+                showCheckoutMessage("An error occurred while processing your order. Please try again.", true);
             }
         });
     }
