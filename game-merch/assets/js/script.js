@@ -133,6 +133,11 @@ document.addEventListener('DOMContentLoaded', () => {
         displayCart();
         const sortSelect = document.querySelector("#cart-sort");
         if (sortSelect) sortSelect.addEventListener("change", displayCart);
+        
+        // NEW FILTER EVENT LISTENER
+        const filterInput = document.querySelector("#cart-filter");
+        if (filterInput) filterInput.addEventListener("input", displayCart);
+        
     } else if (isCheckoutPage) {
         displayCheckout();
     } else if (isConfirmationPage) {
@@ -141,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- PRODUCT LIST & FILTERING (INDEX PAGE) ---
     async function displayProducts() {
-        productContainer.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #666;'>Loading products...</p>";
+        productContainer.innerHTML = "<p class='status-msg'>Loading products...</p>";
         
         try {
             const response = await fetch('/api/products');
@@ -166,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
     
             if (filteredProducts.length === 0) {
-                productContainer.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #666;'>No products found matching your criteria.</p>";
+                productContainer.innerHTML = "<p class='status-msg'>No products found matching your criteria.</p>";
                 return;
             }
     
@@ -199,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
         } catch (error) {
             console.error("Error loading products:", error);
-            productContainer.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: red;'>Unable to load products. Please try again later.</p>";
+            productContainer.innerHTML = "<p class='status-msg error'>Unable to load products. Please try again later.</p>";
         }
     }
 
@@ -318,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- CART PAGE ---
     function displayCart() {
-        const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+        let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
         const cartItemsContainer = document.querySelector(".cart-items");
         const subtotalEl = document.querySelector(".Subtotal");
         const grandTotalEl = document.querySelector(".grand-total");
@@ -328,8 +333,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const proceedBtn = document.querySelector(".cart-total .btn");
 
+        // FILTER LOGIC
+        const filterInput = document.querySelector("#cart-filter");
+        if (filterInput && filterInput.value.trim() !== "") {
+            const searchTerm = filterInput.value.toLowerCase().trim();
+            cart = cart.filter(item => item.title.toLowerCase().includes(searchTerm));
+        }
+
         if (cart.length === 0) {
-            cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
+            cartItemsContainer.innerHTML = "<p>No items found.</p>";
             subtotalEl.textContent = "$0.00";
             grandTotalEl.textContent = "$0.00";
             updateCartCount();
@@ -371,9 +383,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <img src="${item.image}" alt="${item.title}">
                     <div class="item-detail">
                         <p>${item.title}</p>
-                        <div style="margin-top: 8px;">
+                        <div class="item-variants">
                             <span class="size">${item.size}</span>
-                            <span class="color" style="margin-left: 8px;">${item.color}</span>
+                            <span class="color">${item.color}</span>
                         </div>
                     </div>
                 </div>
@@ -448,7 +460,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (existingMsg) existingMsg.remove();
 
             const msgDiv = document.createElement('div');
-            // Assigns the CSS classes defined in your external stylesheet
             msgDiv.className = `system-msg ${isError ? 'msg-error' : 'msg-success'}`;
             msgDiv.textContent = message;
 
@@ -579,29 +590,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let itemsHTML = latestOrder.items.map(item => `
-            <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #eee;">
-                <div style="display: flex; gap: 15px; align-items: center;">
-                    <img src="${item.image}" style="width: 50px; border-radius: 5px;" alt="${item.title}">
+            <div class="receipt-item">
+                <div class="receipt-item-details">
+                    <img src="${item.image}" class="receipt-item-img" alt="${item.title}">
                     <div>
-                        <p style="font-weight: 600; margin-bottom: 5px;">${item.title}</p>
-                        <p style="font-size: 14px; color: #666;">Qty: ${item.quantity} | ${item.color} | ${item.size}</p>
+                        <p class="receipt-item-title">${item.title}</p>
+                        <p class="receipt-item-meta">Qty: ${item.quantity} | ${item.color} | ${item.size}</p>
                     </div>
                 </div>
-                <span style="font-weight: bold;">$${(getSafePrice(item.price) * item.quantity).toFixed(2)}</span>
+                <span class="receipt-price">$${(getSafePrice(item.price) * item.quantity).toFixed(2)}</span>
             </div>
         `).join('');
 
         orderBox.innerHTML = `
-            <h3 style="margin-bottom: 10px;">Shipping To:</h3>
-            <p style="margin-bottom: 5px;"><strong>${latestOrder.customerName}</strong></p>
-            <p style="margin-bottom: 25px; color: #555;">${latestOrder.customerAddress}</p>
+            <h3>Shipping To:</h3>
+            <p><strong>${latestOrder.customerName}</strong></p>
+            <p class="mb-20">${latestOrder.customerAddress}</p>
             
-            <h3 style="margin-bottom: 15px;">Items Purchased:</h3>
+            <h3>Items Purchased:</h3>
             ${itemsHTML}
             
-            <div style="display: flex; justify-content: space-between; margin-top: 20px; font-size: 20px;">
+            <div class="receipt-total">
                 <strong>Total Paid:</strong>
-                <strong style="color: #e35f26;">$${latestOrder.totalPaid.toFixed(2)}</strong>
+                <strong class="amount">$${latestOrder.totalPaid.toFixed(2)}</strong>
             </div>
         `;
     }

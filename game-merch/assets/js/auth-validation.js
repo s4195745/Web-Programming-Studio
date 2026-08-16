@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const currentUsername = sessionStorage.getItem("username"); 
     const currentEmail = sessionStorage.getItem("userEmail"); 
-    const currentToken = sessionStorage.getItem("token"); // SECURE JWT TOKEN
+    const currentToken = sessionStorage.getItem("token"); 
 
     const profileNameEl = document.querySelector(".profile-name");
     const profileEmailEl = document.querySelector(".profile-email");
@@ -28,49 +28,41 @@ document.addEventListener('DOMContentLoaded', () => {
     function showAuthMessage(container, message, isError = true) {
         if (!container) return;
         
-        // Remove any existing message
-        const existingMsg = container.querySelector('.auth-system-msg');
+        let existingMsg = container.querySelector('.system-msg');
         if (existingMsg) existingMsg.remove();
 
-        // Create new responsive message element
         const msgDiv = document.createElement('div');
-        msgDiv.className = `auth-system-msg`;
-        msgDiv.style.padding = '12px';
-        msgDiv.style.marginBottom = '20px';
-        msgDiv.style.borderRadius = '6px';
-        msgDiv.style.fontSize = '14px';
-        msgDiv.style.textAlign = 'center';
-        msgDiv.style.fontWeight = '600';
-        msgDiv.style.backgroundColor = isError ? '#ffe6e6' : '#e6ffe6';
-        msgDiv.style.color = isError ? '#d32f2f' : '#2e7d32';
-        msgDiv.style.border = `1px solid ${isError ? '#d32f2f' : '#2e7d32'}`;
+        msgDiv.className = `system-msg ${isError ? 'msg-error' : 'msg-success'}`;
         msgDiv.textContent = message;
 
-        // Insert at the top of the container/form
         container.insertBefore(msgDiv, container.firstChild);
     }
 
-    // --- 3. VALIDATION UTILITIES ---
+    // --- 3. VALIDATION UTILITIES (Inline CSS Removed) ---
     const showError = (inputId, message) => {
         const errorSpan = document.getElementById(`${inputId}-error`);
         if (errorSpan) {
             errorSpan.textContent = message;
-            errorSpan.style.color = '#d32f2f';
-            errorSpan.style.fontSize = '0.85rem';
-            errorSpan.style.display = 'block';
+            errorSpan.classList.add('show-error');
         }
         const targetInput = document.getElementById(inputId);
-        if (targetInput) targetInput.style.borderColor = '#d32f2f';
+        if (targetInput) {
+            targetInput.classList.remove('input-success');
+            targetInput.classList.add('input-error');
+        }
     };
 
     const clearError = (inputId) => {
         const errorSpan = document.getElementById(`${inputId}-error`);
         if (errorSpan) {
             errorSpan.textContent = '';
-            errorSpan.style.display = 'none';
+            errorSpan.classList.remove('show-error');
         }
         const targetInput = document.getElementById(inputId);
-        if (targetInput) targetInput.style.borderColor = '#2e7d32';
+        if (targetInput) {
+            targetInput.classList.remove('input-error');
+            targetInput.classList.add('input-success');
+        }
     };
 
     const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -141,105 +133,62 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 5. LOGIN LOGIC ---
+    // --- 5. REUSABLE LOGIN LOGIC ---
+    async function processLogin(formElement, email, password) {
+        if (email === "" || password === "") {
+            showAuthMessage(formElement, "Please enter both email and password.", true);
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                sessionStorage.setItem("isLoggedIn", "true");
+                sessionStorage.setItem("userRole", data.user.role);
+                sessionStorage.setItem("username", data.user.username);
+                sessionStorage.setItem("userEmail", data.user.email);
+                sessionStorage.setItem("token", data.token); 
+                if (data.user.avatar) sessionStorage.setItem('profileAvatarBase64', data.user.avatar);
+                
+                showAuthMessage(formElement, "Login successful! Redirecting...", false);
+                
+                setTimeout(() => {
+                    if (data.user.role === "admin") window.location.href = "/admin"; 
+                    else window.location.href = "/profile"; 
+                }, 1000);
+            } else {
+                showAuthMessage(formElement, data.error, true);
+            }
+        } catch (error) {
+            console.error("Error during login:", error);
+            showAuthMessage(formElement, "A network error occurred. Please try again.", true);
+        }
+    }
+
     const loginForm = document.getElementById('login-form'); 
     if (loginForm) {
-        const loginEmailInput = document.getElementById('login-email');
-        const loginPasswordInput = document.getElementById('login-password');
-
-        loginForm.addEventListener('submit', async (e) => {
+        loginForm.addEventListener('submit', (e) => {
             e.preventDefault(); 
-
-            const email = loginEmailInput.value.trim();
-            const password = loginPasswordInput.value.trim();
-
-            if (email === "" || password === "") {
-                showAuthMessage(loginForm, "Please enter both email and password.", true);
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    sessionStorage.setItem("isLoggedIn", "true");
-                    sessionStorage.setItem("userRole", data.user.role);
-                    sessionStorage.setItem("username", data.user.username);
-                    sessionStorage.setItem("userEmail", data.user.email);
-                    
-                    // SAVE SECURE TOKEN
-                    sessionStorage.setItem("token", data.token); 
-                    if (data.user.avatar) sessionStorage.setItem('profileAvatarBase64', data.user.avatar);
-                    
-                    showAuthMessage(loginForm, "Login successful! Redirecting...", false);
-                    
-                    setTimeout(() => {
-                        if (data.user.role === "admin") window.location.href = "/admin"; 
-                        else window.location.href = "/profile"; 
-                    }, 1000);
-                } else {
-                    showAuthMessage(loginForm, data.error, true);
-                }
-            } catch (error) {
-                console.error("Error during login:", error);
-                showAuthMessage(loginForm, "A network error occurred. Please try again.", true);
-            }
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+            processLogin(loginForm, email, password);
         });
     }
 
-    // --- 5B. LANDING PAGE LOGIN LOGIC ---
     const landingLoginForm = document.getElementById('landing-login-form');
     if (landingLoginForm) {
-        const landingEmailInput = document.getElementById('landing-login-email');
-        const landingPasswordInput = document.getElementById('landing-login-password');
-
-        landingLoginForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Stop the browser from redirecting
-
-            const email = landingEmailInput.value.trim();
-            const password = landingPasswordInput.value.trim();
-
-            if (email === "" || password === "") {
-                showAuthMessage(landingLoginForm, "Please enter both email and password.", true);
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    sessionStorage.setItem("isLoggedIn", "true");
-                    sessionStorage.setItem("userRole", data.user.role);
-                    sessionStorage.setItem("username", data.user.username);
-                    sessionStorage.setItem("userEmail", data.user.email);
-                    sessionStorage.setItem("token", data.token); 
-                    if (data.user.avatar) sessionStorage.setItem('profileAvatarBase64', data.user.avatar);
-                    
-                    showAuthMessage(landingLoginForm, "Login successful! Redirecting...", false);
-                    
-                    setTimeout(() => {
-                        if (data.user.role === "admin") window.location.href = "/admin"; 
-                        else window.location.href = "/profile"; 
-                    }, 1000);
-                } else {
-                    showAuthMessage(landingLoginForm, data.error, true);
-                }
-            } catch (error) {
-                console.error("Error during login:", error);
-                showAuthMessage(landingLoginForm, "A network error occurred. Please try again.", true);
-            }
+        landingLoginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('landing-login-email').value.trim();
+            const password = document.getElementById('landing-login-password').value.trim();
+            processLogin(landingLoginForm, email, password);
         });
     }
 
@@ -261,7 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const newDescription = editDesc.value.trim();
             const newAvatar = sessionStorage.getItem('profileAvatarBase64');
             
-            // The dashboard card containing the form inputs
             const formCard = editProfileForm.querySelector('.dashboard-card');
 
             try {
@@ -270,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         currentEmail: currentEmail,
-                        token: currentToken, // Secured with token
+                        token: currentToken, 
                         newUsername, 
                         newEmail, 
                         newDescription,
@@ -285,9 +233,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     sessionStorage.setItem("userEmail", data.user.email);
                     showAuthMessage(formCard, "Profile updated successfully!", false);
                     
-                    // Remove message after 3 seconds
                     setTimeout(() => {
-                        const msg = formCard.querySelector('.auth-system-msg');
+                        const msg = formCard.querySelector('.system-msg');
                         if(msg) msg.remove();
                     }, 3000);
                 } else {
@@ -313,11 +260,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         confirmNewInput.addEventListener('input', () => {
-            if (confirmNewInput.value !== newPassInput.value) showError('confirm-new-error', 'Passwords do not match.');
+            if (confirmNewInput.value !== newPassInput.value) showError('confirm-new-password', 'Passwords do not match.');
             else {
-                const errSpan = document.getElementById('confirm-new-error');
-                if (errSpan) errSpan.textContent = '';
-                confirmNewInput.style.borderColor = '#2e7d32';
+                clearError('confirm-new-password');
             }
         });
 
@@ -410,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-// --- 10. VERIFY CURRENT PASSWORD LOGIC ---
+    // --- 10. VERIFY CURRENT PASSWORD LOGIC ---
     const verifyPassForm = document.getElementById('verify-password-form');
     if (verifyPassForm) {
         verifyPassForm.addEventListener('submit', async (e) => {
@@ -437,7 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     const data = await response.json();
                     showAuthMessage(formCard, data.error || "Incorrect current password. Please try again.", true);
-                    passwordInput.style.borderColor = '#d32f2f';
+                    passwordInput.classList.add('input-error');
                 }
             } catch (error) {
                 console.error("Error verifying password:", error);
@@ -491,15 +436,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                // We send it to our backend API
                 await fetch('/api/forgot-password', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email })
                 });
 
-                // Security best practice: Always show the same success message 
-                // regardless of whether the email exists in the database or not.
                 showAuthMessage(forgotPassForm, "Processing request...", false);
                 
                 setTimeout(() => {

@@ -204,6 +204,7 @@
     align-items: center;
     margin-bottom: 15px;
     gap: 10px;
+    flex-wrap: wrap; /* Added this to allow nice wrapping on smaller screens */
 }
 
 .cart-controls label {
@@ -491,6 +492,75 @@
     background-color: transparent !important;
 }
 
+/* ================= CART FILTER  ================= */
+.text-center { text-align: center; }
+
+.cart-filter-input, .cart-sort-select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+    font-family: inherit;
+}
+
+.cart-filter-input {
+    margin-right: 15px;
+}
+
+.status-msg {
+    grid-column: 1/-1;
+    text-align: center;
+    color: #666;
+    padding: 20px 0;
+}
+
+.status-msg.error {
+    color: #d32f2f;
+}
+
+/* Receipt Elements */
+.receipt-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.receipt-item-details {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.receipt-item-img {
+    width: 50px;
+    border-radius: 5px;
+}
+
+.receipt-item-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.receipt-item-meta {
+    font-size: 14px;
+    color: #666;
+}
+
+.receipt-price {
+    font-weight: bold;
+}
+
+.receipt-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    font-size: 20px;
+}
+
+.receipt-total .amount {
+    color: #e35f26;
+}
 
 /* ================= MEDIA QUERIES (Responsive) ================= */
 @media (max-width: 768px) {
