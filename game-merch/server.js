@@ -134,7 +134,6 @@ const users = [
     { id: 2, email: "admin@lootbox.com", password: hashPassword("AdminPassword1!"), role: "admin", username: "Admin", description: "Site Administrator", avatar: null, token: null }
 ];
 const orders = [];
-const orders = [];
 
 // --- VIEW ROUTES ---
 app.get('/', (req, res) => { res.render('index'); });
