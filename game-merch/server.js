@@ -1,6 +1,12 @@
 const express = require('express');
+const crypto = require('crypto'); 
 const app = express();
 const PORT = 3000;
+
+
+function hashPassword(password) {
+    return crypto.createHash('sha256').update(password).digest('hex');
+}
 
 app.set('view engine', 'ejs');
 app.use('/assets', express.static('assets'));
@@ -197,7 +203,10 @@ app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: "Email and password are required!" });
     
-    const user = users.find(u => u.email === email && u.password === password);
+    // Hash the incoming password to compare with the stored hashed password
+    const hashedPassword = hashPassword(password);
+    const user = users.find(u => u.email === email && u.password === hashedPassword);
+    
     if (user) {
         // Generate mock JWT Token
         const token = "mock_token_" + Buffer.from(user.email + Date.now()).toString('base64');
