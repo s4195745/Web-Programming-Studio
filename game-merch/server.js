@@ -17,7 +17,7 @@ const cartRoutes = require('./routes/cartRoutes');
 // UI View Routes
 app.use('/', viewRoutes);
 
-// API Routes mounted to '/api' so client JS fetch('/api/login') doesn't break
+// API Routes 
 app.use('/api', authRoutes);
 app.use('/api', cartRoutes);
 
