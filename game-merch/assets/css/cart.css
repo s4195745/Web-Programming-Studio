@@ -320,6 +320,11 @@
 }
 
 /* ================= CHECKOUT ================= */
+
+.checkout-heading {
+    text-align: center;
+}
+
 .checkout-page {
     padding: 130px 9% 30px;
     max-width: 800px;
@@ -493,6 +498,28 @@
 }
 
 /* ================= CART FILTER  ================= */
+
+.filter-label {
+    font-weight: 600;
+}
+
+.filter-input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+    font-family: inherit; /* Inherits 'Outfit' from main.css */
+    margin-right: 15px;
+    border-radius: 4px;
+}
+
+.sort-select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+    font-family: inherit;
+    border-radius: 4px;
+}
+
 .text-center { text-align: center; }
 
 .cart-filter-input, .cart-sort-select {

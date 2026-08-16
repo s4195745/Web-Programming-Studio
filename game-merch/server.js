@@ -18,11 +18,11 @@ const products = [
         colors: [
             {
                 name: "White",
-                mainImage: "../../assets/cart.images/white/white_hk_main.webp",
+                mainImage: "../../assets/cart.images/white/white_hk_main.jpg",
                 thumbnails: [
-                    "../../assets/cart.images/white/white_hk_photo1.webp",
-                    "../../assets/cart.images/white/white_hk_photo2.webp",
-                    "../../assets/cart.images/white/white_hk_photo3.webp"
+                    "../../assets/cart.images/white/white_hk_photo1.jpg",
+                    "../../assets/cart.images/white/white_hk_photo2.jpg",
+                    "../../assets/cart.images/white/white_hk_photo3.jpg"
                 ],
                 sizes: ["S", "M", "L", "XL", "XXL"]
             },
@@ -77,31 +77,31 @@ const products = [
         colors: [
             {
                 name: "Brown",
-                mainImage: "../../assets/cart.images/brown/enfi_brown_main.avif",
+                mainImage: "../../assets/cart.images/brown/enfi_brown_main.jpg",
                 thumbnails: [
-                    "../../assets/cart.images/brown/enfi_brown_photo1.avif",
-                    "../../assets/cart.images/brown/enfi_brown_photo2.avif",
-                    "../../assets/cart.images/brown/enfi_brown_photo3.avif"
+                    "../../assets/cart.images/brown/enfi_brown_photo1.jpg",
+                    "../../assets/cart.images/brown/enfi_brown_photo2.jpg",
+                    "../../assets/cart.images/brown/enfi_brown_photo3.jpg"
                 ],
                 sizes: ["S", "M", "L"]
             },
             {
                 name: "Red",
-                mainImage: "../../assets/cart.images/red/enfi_red_main.webp",
+                mainImage: "../../assets/cart.images/red/enfi_red_main.jpg",
                 thumbnails: [
-                    "../../assets/cart.images/red/enfi_red_photo1.avif",
-                    "../../assets/cart.images/red/enfi_red_photo2.avif",
-                    "../../assets/cart.images/red/enfi_red_photo3.avif"
+                    "../../assets/cart.images/red/enfi_red_photo1.jpg",
+                    "../../assets/cart.images/red/enfi_red_photo2.jpg",
+                    "../../assets/cart.images/red/enfi_red_photo3.jpg"
                 ],
                 sizes: ["S", "M", "L"]
             },
             {
                 name: "Blue",
-                mainImage: "../../assets/cart.images/blue/enfi_blue_main.avif",
+                mainImage: "../../assets/cart.images/blue/enfi_blue_main.jpg",
                 thumbnails: [
-                    "../../assets/cart.images/blue/enfi_blue_photo1.avif",
-                    "../../assets/cart.images/blue/enfi_blue_photo2.avif",
-                    "../../assets/cart.images/blue/enfi_blue_photo3.avif"
+                    "../../assets/cart.images/blue/enfi_blue_photo1.jpg",
+                    "../../assets/cart.images/blue/enfi_blue_photo2.jpg",
+                    "../../assets/cart.images/blue/enfi_blue_photo3.jpg"
                 ],
                 sizes: ["S","M", "L"]
             }
@@ -116,11 +116,11 @@ const products = [
         colors: [
             {
                 name: "White",
-                mainImage: "../../assets/cart.images/white/pengu_white_main.webp",
+                mainImage: "../../assets/cart.images/white/pengu_white_main.jpg",
                 thumbnails: [
-                    "../../assets/cart.images/white/pengu_white_photo1.webp",
-                    "../../assets/cart.images/white/pengu_white_photo2.webp",
-                    "../../assets/cart.images/white/pengu_white_photo3.webp"
+                    "../../assets/cart.images/white/pengu_white_photo1.jpg",
+                    "../../assets/cart.images/white/pengu_white_photo2.jpg",
+                    "../../assets/cart.images/white/pengu_white_photo3.jpg"
                 ],
                 sizes: ["S", "M", "L"]
             }

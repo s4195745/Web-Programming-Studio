@@ -14,13 +14,13 @@
 
     <div class="cart">
         <!-- Filter & Sorting UI -->
-        <div class="cart-controls" style="display: flex; justify-content: flex-end; margin-bottom: 15px; gap: 10px; align-items: center; flex-wrap: wrap;">
+        <div class="cart-controls">
             
-            <label for="cart-filter" style="font-weight: 600;">Filter:</label>
-            <input type="text" id="cart-filter" placeholder="Search items..." style="padding: 8px; border: 1px solid #ccc; outline: none; font-family: 'Outfit', serif; margin-right: 15px;">
+            <label for="cart-filter" class="filter-label">Filter:</label>
+            <input type="text" id="cart-filter" class="filter-input" placeholder="Search items...">
 
-            <label for="cart-sort" style="font-weight: 600;">Sort by:</label>
-            <select id="cart-sort" style="padding: 8px; border: 1px solid #ccc; outline: none; font-family: 'Outfit', serif;">
+            <label for="cart-sort" class="filter-label">Sort by:</label>
+            <select id="cart-sort" class="sort-select">
                 <option value="default">Recently Added</option>
                 <option value="title-asc">Title (A-Z)</option>
                 <option value="title-desc">Title (Z-A)</option>
