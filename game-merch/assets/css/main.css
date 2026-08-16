@@ -288,9 +288,63 @@ footer.site_footer {
     margin-top: auto; 
 }
 
-/* ================= MOBILE RESPONSIVENESS FOR GLOBAL SHARED COMPONENTS ================= */
+/* ================= IN-PAGE SYSTEM MESSAGES ================= */
+.system-msg {
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    text-align: center;
+    font-weight: 600;
+}
 
-/* ================= UTILITY CLASSES ================= */
+.msg-error {
+    background-color: #ffe6e6;
+    color: #d32f2f;
+    border: 1px solid #d32f2f;
+}
+
+.msg-success {
+    background-color: #e6ffe6;
+    color: #2e7d32;
+    border: 1px solid #2e7d32;
+}
+
+/* ================= INPUT VALIDATION STATES ================= */
+.input-error {
+    border-color: #d32f2f !important;
+    background-color: #ffe6e6 !important;
+}
+
+.input-success {
+    border-color: #2e7d32 !important;
+    background-color: transparent !important;
+}
+
+.error-msg {
+    display: none; /* Hidden by default */
+}
+
+.show-error {
+    color: #d32f2f;
+    font-size: 0.85rem;
+    display: block !important;
+    margin-top: 5px;
+}
+
+.d-none {
+    display: none !important;
+}
+
+.d-flex {
+    display: flex !important;
+}
+
+.p-relative {
+    position: relative !important;
+}
+
+/* ================= MOBILE RESPONSIVENESS FOR GLOBAL SHARED COMPONENTS ================= */
 
 .sr-only {
     position: absolute;

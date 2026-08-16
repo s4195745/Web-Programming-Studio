@@ -134,7 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const sortSelect = document.querySelector("#cart-sort");
         if (sortSelect) sortSelect.addEventListener("change", displayCart);
         
-        // NEW FILTER EVENT LISTENER
         const filterInput = document.querySelector("#cart-filter");
         if (filterInput) filterInput.addEventListener("input", displayCart);
         
@@ -286,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateProductDisplay(selectedColor);
 
-        // ADD TO CART
+        // ADD TO CART (Refactored to remove inline CSS)
         addToCartBtn.addEventListener("click", () => {
             let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
             const existingItem = cart.find(item => item.id === productData.id && item.color === selectedColor.name && item.size === selectedSize);
@@ -309,7 +308,8 @@ document.addEventListener('DOMContentLoaded', () => {
             updateCartCount(); 
             showToast(`${productData.title} added to cart!`); 
             
-            addToCartBtn.style.position = "relative"; 
+            // Replaced .style.position with a utility class from main.css
+            addToCartBtn.classList.add("p-relative"); 
             const plusOne = document.createElement("span");
             plusOne.textContent = "+1";
             plusOne.classList.add("plus-one-anim");
@@ -317,6 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             setTimeout(() => {
                 plusOne.remove();
+                addToCartBtn.classList.remove("p-relative");
             }, 800);
         });
     }
@@ -340,15 +341,16 @@ document.addEventListener('DOMContentLoaded', () => {
             cart = cart.filter(item => item.title.toLowerCase().includes(searchTerm));
         }
 
+        // Refactored to remove inline CSS display toggling
         if (cart.length === 0) {
             cartItemsContainer.innerHTML = "<p>No items found.</p>";
             subtotalEl.textContent = "$0.00";
             grandTotalEl.textContent = "$0.00";
             updateCartCount();
-            if (proceedBtn) proceedBtn.style.display = "none";
+            if (proceedBtn) proceedBtn.classList.add("d-none");
             return;
         } else {
-            if (proceedBtn) proceedBtn.style.display = "block";
+            if (proceedBtn) proceedBtn.classList.remove("d-none");
         }
 
         const sortSelect = document.querySelector("#cart-sort");
@@ -454,17 +456,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const expiryInput = document.getElementById("expiry");
         const cvvInput = document.getElementById("cvv");
 
-        // CLEAN INLINE UI MESSAGE HELPER (Uses External CSS Classes)
-        function showCheckoutMessage(message, isError = true) {
-            let existingMsg = document.querySelector('.system-msg');
+        // Helper to use the global message function from auth-validation.js or a local fallback
+        const displayMessage = window.showAuthMessage || function(container, message, isError = true) {
+            let existingMsg = container.querySelector('.system-msg');
             if (existingMsg) existingMsg.remove();
-
             const msgDiv = document.createElement('div');
             msgDiv.className = `system-msg ${isError ? 'msg-error' : 'msg-success'}`;
             msgDiv.textContent = message;
-
-            checkoutForm.insertBefore(msgDiv, checkoutForm.firstChild);
-        }
+            container.insertBefore(msgDiv, container.firstChild);
+        };
 
         // Web Storage API for Checkout Form Retention
         const checkoutFields = [
@@ -520,7 +520,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
             if (cart.length === 0) {
-                showCheckoutMessage("Your cart is empty!", true);
+                displayMessage(checkoutForm, "Your cart is empty!", true);
                 setTimeout(() => window.location.href = "/cart", 2000);
                 return;
             }
@@ -528,7 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!/^[0-9\s]+$/.test(cardInput.value) || 
                 !/^(0[1-9]|1[0-2])\/[0-9]{2}$/.test(expiryInput.value) || 
                 !/^[0-9]{3,4}$/.test(cvvInput.value)) {
-                showCheckoutMessage("Please verify your payment details!", true);
+                displayMessage(checkoutForm, "Please verify your payment details!", true);
                 return;
             }
 
@@ -565,14 +565,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     sessionStorage.removeItem("checkout-name");
                     sessionStorage.removeItem("checkout-address");
                     
-                    showCheckoutMessage("Payment Successful! Redirecting to receipt...", false);
+                    displayMessage(checkoutForm, "Payment Successful! Redirecting to receipt...", false);
                     setTimeout(() => window.location.href = "/confirmation", 1500);
                 } else {
-                    showCheckoutMessage(`Checkout Failed: ${data.error}`, true);
+                    displayMessage(checkoutForm, `Checkout Failed: ${data.error}`, true);
                 }
             } catch (error) {
                 console.error("Error during checkout:", error);
-                showCheckoutMessage("An error occurred while processing your order. Please try again.", true);
+                displayMessage(checkoutForm, "An error occurred while processing your order. Please try again.", true);
             }
         });
     }

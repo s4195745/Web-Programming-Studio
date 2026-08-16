@@ -130,9 +130,10 @@ const products = [
 
 
 const users = [
-    { id: 1, email: "nguyenthechinh2807@gmail.com", password: "Password123!", role: "customer", username: "Nguyen The Chinh", description: "Information Technology student.", avatar: null, token: null },
-    { id: 2, email: "admin@lootbox.com", password: "AdminPassword1!", role: "admin", username: "Admin", description: "Site Administrator", avatar: null, token: null }
+    { id: 1, email: "nguyenthechinh2807@gmail.com", password: hashPassword("Password123!"), role: "customer", username: "Nguyen The Chinh", description: "Information Technology student.", avatar: null, token: null },
+    { id: 2, email: "admin@lootbox.com", password: hashPassword("AdminPassword1!"), role: "admin", username: "Admin", description: "Site Administrator", avatar: null, token: null }
 ];
+const orders = [];
 const orders = [];
 
 // --- VIEW ROUTES ---
@@ -181,7 +182,7 @@ app.post('/api/register', (req, res) => {
         id: users.length + 1, 
         username, 
         email, 
-        password, 
+        password: hashPassword(password), 
         description, 
         role: "customer",
         avatar: null,
@@ -239,7 +240,7 @@ app.post('/api/verify-password', (req, res) => {
     const { email, token, password } = req.body;
     const user = users.find(u => u.email === email && u.token === token);
     if (!user) return res.status(401).json({ error: "Invalid session." });
-    if (user.password !== password) return res.status(401).json({ error: "Incorrect current password." });
+    if (user.password !== hashPassword(password)) return res.status(401).json({ error: "Incorrect current password." });
     res.status(200).json({ message: "Verified." });
 });
 
@@ -251,7 +252,7 @@ app.put('/api/change-password', (req, res) => {
     const user = users.find(u => u.email === email && u.token === token);
     if (!user) return res.status(401).json({ error: "Invalid session." });
 
-    user.password = newPassword;
+    user.password = hashPassword(newPassword);
     res.status(200).json({ message: "Password updated successfully." });
 });
 
@@ -272,7 +273,7 @@ app.post('/api/forgot-password', (req, res) => {
     res.status(200).json({ message: "Reset link sent." });
 });
 
-// CHECKOUT: Secured with Token AND Server-Side Price Calculation
+// CHECKOUT
 app.post('/api/checkout', (req, res) => {
     const { userEmail, token, customerName, customerAddress, items, paymentDetails } = req.body;
 
@@ -297,19 +298,21 @@ app.post('/api/checkout', (req, res) => {
         // 3. SERVER-SIDE VALIDATION: Recalculate total securely using DB prices
         let secureTotalPaid = 0;
         const verifiedItems = items.map(clientItem => {
+            if (!clientItem.quantity || clientItem.quantity < 1 || isNaN(clientItem.quantity)) {
+                throw new Error("Invalid item quantity detected.");
+            }
+
             const dbProduct = products.find(p => p.id === clientItem.id);
             if (!dbProduct) throw new Error(`Product ${clientItem.id} not found in database.`);
             
             secureTotalPaid += (dbProduct.price * clientItem.quantity);
             
-            // Enforce the server's price, ignore the client's price
             return { ...clientItem, price: dbProduct.price };
         });
 
-        // 4. Create Order
         const newOrder = { 
             id: orders.length + 1, 
-            userId: user.id, // Tie the order to the authenticated user
+            userId: user.id, 
             customerName, 
             customerAddress, 
             items: verifiedItems, 
