@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
 
   const postFeed = document.getElementById('postFeed');
   const searchInput = document.querySelector('.search-input');
@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchTypeSelect = document.querySelector('.search-type-select');
   const categorySelect = document.querySelector('.category-select');
 
-  // forms for user blog
   const postForm = document.querySelector('.post-form');
   const postIdInput = document.getElementById('post-id');
   const titleInput = document.getElementById('post-title');
@@ -19,16 +18,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const submitBtn = postForm ? postForm.querySelector('.submit-btn') : null;
   const userPostsList = document.querySelector('.user-posts-list');
 
-  // currently logged 
-    const CURRENT_USER = window.currentUser || 'Guest';
+  // Retrieve logged-in account name dynamically
+  let CURRENT_USER = window.currentUserAccount || '';
 
-  // pagination
-  let allPosts = [];
-  let currentPage = 1;
-  const postsPerPage = 10;
-  let isLoading = false;
+  if (!CURRENT_USER) {
+    try {
+      const res = await fetch('/api/current-user');
+      const data = await res.json();
+      CURRENT_USER = data.accountName !== 'Guest' ? data.accountName : '';
+    } catch (e) {
+      console.error('Failed to get name:', e);
+    }
+  }
 
-  // blog.html - main feed
+  // Main Feed 
   if (postFeed) {
     const fetchAndRenderFeed = () => {
       const query = searchInput ? searchInput.value.trim() : '';
@@ -37,98 +40,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const params = new URLSearchParams({ query, searchType, category });
 
-      // reset paignation on search/filter/new 10 post
-      currentPage = 1;
-      postFeed.innerHTML = '';
-
       fetch(`/api/posts?${params.toString()}`)
         .then(res => res.json())
         .then(posts => {
-          allPosts = posts;
-
-          if (allPosts.length === 0) {
+          if (posts.length === 0) {
             postFeed.innerHTML = '<p class="no-posts">No blog posts found.</p>';
             return;
           }
 
-          renderNextBatch();
+          postFeed.innerHTML = posts.map(post => `
+            <article class="blog-card" id="card-${post.id}">
+              <div class="card-image-wrapper">
+                <img src="${post.imageUrl}" alt="${post.title}" class="card-image" onerror="this.src='https://via.placeholder.com/600x338?text=No+Image'" />
+              </div>
+              <div class="category">
+                <span class="icon">${post.categoryIcon || '📝'}</span>
+                <span class="category-name">${post.category}</span>
+              </div>
+              <h2 class="card-title">${post.title}</h2>
+              <p class="card-description">${post.summary}</p>
+              <div class="card-meta">${post.dateAdded} • By ${post.author}</div>
+              
+              <div class="detailed-content" id="detail-${post.id}" style="display: none; margin-top: 15px;">
+                <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ccc;" />
+                <div class="article-body">
+                  <p>${post.content ? post.content.replace(/\n/g, '<br>') : ''}</p>
+                </div>
+                ${post.secondaryImage ? `<img src="${post.secondaryImage}" alt="Secondary Illustration" class="article-image" style="margin-top:15px; max-width:100%;" />` : ''}
+                
+                <section class="comments-section" style="margin-top:20px;">
+                  <h3>Comments</h3>
+                  <form class="comment-form" onsubmit="submitComment(event, '${post.id}')">
+                    <textarea id="commentInput-${post.id}" placeholder="${CURRENT_USER ? 'Write a comment as ' + CURRENT_USER + '...' : 'Write a comment as Guest...'}" rows="3" class="comment-input" required></textarea>
+                    <button type="submit" class="submit-btn">Post Comment</button>
+                  </form>
+                  <div class="comment-list" id="commentList-${post.id}">
+                    ${renderCommentsHtml(post.comments)}
+                  </div>
+                </section>
+              </div>
+
+              <button type="button" class="read-link" onclick="togglePostDetail('${post.id}')" style="background:none; border:none; cursor:pointer; padding:0; text-decoration:underline;">
+                Read More
+              </button>
+            </article>
+          `).join('');
         })
         .catch(err => {
           console.error('Error fetching posts:', err);
           postFeed.innerHTML = '<p class="error-msg">Failed to load posts.</p>';
         });
     };
-
-    // next 10 post render
-    const renderNextBatch = () => {
-      if (isLoading) return;
-      isLoading = true;
-
-      const startIndex = (currentPage - 1) * postsPerPage;
-      const endIndex = startIndex + postsPerPage;
-      const batch = allPosts.slice(startIndex, endIndex);
-
-      if (batch.length === 0) {
-        isLoading = false;
-        return;
-      }
-
-      const html = batch.map(post => `
-        <article class="blog-card" id="card-${post.id}">
-          <div class="card-image-wrapper">
-            <img src="${post.imageUrl}" alt="${post.title}" class="card-image" onerror="this.src='https://via.placeholder.com/600x338?text=No+Image'" />
-          </div>
-          <div class="category">
-            <span class="icon">${post.categoryIcon || '📝'}</span>
-            <span class="category-name">${post.category}</span>
-          </div>
-          <h2 class="card-title">${post.title}</h2>
-          <p class="card-description">${post.summary}</p>
-          <div class="card-meta">${post.dateAdded} • By ${post.author}</div>
-          
-          <!-- Inline Detailed Content Area -->
-          <div class="detailed-content" id="detail-${post.id}" style="display: none; margin-top: 15px;">
-            <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ccc;" />
-            <div class="article-body">
-              <p>${post.content ? post.content.replace(/\n/g, '<br>') : ''}</p>
-            </div>
-            ${post.secondaryImage ? `<img src="${post.secondaryImage}" alt="Secondary Illustration" class="article-image" style="margin-top:15px; max-width:100%;" />` : ''}
-            
-            <section class="comments-section" style="margin-top:20px;">
-              <h3>Comments</h3>
-              <form class="comment-form" onsubmit="submitComment(event, '${post.id}')">
-                <textarea id="commentInput-${post.id}" placeholder="Write a comment..." rows="3" class="comment-input" required></textarea>
-                <button type="submit" class="submit-btn">Post Comment</button>
-              </form>
-              <div class="comment-list" id="commentList-${post.id}">
-                ${renderCommentsHtml(post.comments)}
-              </div>
-            </section>
-          </div>
-
-          <button type="button" class="read-link" onclick="togglePostDetail('${post.id}')" style="background:none; border:none; cursor:pointer; padding:0; text-decoration:underline;">
-            Read More
-          </button>
-        </article>
-      `).join('');
-
-      postFeed.insertAdjacentHTML('beforeend', html);
-      currentPage++;
-      isLoading = false;
-    };
-
-    // loading scroll 
-    window.addEventListener('scroll', () => {
-      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-
-      // trigger when user is close to bottom of the page
-      if (scrollTop + clientHeight >= scrollHeight - 200) {
-        const totalPages = Math.ceil(allPosts.length / postsPerPage);
-        if (currentPage <= totalPages && !isLoading) {
-          renderNextBatch();
-        }
-      }
-    });
 
     fetchAndRenderFeed();
 
@@ -141,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // drop down toggle
   window.togglePostDetail = function(id) {
     const detailElem = document.getElementById(`detail-${id}`);
     const cardElem = document.getElementById(`card-${id}`);
@@ -158,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // comments render
   function renderCommentsHtml(comments) {
     if (!comments || comments.length === 0) {
       return '<p>No comments.</p>';
@@ -172,47 +132,49 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
-  // comment submission
+  // Comment
   window.submitComment = function(e, postId) {
-  e.preventDefault();
-  const input = document.getElementById(`commentInput-${postId}`);
-  const text = input ? input.value.trim() : '';
+    e.preventDefault();
+    const input = document.getElementById(`commentInput-${postId}`);
+    const text = input ? input.value.trim() : '';
 
-  if (!text) return;
+    if (!text) return;
 
-  fetch(`/api/posts/${postId}/comments`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text })
-  })
-  .then(res => {
-    if (res.status === 401) alert("Please log in to comment.");
-    return res.json();
-  })
-  .then(() => {
-    fetch(`/api/posts/${postId}`)
-      .then(res => res.json())
-      .then(post => {
-        const listElem = document.getElementById(`commentList-${postId}`);
-        if (listElem) listElem.innerHTML = renderCommentsHtml(post.comments);
-        if (input) input.value = '';
-      });
-  })
-  .catch(err => console.error('Error posting comment:', err));
-};
+    fetch(`/api/posts/${postId}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    })
+    .then(res => res.json())
+    .then(() => {
+      fetch(`/api/posts/${postId}`)
+        .then(res => res.json())
+        .then(post => {
+          const listElem = document.getElementById(`commentList-${postId}`);
+          if (listElem) listElem.innerHTML = renderCommentsHtml(post.comments);
+          if (input) input.value = '';
+        });
+    })
+    .catch(err => console.error('Error posting comment:', err));
+  };
 
-  // User blog manager
+  // User Blog Manager
   if (postForm) {
     const loadUserPosts = () => {
-      fetch('/api/posts')
+      if (!CURRENT_USER) {
+        if (userPostsList) {
+          userPostsList.innerHTML = '<p class="no-posts">Please log in to view and manage your posts.</p>';
+        }
+        return;
+      }
+
+      fetch(`/api/posts?userOnly=true`)
         .then(res => res.json())
-        .then(posts => {
+        .then(userOnlyPosts => {
           if (!userPostsList) return;
 
-          const userOnlyPosts = posts.filter(post => post.author && post.author.toLowerCase() === CURRENT_USER.toLowerCase());
-
           if (userOnlyPosts.length === 0) {
-            userPostsList.innerHTML = '<p class="no-posts">You have not created any posts yet.</p>';
+            userPostsList.innerHTML = `<p class="no-posts">No posts found for ${CURRENT_USER}.</p>`;
             return;
           }
 
@@ -239,14 +201,18 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(err => console.error('Error loading posts list:', err));
     };
 
-    //form for create/update
     postForm.addEventListener('submit', (e) => {
       e.preventDefault();
+
+      if (!CURRENT_USER) {
+        alert("Please sign in to publish a post.");
+        return;
+      }
+
       const id = postIdInput.value;
       const contentVal = contentInput.value.trim();
       let summaryVal = summaryInput ? summaryInput.value.trim() : '';
 
-      // Fallback to the first sentence if no summary is provided
       if (!summaryVal) {
         const firstSentenceMatch = contentVal.match(/^[^.!?]*[.!?]/);
         if (firstSentenceMatch) {
@@ -261,8 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
         category: categoryInput.value,
         imageUrl: imageInput.value.trim(),
         summary: summaryVal,
-        content: contentVal,
-        author: CURRENT_USER
+        content: contentVal
       };
 
       const method = id ? 'PUT' : 'POST';
@@ -273,12 +238,15 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) return res.json().then(err => Promise.reject(err));
+        return res.json();
+      })
       .then(() => {
         resetForm();
         loadUserPosts();
       })
-      .catch(err => console.error('Error saving post:', err));
+      .catch(err => alert(err.error || 'Error saving post'));
     });
 
     if (cancelBtn) cancelBtn.addEventListener('click', resetForm);
@@ -294,7 +262,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (cancelBtn) cancelBtn.style.display = 'none';
     }
 
-    // drop down menu visilibty
     window.toggleDropdown = function(e, id) {
       e.stopPropagation();
       const currentDropdown = document.getElementById(`dropdown-${id}`);
@@ -308,14 +275,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
 
-    // close options when clicking outside
     document.addEventListener('click', () => {
       document.querySelectorAll('.dropdown-menu').forEach(menu => {
         menu.style.display = 'none';
       });
     });
 
-    // handler for edit/delete
     window.triggerEdit = function(id) {
       fetch(`/api/posts/${id}`)
         .then(res => {
@@ -341,8 +306,12 @@ document.addEventListener('DOMContentLoaded', () => {
     window.triggerDelete = function(id) {
       if (confirm('Delete post? This action cannot be undone.')) {
         fetch(`/api/posts/${id}`, { method: 'DELETE' })
+          .then(res => {
+            if (!res.ok) return res.json().then(err => Promise.reject(err));
+            return res.json();
+          })
           .then(() => loadUserPosts())
-          .catch(err => console.error('Error deleting post:', err));
+          .catch(err => alert(err.error || 'Error deleting post'));
       }
     };
 

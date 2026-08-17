@@ -4,20 +4,15 @@ const path = require('path');
 
 const router = express.Router();
 
-// data files
 const BLOG_DIR = __dirname;
 const DATA_FILE = path.join(BLOG_DIR, 'posts.json');
 
-function getLoggedInUser(req) {
-  const user = req.user || (req.session && req.session.user);
-  return user ? (user.username || user.name || user.email) : "Guest";
-}
+const initialPosts = [];
 
-// initialize data storage
 function loadPosts() {
   if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(posts, null, 2), 'utf8');
-    return posts;
+    fs.writeFileSync(DATA_FILE, JSON.stringify(initialPosts, null, 2), 'utf8');
+    return initialPosts;
   }
   const fileData = fs.readFileSync(DATA_FILE, 'utf8');
   return JSON.parse(fileData);
@@ -32,22 +27,23 @@ function getCategoryIcon(cat) {
   return icons[cat] || '📝';
 }
 
-//fall back incase posts.json die so sv doesnt die with it
-const initialPosts = [];
-
-function loadPosts() {
-  if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(initialPosts, null, 2), 'utf8');
-    return initialPosts;
-  }
-  const fileData = fs.readFileSync(DATA_FILE, 'utf8');
-  return JSON.parse(fileData);
+// Helper: Get logged-in user's display account name
+function getAccountName(req) {
+  const user = req.user || (req.session && req.session.user);
+  return user ? (user.username || user.name || user.email) : null;
 }
 
 // GET posts
 router.get('/api/posts', (req, res) => {
   let posts = loadPosts();
-  const { query, searchType, category } = req.query;
+  const { query, searchType, category, userOnly } = req.query;
+
+  // Filter posts created by the current user when requested
+  if (userOnly === 'true') {
+    const currentAccount = getAccountName(req);
+    if (!currentAccount) return res.json([]);
+    posts = posts.filter(p => p.author && p.author.toLowerCase() === currentAccount.toLowerCase());
+  }
 
   if (category) {
     posts = posts.filter(p => p.category.toLowerCase() === category.toLowerCase());
@@ -70,20 +66,27 @@ router.get('/api/posts', (req, res) => {
   res.json(posts);
 });
 
-//  create post 
+// GET current account endpoint
+router.get('/api/current-user', (req, res) => {
+  const accountName = getAccountName(req);
+  res.json({ accountName: accountName || 'Guest', isLoggedIn: !!accountName });
+});
+
+// CREATE post (Uses Account Name)
 router.post('/api/posts', (req, res) => {
+  const accountName = getAccountName(req);
+
+  if (!accountName) {
+    return res.status(401).json({ error: "Please sign in to create a post." });
+  }
+
   const posts = loadPosts();
   const { title, category, imageUrl, content, summary } = req.body;
-  const author = getLoggedInUser(req); // Get author from session/auth
-
-  if (author === "Guest") {
-    return res.status(401).json({ error: "Unauthorized. Please log in." });
-  }
 
   const newPost = {
     id: `post-${Date.now()}`,
     title,
-    author,
+    author: accountName,
     dateAdded: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
     category,
     categoryIcon: getCategoryIcon(category),
@@ -99,12 +102,17 @@ router.post('/api/posts', (req, res) => {
   res.status(201).json(newPost);
 });
 
-// edit post 
+// edit post
 router.put('/api/posts/:id', (req, res) => {
+  const accountName = getAccountName(req);
   const posts = loadPosts();
   const idx = posts.findIndex(p => p.id === req.params.id);
 
   if (idx === -1) return res.status(404).json({ error: "Post not found" });
+
+  if (posts[idx].author.toLowerCase() !== accountName.toLowerCase()) {
+    return res.status(403).json({ error: "You can only edit your own posts." });
+  }
 
   const { title, category, imageUrl, content, summary } = req.body;
 
@@ -122,31 +130,34 @@ router.put('/api/posts/:id', (req, res) => {
   res.json(posts[idx]);
 });
 
-// DELETE /api/posts/:id - Delete Post
+// delete post
 router.delete('/api/posts/:id', (req, res) => {
+  const accountName = getAccountName(req);
   let posts = loadPosts();
-  const filtered = posts.filter(p => p.id !== req.params.id);
+  const post = posts.find(p => p.id === req.params.id);
 
-  if (posts.length === filtered.length) {
-    return res.status(404).json({ error: "Post not found" });
+  if (!post) return res.status(404).json({ error: "Post not found" });
+
+  if (post.author.toLowerCase() !== accountName.toLowerCase()) {
+    return res.status(403).json({ error: "You can only delete your own posts." });
   }
 
+  const filtered = posts.filter(p => p.id !== req.params.id);
   savePosts(filtered);
   res.json({ success: true, message: "Post deleted" });
 });
 
-// comment 
+// post
 router.post('/api/posts/:id/comments', (req, res) => {
+  const accountName = getAccountName(req) || "Guest";
   const posts = loadPosts();
   const post = posts.find(p => p.id === req.params.id);
 
   if (!post) return res.status(404).json({ error: "Post not found" });
 
-  const author = getLoggedInUser(req); // Retrieve logged-in user
-
   const newComment = {
     id: `c-${Date.now()}`,
-    author,
+    author: accountName,
     date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
     text: req.body.text
   };
