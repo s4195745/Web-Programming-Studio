@@ -45,6 +45,15 @@ app.get('/login', (req, res) => {
     res.render('modules/user_account_manage/login');
 });
 
+//blog pages
+app.get('/blog', (req, res) => {
+    res.render('modules/blog/blog');
+});
+
+app.get('/UserBlog', (req, res) => {
+    res.render('modules/blog/UserBlog');
+});
+
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server is running! Open your browser and go to http://localhost:${PORT}`);

@@ -1,0 +1,60 @@
+<main class="dashboard-content">
+    <div class="dashboard-card">
+        <div class="card-header-flex">
+            <div class="card-title">User Manager</div>
+        </div>
+
+        <table class="user-management-table" style="width: 100%; text-align: left; margin-top: 15px;">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- test -->
+                <tr data-user-id="101">
+                    <td>Nguyen The Chinh</td>
+                    <td>nguyenthechinh2807@gmail.com</td>
+                    <td>User</td>
+                    <td><span class="status-badge">Active</span></td>
+                    <td>
+                        <button type="button" class="btn-danger" onclick="toggleUserLock('101', true)">
+                            Lock Account
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<script>
+async function toggleUserLock(userId, shouldLock) {
+    const confirmMessage = shouldLock 
+        ? "Are you sure you want to lock this user?"
+        : "Are you sure you want to unlock this user?";
+
+    if (!confirm(confirmMessage)) return;
+
+    try {
+        const response = await fetch(`/api/admin/users/${userId}/lock-status`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ isLocked: shouldLock })
+        });
+
+        const result = await response.json();
+        alert(result.message);
+
+        if (response.ok) {
+            location.reload(); // reload to update status
+        }
+    } catch (err) {
+        console.error("Error toggling user lock status:", err);
+    }
+}
+</script>
