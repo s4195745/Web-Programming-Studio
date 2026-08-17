@@ -10,7 +10,14 @@
     "content": "ADmin account post",
     "imageUrl": "https://via.placeholder.com/600x338",
     "secondaryImage": "",
-    "comments": []
+    "comments": [
+      {
+        "id": "c-1786975850922",
+        "author": "Guest",
+        "date": "Aug 17, 2026",
+        "text": "test"
+      }
+    ]
   },
   {
     "id": "post-1786607745941",

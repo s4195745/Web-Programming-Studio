@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const userPostsList = document.querySelector('.user-posts-list');
 
   // currently logged 
-  const CURRENT_USER = 'You';
+    const CURRENT_USER = window.currentUser || 'Guest';
 
   // pagination
   let allPosts = [];
@@ -174,29 +174,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // comment submission
   window.submitComment = function(e, postId) {
-    e.preventDefault();
-    const input = document.getElementById(`commentInput-${postId}`);
-    const text = input ? input.value.trim() : '';
+  e.preventDefault();
+  const input = document.getElementById(`commentInput-${postId}`);
+  const text = input ? input.value.trim() : '';
 
-    if (!text) return;
+  if (!text) return;
 
-    fetch(`/api/posts/${postId}/comments`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ author: CURRENT_USER, text })
-    })
-    .then(res => res.json())
-    .then(() => {
-      fetch(`/api/posts/${postId}`)
-        .then(res => res.json())
-        .then(post => {
-          const listElem = document.getElementById(`commentList-${postId}`);
-          if (listElem) listElem.innerHTML = renderCommentsHtml(post.comments);
-          if (input) input.value = '';
-        });
-    })
-    .catch(err => console.error('Error posting comment:', err));
-  };
+  fetch(`/api/posts/${postId}/comments`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text })
+  })
+  .then(res => {
+    if (res.status === 401) alert("Please log in to comment.");
+    return res.json();
+  })
+  .then(() => {
+    fetch(`/api/posts/${postId}`)
+      .then(res => res.json())
+      .then(post => {
+        const listElem = document.getElementById(`commentList-${postId}`);
+        if (listElem) listElem.innerHTML = renderCommentsHtml(post.comments);
+        if (input) input.value = '';
+      });
+  })
+  .catch(err => console.error('Error posting comment:', err));
+};
 
   // User blog manager
   if (postForm) {

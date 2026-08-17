@@ -7,6 +7,9 @@
     <link rel="stylesheet" type="text/css" href="/assets/css/blog.css" />
     <link rel="stylesheet" type="text/css" href="/assets/css/main.css" />
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+    <script>
+      window.currentUser = "<%= user ? (user.username || user.name) : '' %>";
+    </script>
 </head>
 
  <%- include('../../partials/navbar') %>

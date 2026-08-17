@@ -8,6 +8,11 @@ const router = express.Router();
 const BLOG_DIR = __dirname;
 const DATA_FILE = path.join(BLOG_DIR, 'posts.json');
 
+function getLoggedInUser(req) {
+  const user = req.user || (req.session && req.session.user);
+  return user ? (user.username || user.name || user.email) : "Guest";
+}
+
 // initialize data storage
 function loadPosts() {
   if (!fs.existsSync(DATA_FILE)) {
@@ -68,12 +73,17 @@ router.get('/api/posts', (req, res) => {
 //  create post 
 router.post('/api/posts', (req, res) => {
   const posts = loadPosts();
-  const { title, author, category, imageUrl, content, summary } = req.body;
+  const { title, category, imageUrl, content, summary } = req.body;
+  const author = getLoggedInUser(req); // Get author from session/auth
+
+  if (author === "Guest") {
+    return res.status(401).json({ error: "Unauthorized. Please log in." });
+  }
 
   const newPost = {
     id: `post-${Date.now()}`,
     title,
-    author: author || "You",
+    author,
     dateAdded: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
     category,
     categoryIcon: getCategoryIcon(category),
@@ -132,9 +142,11 @@ router.post('/api/posts/:id/comments', (req, res) => {
 
   if (!post) return res.status(404).json({ error: "Post not found" });
 
+  const author = getLoggedInUser(req); // Retrieve logged-in user
+
   const newComment = {
     id: `c-${Date.now()}`,
-    author: req.body.author || "Guest",
+    author,
     date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
     text: req.body.text
   };

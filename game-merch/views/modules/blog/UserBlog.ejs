@@ -7,6 +7,9 @@
     <link rel="stylesheet" type="text/css" href="/assets/css/blog.css" />
     <link rel="stylesheet" type="text/css" href="/assets/css/main.css" />
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+    <script>
+      window.currentUser = "<%= user ? (user.username || user.name) : '' %>";
+    </script>
 </head>
 
  <%- include('../../partials/navbar') %>
@@ -37,6 +40,12 @@
           <div class="form-group">
             <label for="post-image">Image URL</label>
             <input type="url" id="post-image" class="form-input" placeholder="https://example.com/image.jpg" />
+            <div class="form-row">
+                        <label class="form-label">Input image</label>
+                        <div class="form-input-wrapper">
+                            <input type="file" id="avatar" name="avatar" accept="image/*">
+                        </div>
+                    </div>
           </div>
 
             <div class="form-group">
