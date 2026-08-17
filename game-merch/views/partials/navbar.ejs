@@ -9,11 +9,7 @@
         <a href="/blog">Blog</a>
         <a href="/review">Review</a>
         <a href="/wishlist">Wishlist</a>
-
-        <!-- Check for admin -->
-        <% if (typeof user !== 'undefined' && user && user.role && user.role.toLowerCase() === 'admin') { %>
-            <a href="/UserManager" class="admin-link">User Manager</a>
-        <% } %>
+        <a href="/admin" class="nav-admin-link">Manage Users</a>
     </div>
 
     <div class="nav-actions">

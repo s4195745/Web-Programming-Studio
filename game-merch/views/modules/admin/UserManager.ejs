@@ -1,77 +1,62 @@
-<main class="dashboard-content">
-    <div class="dashboard-card">
-        <div class="card-header-flex">
-            <div class="card-title">User Manager</div>
-        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - User Management</title>
+</head>
+<body>
+  <h1>User Management</h1>
+  <table id="users-table" border="1">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-        <table class="user-management-table" style="width: 100%; text-align: left; margin-top: 15px;">
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% if (users && users.length > 0) { %>
-                    <% users.forEach(user => { %>
-                        <tr data-user-id="<%= user._id || user.id %>">
-                            <td><%= user.username %></td>
-                            <td><%= user.email %></td>
-                            <td><%= user.role %></td>
-                            <td>
-                                <span class="status-badge <%= user.isLocked ? 'status-locked' : 'status-active' %>">
-                                    <%= user.isLocked ? 'Locked' : 'Active' %>
-                                </span>
-                            </td>
-                            <td>
-                                <% if (user.isLocked) { %>
-                                    <button type="button" class="btn-success" onclick="toggleUserLock('<%= user._id || user.id %>', false)">
-                                        Unlock Account
-                                    </button>
-                                <% } else { %>
-                                    <button type="button" class="btn-danger" onclick="toggleUserLock('<%= user._id || user.id %>', true)">
-                                        Lock Account
-                                    </button>
-                                <% } %>
-                            </td>
-                        </tr>
-                    <% }); %>
-                <% } else { %>
-                    <tr>
-                        <td colspan="5" style="text-align: center;">No accounts found.</td>
-                    </tr>
-                <% } %>
-            </tbody>
-        </table>
-    </div>
-</main>
+  <script>
+    async function loadUsers() {
+      const res = await fetch('/api/admin/users');
+      if (!res.ok) {
+        alert("Failed to load user list");
+        return;
+      }
+      const users = await res.json();
+      const tbody = document.querySelector('#users-table tbody');
+      tbody.innerHTML = '';
 
-<script>
-async function toggleUserLock(userId, shouldLock) {
-    const actionText = shouldLock ? "lock" : "unlock";
-    if (!confirm(`Are you sure you want to ${actionText} this user?`)) return;
-
-    try {
-        const response = await fetch(`/api/admin/users/${userId}/lock-status`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ isLocked: shouldLock })
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            alert(result.message || `User account successfully ${shouldLock ? 'locked' : 'unlocked'}.`);
-            location.reload();
-        } else {
-            alert(result.message || "Failed to update user lock status.");
-        }
-    } catch (err) {
-        console.error("Error toggling user lock status:", err);
-        alert("An error occurred while communicating with the server.");
+      users.forEach(user => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${user.id}</td>
+          <td>${user.username}</td>
+          <td>${user.role}</td>
+          <td>${user.isLocked ? 'Locked' : 'Active'}</td>
+          <td>
+            ${user.isLocked 
+              ? `<button onclick="toggleLock('${user.id}', 'unlock')">Unlock</button>` 
+              : `<button onclick="toggleLock('${user.id}', 'lock')">Lock</button>`}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
     }
-}
-</script>
+
+    async function toggleLock(userId, action) {
+      const res = await fetch(`/api/admin/users/${userId}/${action}`, { method: 'POST' });
+      if (res.ok) {
+        loadUsers();
+      } else {
+        alert(`Failed to ${action} user.`);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadUsers);
+  </script>
+</body>
+</html>
