@@ -16,10 +16,10 @@
             </thead>
             <tbody>
                 <!-- test -->
-                <tr data-user-id="101">
-                    <td>Nguyen The Chinh</td>
-                    <td>nguyenthechinh2807@gmail.com</td>
-                    <td>User</td>
+                <tr data-user-id="2">
+                    <td>Admin</td>
+                    <td>admin@lootbox.com</td>
+                    <td>admin</td>
                     <td><span class="status-badge">Active</span></td>
                     <td>
                         <button type="button" class="btn-danger" onclick="toggleUserLock('101', true)">
@@ -34,27 +34,45 @@
 
 <script>
 async function toggleUserLock(userId, shouldLock) {
-    const confirmMessage = shouldLock 
-        ? "Are you sure you want to lock this user?"
-        : "Are you sure you want to unlock this user?";
+    const actionText = shouldLock ? "lock" : "unlock";
+    const confirmMessage = `Are you sure you want to ${actionText} this user?`;
 
     if (!confirm(confirmMessage)) return;
 
     try {
         const response = await fetch(`/api/admin/users/${userId}/lock-status`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json' 
+            },
             body: JSON.stringify({ isLocked: shouldLock })
         });
 
         const result = await response.json();
-        alert(result.message);
 
         if (response.ok) {
-            location.reload(); // reload to update status
+            alert(result.message || `User account successfully ${shouldLock ? 'locked' : 'unlocked'}.`);
+            location.reload(); // Refresh view to update row state
+        } else {
+            alert(result.message || "Failed to update user lock status.");
         }
     } catch (err) {
         console.error("Error toggling user lock status:", err);
+        alert("An error occurred while communicating with the server.");
     }
 }
+
+// Middleware to block locked users from performing operations
+function checkAccountStatus(req, res, next) {
+    if (req.user && req.user.isLocked) {
+        // Clear session or destroy cookie if needed
+        req.logout?.(); 
+        return res.status(403).json({ 
+            error: "Your account is locked. You cannot perform any operations." 
+        });
+    }
+    next();
+}
+
+module.exports = checkAccountStatus;
 </script>
