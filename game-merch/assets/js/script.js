@@ -12,6 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- TOAST NOTIFICATION ---
     function showToast(message) {
+        const existingToast = document.querySelector(".toast-message");
+        if (existingToast) {
+            existingToast.remove();
+        }
+
         const toast = document.createElement("div");
         toast.className = "toast-message";
         toast.textContent = message;
@@ -54,17 +59,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function executeSearch(query) {
         currentSearchQuery = query.toLowerCase().trim();
         if (productContainer) {
-            // We are on the shop page, just filter immediately
             displayProducts();
         } else {
-            // We are on another page, save search query and redirect to shop
             sessionStorage.setItem("pendingSearch", currentSearchQuery);
-            
-            // Safe redirect handling depending on where the user is
             if(window.location.pathname.includes("landing_page.html")) {
-                window.location.href = "/index";
+                window.location.href = "/shop";
             } else {
-                window.location.href = "/index";
+                window.location.href = "/shop";
             }
         }
     }
@@ -87,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
             displayProducts();
         });
     }
-
 
     // --- HELPER: BULLETPROOF PRICE PARSER ---
     function getSafePrice(priceVal) {
@@ -120,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- ROUTER ---
     if (productContainer) {
-        // Check for pending search from another page
         const pendingSearch = sessionStorage.getItem("pendingSearch");
         if (pendingSearch) {
             currentSearchQuery = pendingSearch;
@@ -134,6 +133,10 @@ document.addEventListener('DOMContentLoaded', () => {
         displayCart();
         const sortSelect = document.querySelector("#cart-sort");
         if (sortSelect) sortSelect.addEventListener("change", displayCart);
+        
+        const filterInput = document.querySelector("#cart-filter");
+        if (filterInput) filterInput.addEventListener("input", displayCart);
+        
     } else if (isCheckoutPage) {
         displayCheckout();
     } else if (isConfirmationPage) {
@@ -141,62 +144,74 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- PRODUCT LIST & FILTERING (INDEX PAGE) ---
-    function displayProducts() {
-        productContainer.innerHTML = "";
+    async function displayProducts() {
+        productContainer.innerHTML = "<p class='status-msg'>Loading products...</p>";
         
-        if (typeof products === 'undefined') return;
-
-        // Apply Search and Category Filters
-        const filteredProducts = products.filter(product => {
-            const matchesCategory = currentCategoryFilter === "all" || product.category === currentCategoryFilter;
-            const matchesSearch = product.title.toLowerCase().includes(currentSearchQuery) || 
-                                  product.description.toLowerCase().includes(currentSearchQuery);
-            return matchesCategory && matchesSearch;
-        });
-
-        // Update UI Result Text
-        const resultText = document.getElementById("search-result-text");
-        if (resultText) {
-            if (currentSearchQuery !== "") {
-                resultText.textContent = `Found ${filteredProducts.length} results for "${currentSearchQuery}"`;
-            } else {
-                resultText.textContent = `Showing ${filteredProducts.length} products`;
-            }
-        }
-
-        if (filteredProducts.length === 0) {
-            productContainer.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #666;'>No products found matching your criteria.</p>";
-            return;
-        }
-
-        // Render Filtered Products
-        filteredProducts.forEach(product => {
-            const productCard = document.createElement("div");
-            productCard.classList.add("product-card");
+        try {
+            const response = await fetch('/api/products');
+            if (!response.ok) throw new Error("Failed to fetch products");
             
-            const safePrice = getSafePrice(product.price);
-
-            productCard.innerHTML = `
-                <div class="img-box">
-                    <img src="${product.colors[0].mainImage}" alt="${product.title}">
-                </div>
-                <h2 class="title">${product.title}</h2>
-                <span class="price">$${safePrice.toFixed(2)}</span>
-            `;
-            productContainer.appendChild(productCard);
-            
-            productCard.querySelector(".img-box").addEventListener("click", () => {
-                sessionStorage.setItem("selectedProduct", JSON.stringify(product));
-                window.location.href = "/product-detail";
+            const products = await response.json();
+    
+            const filteredProducts = products.filter(product => {
+                const matchesCategory = currentCategoryFilter === "all" || product.category === currentCategoryFilter;
+                const matchesSearch = product.title.toLowerCase().includes(currentSearchQuery) || 
+                                      product.description.toLowerCase().includes(currentSearchQuery);
+                return matchesCategory && matchesSearch;
             });
-        });
+    
+            const resultText = document.getElementById("search-result-text");
+            if (resultText) {
+                if (currentSearchQuery !== "") {
+                    resultText.textContent = `Found ${filteredProducts.length} results for "${currentSearchQuery}"`;
+                } else {
+                    resultText.textContent = `Showing ${filteredProducts.length} products`;
+                }
+            }
+    
+            if (filteredProducts.length === 0) {
+                productContainer.innerHTML = "<p class='status-msg'>No products found matching your criteria.</p>";
+                return;
+            }
+    
+            productContainer.innerHTML = ""; 
+            const fragment = document.createDocumentFragment();
+    
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement("div");
+                productCard.classList.add("product-card");
+                
+                const safePrice = getSafePrice(product.price);
+    
+                productCard.innerHTML = `
+                    <div class="img-box">
+                        <img src="${product.colors[0].mainImage}" alt="${product.title}">
+                    </div>
+                    <h2 class="title">${product.title}</h2>
+                    <span class="price">$${safePrice.toFixed(2)}</span>
+                `;
+                
+                fragment.appendChild(productCard);
+                
+                productCard.querySelector(".img-box").addEventListener("click", () => {
+                    sessionStorage.setItem("selectedProduct", JSON.stringify(product));
+                    window.location.href = "/product_detail";
+                });
+            });
+    
+            productContainer.appendChild(fragment);
+            
+        } catch (error) {
+            console.error("Error loading products:", error);
+            productContainer.innerHTML = "<p class='status-msg error'>Unable to load products. Please try again later.</p>";
+        }
     }
 
     // --- PRODUCT DETAIL PAGE ---
     function displayProductDetail() {
         const productData = JSON.parse(sessionStorage.getItem("selectedProduct"));
         if (!productData) {
-            window.location.href = "/index";
+            window.location.href = "/shop";
             return;
         }
 
@@ -270,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateProductDisplay(selectedColor);
 
-        // ADD TO CART
+        // ADD TO CART (Refactored to remove inline CSS)
         addToCartBtn.addEventListener("click", () => {
             let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
             const existingItem = cart.find(item => item.id === productData.id && item.color === selectedColor.name && item.size === selectedSize);
@@ -291,10 +306,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             sessionStorage.setItem("cart", JSON.stringify(cart));
             updateCartCount(); 
-            showToast(`${productData.title} added to cart!`); // NEW TOAST FEEDBACK
+            showToast(`${productData.title} added to cart!`); 
             
-            // Floating +1 Animation
-            addToCartBtn.style.position = "relative"; 
+            // Replaced .style.position with a utility class from main.css
+            addToCartBtn.classList.add("p-relative"); 
             const plusOne = document.createElement("span");
             plusOne.textContent = "+1";
             plusOne.classList.add("plus-one-anim");
@@ -302,13 +317,14 @@ document.addEventListener('DOMContentLoaded', () => {
             
             setTimeout(() => {
                 plusOne.remove();
+                addToCartBtn.classList.remove("p-relative");
             }, 800);
         });
     }
 
     // --- CART PAGE ---
     function displayCart() {
-        const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+        let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
         const cartItemsContainer = document.querySelector(".cart-items");
         const subtotalEl = document.querySelector(".Subtotal");
         const grandTotalEl = document.querySelector(".grand-total");
@@ -316,12 +332,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!cartItemsContainer || !subtotalEl || !grandTotalEl) return;
         cartItemsContainer.innerHTML = "";
 
+        const proceedBtn = document.querySelector(".cart-total .btn");
+
+        // FILTER LOGIC
+        const filterInput = document.querySelector("#cart-filter");
+        if (filterInput && filterInput.value.trim() !== "") {
+            const searchTerm = filterInput.value.toLowerCase().trim();
+            cart = cart.filter(item => item.title.toLowerCase().includes(searchTerm));
+        }
+
+        // Refactored to remove inline CSS display toggling
         if (cart.length === 0) {
-            cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
+            cartItemsContainer.innerHTML = "<p>No items found.</p>";
             subtotalEl.textContent = "$0.00";
             grandTotalEl.textContent = "$0.00";
             updateCartCount();
+            if (proceedBtn) proceedBtn.classList.add("d-none");
             return;
+        } else {
+            if (proceedBtn) proceedBtn.classList.remove("d-none");
         }
 
         const sortSelect = document.querySelector("#cart-sort");
@@ -341,9 +370,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        const fragment = document.createDocumentFragment();
         let subtotal = 0;
         
-        cart.forEach((item, index) => {
+        cart.forEach((item) => {
             const itemPrice = getSafePrice(item.price);
             const itemTotal = itemPrice * item.quantity;
             subtotal += itemTotal;
@@ -355,44 +385,59 @@ document.addEventListener('DOMContentLoaded', () => {
                     <img src="${item.image}" alt="${item.title}">
                     <div class="item-detail">
                         <p>${item.title}</p>
-                        <div style="margin-top: 8px;">
+                        <div class="item-variants">
                             <span class="size">${item.size}</span>
-                            <span class="color" style="margin-left: 8px;">${item.color}</span>
+                            <span class="color">${item.color}</span>
                         </div>
                     </div>
                 </div>
                 <span class="price">$${itemPrice.toFixed(2)}</span>
                 <div class="quantity">
-                    <input type="number" value="${item.quantity}" min="1" data-index="${index}" aria-label="Quantity">
+                    <input type="number" value="${item.quantity}" min="1" aria-label="Quantity">
                 </div>
                 <span class="total-price">$${itemTotal.toFixed(2)}</span>
-                <button class="remove" data-index="${index}" aria-label="Remove item"><i class="ri-close-line"></i></button>
+                <button class="remove" aria-label="Remove item"><i class="ri-close-line"></i></button>
             `;
 
-            cartItemsContainer.appendChild(cartItem);
+            fragment.appendChild(cartItem);
 
             cartItem.querySelector('input[type="number"]').addEventListener("change", (e) => {
-                const newQuantity = parseInt(e.target.value);
-                if (newQuantity >= 1) {
-                    cart[index].quantity = newQuantity; 
-                    sessionStorage.setItem("cart", JSON.stringify(cart)); 
-                    displayCart(); 
+                let newQuantity = Math.floor(Number(e.target.value));
+                if (isNaN(newQuantity) || newQuantity < 1) {
+                    newQuantity = 1;
+                    e.target.value = 1; 
+                }
+                
+                let freshCart = JSON.parse(sessionStorage.getItem("cart")) || [];
+                let itemIndex = freshCart.findIndex(c => c.id === item.id && c.color === item.color && c.size === item.size);
+                
+                if (itemIndex !== -1) {
+                    freshCart[itemIndex].quantity = newQuantity;
+                    sessionStorage.setItem("cart", JSON.stringify(freshCart));
+                    displayCart();
                 }
             });
 
             cartItem.querySelector(".remove").addEventListener("click", () => {
-                showToast("Item removed from cart"); // NEW TOAST FEEDBACK
-                cart.splice(index, 1); 
-                sessionStorage.setItem("cart", JSON.stringify(cart)); 
-                displayCart(); 
+                showToast("Item removed from cart"); 
+                
+                let freshCart = JSON.parse(sessionStorage.getItem("cart")) || [];
+                let itemIndex = freshCart.findIndex(c => c.id === item.id && c.color === item.color && c.size === item.size);
+                
+                if (itemIndex !== -1) {
+                    freshCart.splice(itemIndex, 1);
+                    sessionStorage.setItem("cart", JSON.stringify(freshCart));
+                    displayCart();
+                }
             });
         });
+
+        cartItemsContainer.appendChild(fragment);
 
         subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
         grandTotalEl.textContent = `$${subtotal.toFixed(2)}`;
         updateCartCount();
 
-        const proceedBtn = document.querySelector(".cart-total .btn");
         if (proceedBtn) {
             proceedBtn.addEventListener("click", () => {
                 window.location.href = "/checkout";
@@ -405,17 +450,47 @@ document.addEventListener('DOMContentLoaded', () => {
         const checkoutForm = document.getElementById("checkout-form");
         if (!checkoutForm) return;
 
+        const nameInput = document.getElementById("name");
+        const addressInput = document.getElementById("address");
         const cardInput = document.getElementById("card");
         const expiryInput = document.getElementById("expiry");
         const cvvInput = document.getElementById("cvv");
 
+        // Helper to use the global message function from auth-validation.js or a local fallback
+        const displayMessage = window.showAuthMessage || function(container, message, isError = true) {
+            let existingMsg = container.querySelector('.system-msg');
+            if (existingMsg) existingMsg.remove();
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `system-msg ${isError ? 'msg-error' : 'msg-success'}`;
+            msgDiv.textContent = message;
+            container.insertBefore(msgDiv, container.firstChild);
+        };
+
+        // Web Storage API for Checkout Form Retention
+        const checkoutFields = [
+            { el: nameInput, key: "checkout-name" },
+            { el: addressInput, key: "checkout-address" }
+        ];
+
+        checkoutFields.forEach(field => {
+            if (field.el) {
+                const savedData = sessionStorage.getItem(field.key);
+                if (savedData) field.el.value = savedData;
+                
+                field.el.addEventListener('input', (e) => {
+                    sessionStorage.setItem(field.key, e.target.value);
+                });
+            }
+        });
+
+        // CLEAN INPUT VALIDATION (Uses External CSS Classes)
         function showError(input, isValid) {
             if (!isValid) {
-                input.style.borderColor = "red";
-                input.style.backgroundColor = "#ffe6e6"; 
+                input.classList.add('input-error');
+                input.classList.remove('input-success');
             } else {
-                input.style.borderColor = "green";
-                input.style.backgroundColor = "transparent";
+                input.classList.add('input-success');
+                input.classList.remove('input-error');
             }
         }
 
@@ -440,38 +515,65 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        checkoutForm.addEventListener("submit", (e) => {
+        checkoutForm.addEventListener("submit", async (e) => {
             e.preventDefault(); 
             
             const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
             if (cart.length === 0) {
-                alert("Your cart is empty!");
-                window.location.href = "/cart";
+                displayMessage(checkoutForm, "Your cart is empty!", true);
+                setTimeout(() => window.location.href = "/cart", 2000);
                 return;
             }
 
             if (!/^[0-9\s]+$/.test(cardInput.value) || 
                 !/^(0[1-9]|1[0-2])\/[0-9]{2}$/.test(expiryInput.value) || 
                 !/^[0-9]{3,4}$/.test(cvvInput.value)) {
-                alert("Vui lòng kiểm tra lại thông tin thẻ thanh toán!");
+                displayMessage(checkoutForm, "Please verify your payment details!", true);
                 return;
             }
 
-            const name = document.getElementById("name").value;
-            const address = document.getElementById("address").value;
-            const subtotal = cart.reduce((sum, item) => sum + (getSafePrice(item.price) * item.quantity), 0);
+            // FETCH CREDENTIALS FROM SESSION STORAGE
+            const userEmail = sessionStorage.getItem("userEmail");
+            const token = sessionStorage.getItem("token") || sessionStorage.getItem("userPass"); 
 
-            const orderData = {
-                customerName: name,
-                customerAddress: address,
+            // SECURE PAYLOAD
+            const orderPayload = {
+                userEmail: userEmail,
+                token: token,
+                customerName: nameInput.value,
+                customerAddress: addressInput.value,
                 items: cart,
-                totalPaid: subtotal
+                paymentDetails: {
+                    card: cardInput.value,
+                    expiry: expiryInput.value,
+                    cvv: cvvInput.value
+                }
             };
 
-            sessionStorage.setItem("latestOrder", JSON.stringify(orderData));
-            sessionStorage.removeItem("cart"); 
-            
-            window.location.href = "/confirmation";
+            try {
+                const response = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderPayload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    sessionStorage.setItem("latestOrder", JSON.stringify(data.order));
+                    sessionStorage.removeItem("cart"); 
+                    sessionStorage.removeItem("checkout-name");
+                    sessionStorage.removeItem("checkout-address");
+                    
+                    displayMessage(checkoutForm, "Payment Successful! Redirecting to receipt...", false);
+                    setTimeout(() => window.location.href = "/confirmation", 1500);
+                } else {
+                    displayMessage(checkoutForm, `Checkout Failed: ${data.error}`, true);
+                }
+            } catch (error) {
+                console.error("Error during checkout:", error);
+                displayMessage(checkoutForm, "An error occurred while processing your order. Please try again.", true);
+            }
         });
     }
 
@@ -488,34 +590,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let itemsHTML = latestOrder.items.map(item => `
-            <div style="display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #eee;">
-                <div style="display: flex; gap: 15px; align-items: center;">
-                    <img src="${item.image}" style="width: 50px; border-radius: 5px;" alt="${item.title}">
+            <div class="receipt-item">
+                <div class="receipt-item-details">
+                    <img src="${item.image}" class="receipt-item-img" alt="${item.title}">
                     <div>
-                        <p style="font-weight: 600; margin-bottom: 5px;">${item.title}</p>
-                        <p style="font-size: 14px; color: #666;">Qty: ${item.quantity} | ${item.color} | ${item.size}</p>
+                        <p class="receipt-item-title">${item.title}</p>
+                        <p class="receipt-item-meta">Qty: ${item.quantity} | ${item.color} | ${item.size}</p>
                     </div>
                 </div>
-                <span style="font-weight: bold;">$${(getSafePrice(item.price) * item.quantity).toFixed(2)}</span>
+                <span class="receipt-price">$${(getSafePrice(item.price) * item.quantity).toFixed(2)}</span>
             </div>
         `).join('');
 
         orderBox.innerHTML = `
-            <h3 style="margin-bottom: 10px;">Shipping To:</h3>
-            <p style="margin-bottom: 5px;"><strong>${latestOrder.customerName}</strong></p>
-            <p style="margin-bottom: 25px; color: #555;">${latestOrder.customerAddress}</p>
+            <h3>Shipping To:</h3>
+            <p><strong>${latestOrder.customerName}</strong></p>
+            <p class="mb-20">${latestOrder.customerAddress}</p>
             
-            <h3 style="margin-bottom: 15px;">Items Purchased:</h3>
+            <h3>Items Purchased:</h3>
             ${itemsHTML}
             
-            <div style="display: flex; justify-content: space-between; margin-top: 20px; font-size: 20px;">
+            <div class="receipt-total">
                 <strong>Total Paid:</strong>
-                <strong style="color: #e35f26;">$${latestOrder.totalPaid.toFixed(2)}</strong>
+                <strong class="amount">$${latestOrder.totalPaid.toFixed(2)}</strong>
             </div>
         `;
     }
 
-    // Run immediately on page load
     updateCartCount();
-
-}); // End of DOMContentLoaded wrapper
+});

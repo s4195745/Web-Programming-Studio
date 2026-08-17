@@ -78,7 +78,7 @@ nav {
     outline: none;
     background: transparent;
     font-size: 15px;
-    width: 160px;
+    width: 250px;
 }
 
 .search-bar button {
@@ -288,9 +288,76 @@ footer.site_footer {
     margin-top: auto; 
 }
 
+/* ================= IN-PAGE SYSTEM MESSAGES ================= */
+.system-msg {
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.msg-error {
+    background-color: #ffe6e6;
+    color: #d32f2f;
+    border: 1px solid #d32f2f;
+}
+
+.msg-success {
+    background-color: #e6ffe6;
+    color: #2e7d32;
+    border: 1px solid #2e7d32;
+}
+
+/* ================= INPUT VALIDATION STATES ================= */
+.input-error {
+    border-color: #d32f2f !important;
+    background-color: #ffe6e6 !important;
+}
+
+.input-success {
+    border-color: #2e7d32 !important;
+    background-color: transparent !important;
+}
+
+.error-msg {
+    display: none; /* Hidden by default */
+}
+
+.show-error {
+    color: #d32f2f;
+    font-size: 0.85rem;
+    display: block !important;
+    margin-top: 5px;
+}
+
+.d-none {
+    display: none !important;
+}
+
+.d-flex {
+    display: flex !important;
+}
+
+.p-relative {
+    position: relative !important;
+}
+
 /* ================= MOBILE RESPONSIVENESS FOR GLOBAL SHARED COMPONENTS ================= */
 
-/* ================= UTILITY CLASSES (Moved from auth.css) ================= */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 .no-decoration { text-decoration: none; }
 .mb-15 { margin-bottom: 15px; }
 .mb-20 { margin-bottom: 20px; }
@@ -383,7 +450,7 @@ footer.site_footer {
     }
 
     .search-bar input {
-        width: 100px;
+        width: 200px;
     }
 }
 

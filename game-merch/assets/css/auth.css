@@ -485,15 +485,9 @@ body {
 }
 
 /* ================= UTILITY CLASSES ================= */
-
 /* Dashboard background */
 .dashboard-bg {
     background-color: #f7f7f7;
-}
-
-/* Link text decoration reset */
-.no-decoration {
-    text-decoration: none;
 }
 
 /* Button grouping container */
@@ -507,11 +501,6 @@ body {
 .no-border-bottom {
     border-bottom: none !important;
     padding-bottom: 0 !important;
-}
-
-/* Remove top margin */
-.no-margin-top {
-    margin-top: 0 !important;
 }
 
 /* Cancel Button styling */
@@ -588,11 +577,6 @@ body {
     margin-bottom: 5px;
     color: #e35f26;
 }
-
-/* Margin Utilities */
-.mb-15 { margin-bottom: 15px; }
-.mb-20 { margin-bottom: 20px; }
-.mt-25 { margin-top: 25px; }
 
 /* ================= MOBILE RESPONSIVENESS FOR AUTH & DASHBOARD ================= */
 @media (max-width: 768px) {

@@ -2,59 +2,26 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 
-// Tell the server to use EJS for templating
+// --- MIDDLEWARE ---
 app.set('view engine', 'ejs');
-
-// Tell the server where to find static files like CSS and Images
 app.use('/assets', express.static('assets'));
+app.use(express.json({ limit: '10mb' })); 
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// --- ROUTES ---
+// --- IMPORT ROUTES ---
+const viewRoutes = require('./routes/viewRoutes');
+const authRoutes = require('./routes/authRoutes');
+const cartRoutes = require('./routes/cartRoutes');
 
-// 1. Landing Page
-app.get('/', (req, res) => {
-    res.render('index');
-});
+// --- MOUNT ROUTES ---
+// UI View Routes
+app.use('/', viewRoutes);
 
-// 2. Shop Page (Index)
-app.get('/shop', (req, res) => {
-    res.render('modules/shopping_cart/index');
-});
+// API Routes 
+app.use('/api', authRoutes);
+app.use('/api', cartRoutes);
 
-// 3. Cart Page
-app.get('/cart', (req, res) => {
-    res.render('modules/shopping_cart/cart'); 
-});
-
-// 4. Product Detail Page
-app.get('/product-detail', (req, res) => {
-    res.render('modules/shopping_cart/product-detail'); 
-});
-
-// 5. Checkout Page
-app.get('/checkout', (req, res) => {
-    res.render('modules/shopping_cart/checkout'); 
-});
-
-// 6. Confirmation Page
-app.get('/confirmation', (req, res) => {
-    res.render('modules/shopping_cart/confirmation'); 
-});
-
-// 7. Login Page
-app.get('/login', (req, res) => {
-    res.render('modules/user_account_manage/login');
-});
-
-//blog pages
-app.get('/blog', (req, res) => {
-    res.render('modules/blog/blog');
-});
-
-app.get('/UserBlog', (req, res) => {
-    res.render('modules/blog/UserBlog');
-});
-
-// Start the server
-app.listen(PORT, () => {
-    console.log(`Server is running! Open your browser and go to http://localhost:${PORT}`);
+// --- START SERVER ---
+app.listen(PORT, () => { 
+    console.log(`Server is running at http://localhost:${PORT}`); 
 });
