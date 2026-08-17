@@ -1,78 +1,82 @@
-<main class="dashboard-content">
-    <div class="dashboard-card">
-        <div class="card-header-flex">
-            <div class="card-title">User Manager</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Merch Store - Home</title>
+    <link rel="stylesheet" type="text/css" href="/assets/css/blog.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+</head>
+
+ <%- include('../../partials/navbar') %>
+
+  <main class="main-container">
+    <div class="article-page">
+      
+      <section class="manage-section">
+        <h2 id="form-title">Create a New Post</h2>
+        <form class="post-form" onsubmit="event.preventDefault();">
+          <input type="hidden" id="post-id" value="" />
+
+          <div class="form-group">
+            <label for="post-title">Post Title</label>
+            <input type="text" id="post-title" class="form-input" placeholder="Enter post title" required />
+          </div>
+
+          <div class="form-group">
+            <label for="post-category">Category</label>
+            <select id="post-category" class="form-input">
+              <option value="Merch">📱 Merch</option>
+              <option value="Fan-art">🎨 Fan-art</option>
+              <option value="Discussion">💬 Discussion</option>
+              <option value="Review">⭐ Review</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="post-image">Image URL</label>
+            <input type="url" id="post-image" class="form-input" placeholder="https://example.com/image.jpg" />
+          </div>
+
+            <div class="form-group">
+              <label for="post-summary">Overview (Optional)</label>
+             <input type="text" id="post-summary" class="form-input" placeholder="Short description of your post." />
+            </div>
+
+          <div class="form-group">
+            <label for="post-content">Content</label>
+            <textarea id="post-content" class="form-input" rows="4" placeholder="Write your post content..." required></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="submit-btn">Publish Post</button>
+            <button type="button" class="cancel-btn" style="display: none;">Cancel Edit</button>
+          </div>
+        </form>
+      </section>
+
+      <hr class="section-divider" />
+
+      <section class="manage-section">
+        <h2>Your Posts</h2>
+        <div class="user-posts-list">
+
+            <div class="menu-dropdown">
+              <button type="button" class="three-dots-btn" aria-label="Post Options">⋮</button>
+              <div class="dropdown-menu">
+                <button type="button" class="dropdown-item edit-item">Edit</button>
+                <button type="button" class="dropdown-item delete-item">Delete</button>
+              </div>
+            </div>
+          </div>
+
         </div>
+      </section>
 
-        <table class="user-management-table" style="width: 100%; text-align: left; margin-top: 15px;">
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- test -->
-                <tr data-user-id="2">
-                    <td>Admin</td>
-                    <td>admin@lootbox.com</td>
-                    <td>admin</td>
-                    <td><span class="status-badge">Active</span></td>
-                    <td>
-                        <button type="button" class="btn-danger" onclick="toggleUserLock('101', true)">
-                            Lock Account
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</main>
-
-<script>
-async function toggleUserLock(userId, shouldLock) {
-    const actionText = shouldLock ? "lock" : "unlock";
-    const confirmMessage = `Are you sure you want to ${actionText} this user?`;
-
-    if (!confirm(confirmMessage)) return;
-
-    try {
-        const response = await fetch(`/api/admin/users/${userId}/lock-status`, {
-            method: 'PUT',
-            headers: { 
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify({ isLocked: shouldLock })
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            alert(result.message || `User account successfully ${shouldLock ? 'locked' : 'unlocked'}.`);
-            location.reload(); // Refresh view to update row state
-        } else {
-            alert(result.message || "Failed to update user lock status.");
-        }
-    } catch (err) {
-        console.error("Error toggling user lock status:", err);
-        alert("An error occurred while communicating with the server.");
-    }
-}
-
-// Middleware to block locked users from performing operations
-function checkAccountStatus(req, res, next) {
-    if (req.user && req.user.isLocked) {
-        // Clear session or destroy cookie if needed
-        req.logout?.(); 
-        return res.status(403).json({ 
-            error: "Your account is locked. You cannot perform any operations." 
-        });
-    }
-    next();
-}
-
-module.exports = checkAccountStatus;
-</script>
+      <div class="bottom-nav">
+        <a href="/blog" class="back-link">← Back to Posts</a>
+  <%- include('../../partials/footer') %>
+<script src="/assets/js/blogscript.js"></script>
+</body>
+</html> 

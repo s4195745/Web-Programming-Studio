@@ -1,8 +1,21 @@
 [
   {
+    "id": "post-1786972941521",
+    "title": "Test3",
+    "author": "You",
+    "dateAdded": "Aug 17, 2026",
+    "category": "Merch",
+    "categoryIcon": "📱",
+    "summary": "ADmin account post",
+    "content": "ADmin account post",
+    "imageUrl": "https://via.placeholder.com/600x338",
+    "secondaryImage": "",
+    "comments": []
+  },
+  {
     "id": "post-1786607745941",
     "title": "Test2",
-    "author": "You",
+    "author": "Yik",
     "dateAdded": "Aug 13, 2026",
     "category": "Merch",
     "categoryIcon": "📱",
@@ -13,7 +26,7 @@
     "comments": [
       {
         "id": "c-1786608321998",
-        "author": "You",
+        "author": "Blink",
         "date": "Aug 13, 2026",
         "text": "HEorjropajap"
       }
