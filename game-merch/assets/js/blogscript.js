@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const titleInput = document.getElementById('post-title');
   const categoryInput = document.getElementById('post-category');
   const imageInput = document.getElementById('post-image');
-  const summaryInput = document.getElementById('post-summary'); // New Summary Input
+  const summaryInput = document.getElementById('post-summary');
   const contentInput = document.getElementById('post-content');
   const cancelBtn = document.querySelector('.cancel-btn');
   const formTitle = document.getElementById('form-title');
@@ -21,6 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // currently logged 
   const CURRENT_USER = 'You';
+
+  // pagination
+  let allPosts = [];
+  let currentPage = 1;
+  const postsPerPage = 10;
+  let isLoading = false;
 
   // blog.html - main feed
   if (postFeed) {
@@ -31,58 +37,98 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const params = new URLSearchParams({ query, searchType, category });
 
+      // reset paignation on search/filter/new 10 post
+      currentPage = 1;
+      postFeed.innerHTML = '';
+
       fetch(`/api/posts?${params.toString()}`)
         .then(res => res.json())
         .then(posts => {
-          if (posts.length === 0) {
+          allPosts = posts;
+
+          if (allPosts.length === 0) {
             postFeed.innerHTML = '<p class="no-posts">No blog posts found.</p>';
             return;
           }
 
-          postFeed.innerHTML = posts.map(post => `
-            <article class="blog-card" id="card-${post.id}">
-              <div class="card-image-wrapper">
-                <img src="${post.imageUrl}" alt="${post.title}" class="card-image" onerror="this.src='https://via.placeholder.com/600x338?text=No+Image'" />
-              </div>
-              <div class="category">
-                <span class="icon">${post.categoryIcon || '📝'}</span>
-                <span class="category-name">${post.category}</span>
-              </div>
-              <h2 class="card-title">${post.title}</h2>
-              <p class="card-description">${post.summary}</p>
-              <div class="card-meta">${post.dateAdded} • By ${post.author}</div>
-              
-              <!-- Inline Detailed Content Area -->
-              <div class="detailed-content" id="detail-${post.id}" style="display: none; margin-top: 15px;">
-                <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ccc;" />
-                <div class="article-body">
-                  <p>${post.content ? post.content.replace(/\n/g, '<br>') : ''}</p>
-                </div>
-                ${post.secondaryImage ? `<img src="${post.secondaryImage}" alt="Secondary Illustration" class="article-image" style="margin-top:15px; max-width:100%;" />` : ''}
-                
-                <section class="comments-section" style="margin-top:20px;">
-                  <h3>Comments</h3>
-                  <form class="comment-form" onsubmit="submitComment(event, '${post.id}')">
-                    <textarea id="commentInput-${post.id}" placeholder="Write a comment..." rows="3" class="comment-input" required></textarea>
-                    <button type="submit" class="submit-btn">Post Comment</button>
-                  </form>
-                  <div class="comment-list" id="commentList-${post.id}">
-                    ${renderCommentsHtml(post.comments)}
-                  </div>
-                </section>
-              </div>
-
-              <button type="button" class="read-link" onclick="togglePostDetail('${post.id}')" style="background:none; border:none; cursor:pointer; padding:0; text-decoration:underline;">
-                Read More
-              </button>
-            </article>
-          `).join('');
+          renderNextBatch();
         })
         .catch(err => {
           console.error('Error fetching posts:', err);
           postFeed.innerHTML = '<p class="error-msg">Failed to load posts.</p>';
         });
     };
+
+    // next 10 post render
+    const renderNextBatch = () => {
+      if (isLoading) return;
+      isLoading = true;
+
+      const startIndex = (currentPage - 1) * postsPerPage;
+      const endIndex = startIndex + postsPerPage;
+      const batch = allPosts.slice(startIndex, endIndex);
+
+      if (batch.length === 0) {
+        isLoading = false;
+        return;
+      }
+
+      const html = batch.map(post => `
+        <article class="blog-card" id="card-${post.id}">
+          <div class="card-image-wrapper">
+            <img src="${post.imageUrl}" alt="${post.title}" class="card-image" onerror="this.src='https://via.placeholder.com/600x338?text=No+Image'" />
+          </div>
+          <div class="category">
+            <span class="icon">${post.categoryIcon || '📝'}</span>
+            <span class="category-name">${post.category}</span>
+          </div>
+          <h2 class="card-title">${post.title}</h2>
+          <p class="card-description">${post.summary}</p>
+          <div class="card-meta">${post.dateAdded} • By ${post.author}</div>
+          
+          <!-- Inline Detailed Content Area -->
+          <div class="detailed-content" id="detail-${post.id}" style="display: none; margin-top: 15px;">
+            <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ccc;" />
+            <div class="article-body">
+              <p>${post.content ? post.content.replace(/\n/g, '<br>') : ''}</p>
+            </div>
+            ${post.secondaryImage ? `<img src="${post.secondaryImage}" alt="Secondary Illustration" class="article-image" style="margin-top:15px; max-width:100%;" />` : ''}
+            
+            <section class="comments-section" style="margin-top:20px;">
+              <h3>Comments</h3>
+              <form class="comment-form" onsubmit="submitComment(event, '${post.id}')">
+                <textarea id="commentInput-${post.id}" placeholder="Write a comment..." rows="3" class="comment-input" required></textarea>
+                <button type="submit" class="submit-btn">Post Comment</button>
+              </form>
+              <div class="comment-list" id="commentList-${post.id}">
+                ${renderCommentsHtml(post.comments)}
+              </div>
+            </section>
+          </div>
+
+          <button type="button" class="read-link" onclick="togglePostDetail('${post.id}')" style="background:none; border:none; cursor:pointer; padding:0; text-decoration:underline;">
+            Read More
+          </button>
+        </article>
+      `).join('');
+
+      postFeed.insertAdjacentHTML('beforeend', html);
+      currentPage++;
+      isLoading = false;
+    };
+
+    // loading scroll 
+    window.addEventListener('scroll', () => {
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+      // trigger when user is close to bottom of the page
+      if (scrollTop + clientHeight >= scrollHeight - 200) {
+        const totalPages = Math.ceil(allPosts.length / postsPerPage);
+        if (currentPage <= totalPages && !isLoading) {
+          renderNextBatch();
+        }
+      }
+    });
 
     fetchAndRenderFeed();
 
@@ -199,12 +245,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Fallback to the first sentence if no summary is provided
       if (!summaryVal) {
-        // Regex matches everything up to the first period, exclamation point, or question mark
         const firstSentenceMatch = contentVal.match(/^[^.!?]*[.!?]/);
         if (firstSentenceMatch) {
           summaryVal = firstSentenceMatch[0].trim();
         } else {
-          // If no punctuation exists, take the first 80 characters
           summaryVal = contentVal.length > 80 ? contentVal.substring(0, 80) + '...' : contentVal;
         }
       }
@@ -261,7 +305,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
 
-    // cloes options when clicking outside
+    // close options when clicking outside
     document.addEventListener('click', () => {
       document.querySelectorAll('.dropdown-menu').forEach(menu => {
         menu.style.display = 'none';

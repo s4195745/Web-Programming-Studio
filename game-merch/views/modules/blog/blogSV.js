@@ -4,26 +4,15 @@ const path = require('path');
 
 const router = express.Router();
 
-// Folder & Data File Setup
+// data files
 const BLOG_DIR = __dirname;
 const DATA_FILE = path.join(BLOG_DIR, 'posts.json');
-
-const initialPosts = [];
-
-router.use(express.json());
-router.use(express.static(__dirname));
-// connecto to css
-router.use(express.static(path.join(__dirname, '../../')));
-// root URL to blog.html
-router.get('/', (req, res) => {
-  res.redirect('/blog.html');
-});
 
 // initialize data storage
 function loadPosts() {
   if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(initialPosts, null, 2), 'utf8');
-    return initialPosts;
+    fs.writeFileSync(DATA_FILE, JSON.stringify(posts, null, 2), 'utf8');
+    return posts;
   }
   const fileData = fs.readFileSync(DATA_FILE, 'utf8');
   return JSON.parse(fileData);
@@ -37,6 +26,19 @@ function getCategoryIcon(cat) {
   const icons = { 'Merch': '📱', 'Fan-art': '🎨', 'Discussion': '💬', 'Review': '⭐' };
   return icons[cat] || '📝';
 }
+
+//fall back incase posts.json die so sv doesnt die with it
+const initialPosts = [];
+
+function loadPosts() {
+  if (!fs.existsSync(DATA_FILE)) {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(initialPosts, null, 2), 'utf8');
+    return initialPosts;
+  }
+  const fileData = fs.readFileSync(DATA_FILE, 'utf8');
+  return JSON.parse(fileData);
+}
+
 // GET posts
 router.get('/api/posts', (req, res) => {
   let posts = loadPosts();

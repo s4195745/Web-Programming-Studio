@@ -1,40 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Manage Posts - Merch Blog</title>
-  <link rel="stylesheet" type="text/css" href="../../assets/css/blog.css" />
-  <link rel="stylesheet" href="../../assets/css/main.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Merch Store - Home</title>
+    <link rel="stylesheet" type="text/css" href="/assets/css/blog.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
 </head>
-<body>
 
-  <!-- ================= SHARED NAVIGATION ================= -->
-  <nav>
-      <a href="../../landing_page.html" class="logo">LootBox.</a>
-      <div class="nav-links">
-          <a href="../shopping_cart/index.html">Shop</a>
-          <a href="../discussion_forum/forum.html">Forum</a>
-          <a href="/blog">Blog</a>
-          <a href="../review/productreview.html">Review</a>
-          <a href="../wishlist/wishlist.html">Wishlist</a>
-      </div>
-      <div class="nav-actions">
-          <div class="search-bar">
-              <input type="text" placeholder="Search..." aria-label="Search">
-              <button type="button" aria-label="Submit search"><i class="ri-search-line"></i></button>
-          </div>
-          <a href="../shopping_cart/cart.html" class="cart-icon">
-              <i class="ri-shopping-bag-line"></i>
-              <span class="cart-item-count active">2</span>
-          </a>
-          <a href="../shared_module/profile.html" class="nav-profile-link">
-              <img src="../../assets/images/Nguyen The Chinh.jpg" alt="User Profile" class="nav-avatar">
-          </a>
-      </div>
-  </nav>
+ <%- include('../../partials/navbar') %>
 
   <main class="main-container">
     <div class="article-page">
@@ -151,6 +126,6 @@
           </a>
       </div>
   </footer>
-  <script src="script.js"></script>
+<script src="/assets/js/blogscript.js"></script>
 </body>
 </html> 

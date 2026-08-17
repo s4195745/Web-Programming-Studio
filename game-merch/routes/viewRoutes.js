@@ -21,4 +21,8 @@ router.get('/forgot_password', (req, res) => { res.render('modules/user_account_
 router.get('/forgot_password_confirm', (req, res) => { res.render('modules/user_account_manage/forgot_password_confirm'); });
 router.get('/delete_account', (req, res) => { res.render('modules/user_account_manage/delete_account'); });
 
+// blog pages
+router.get('/blog', (req, res) => { res.render('modules/blog/blog'); });
+router.get('/UserBlog', (req, res) => { res.render('modules/blog/UserBlog'); });
+
 module.exports = router;
