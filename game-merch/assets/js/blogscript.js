@@ -18,12 +18,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   const submitBtn = postForm ? postForm.querySelector('.submit-btn') : null;
   const userPostsList = document.querySelector('.user-posts-list');
 
-  // Retrieve logged-in account name dynamically
-  let CURRENT_USER = window.currentUserAccount || '';
+// Read auth tokens/session data from sessionStorage set by auth-validation.js
+  const currentUsername = sessionStorage.getItem("username");
+  const currentEmail = sessionStorage.getItem("userEmail");
+  const currentToken = sessionStorage.getItem("token");
 
+function getAuthHeaders() {
+    const headers = { 'Content-Type': 'application/json' };
+    if (currentToken) headers['Authorization'] = `Bearer ${currentToken}`;
+    if (currentEmail) headers['x-user-email'] = currentEmail;
+    return headers;
+  }
+
+  let CURRENT_USER = currentUsername || currentEmail || window.currentUserAccount || '';
+
+  // If CURRENT_USER is empty, query the server using auth headers
   if (!CURRENT_USER) {
     try {
-      const res = await fetch('/api/current-user');
+      const res = await fetch('/api/current-user', { headers: getAuthHeaders() });
       const data = await res.json();
       CURRENT_USER = data.accountName !== 'Guest' ? data.accountName : '';
     } catch (e) {
@@ -31,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // Main Feed 
+  // --- Main Feed ---
   if (postFeed) {
     const fetchAndRenderFeed = () => {
       const query = searchInput ? searchInput.value.trim() : '';
@@ -43,7 +55,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       fetch(`/api/posts?${params.toString()}`)
         .then(res => res.json())
         .then(posts => {
-          if (posts.length === 0) {
+          if (!Array.isArray(posts) || posts.length === 0) {
             postFeed.innerHTML = '<p class="no-posts">No blog posts found.</p>';
             return;
           }
@@ -103,6 +115,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  function renderCommentsHtml(comments) {
+    if (!comments || comments.length === 0) return '<p>No comments.</p>';
+    return comments.map(c => `
+      <div class="comment-item">
+        <span class="comment-author">${c.author}</span>
+        <span class="comment-date">${c.date}</span>
+        <p class="comment-text">${c.text}</p>
+      </div>
+    `).join('');
+  }
+
+  // --- Global Window Bindings for Inline HTML Handlers ---
+
   window.togglePostDetail = function(id) {
     const detailElem = document.getElementById(`detail-${id}`);
     const cardElem = document.getElementById(`card-${id}`);
@@ -119,20 +144,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   };
 
-  function renderCommentsHtml(comments) {
-    if (!comments || comments.length === 0) {
-      return '<p>No comments.</p>';
-    }
-    return comments.map(c => `
-      <div class="comment-item">
-        <span class="comment-author">${c.author}</span>
-        <span class="comment-date">${c.date}</span>
-        <p class="comment-text">${c.text}</p>
-      </div>
-    `).join('');
-  }
-
-  // Comment
   window.submitComment = function(e, postId) {
     e.preventDefault();
     const input = document.getElementById(`commentInput-${postId}`);
@@ -142,7 +153,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     fetch(`/api/posts/${postId}/comments`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ text })
     })
     .then(res => res.json())
@@ -158,49 +169,47 @@ document.addEventListener('DOMContentLoaded', async () => {
     .catch(err => console.error('Error posting comment:', err));
   };
 
-  // User Blog Manager
-  if (postForm) {
-    const loadUserPosts = () => {
-      if (!CURRENT_USER) {
-        if (userPostsList) {
-          userPostsList.innerHTML = '<p class="no-posts">Please log in to view and manage your posts.</p>';
+  const loadUserPosts = () => {
+    if (!userPostsList) return;
+
+    if (!CURRENT_USER) {
+      userPostsList.innerHTML = '<p class="no-posts">Please log in to view and manage your posts.</p>';
+      return;
+    }
+
+    fetch(`/api/posts?userOnly=true`, { headers: getAuthHeaders() })
+      .then(res => res.json())
+      .then(userOnlyPosts => {
+        if (!Array.isArray(userOnlyPosts) || userOnlyPosts.length === 0) {
+          userPostsList.innerHTML = `<p class="no-posts">No posts found for ${CURRENT_USER}.</p>`;
+          return;
         }
-        return;
-      }
 
-      fetch(`/api/posts?userOnly=true`)
-        .then(res => res.json())
-        .then(userOnlyPosts => {
-          if (!userPostsList) return;
-
-          if (userOnlyPosts.length === 0) {
-            userPostsList.innerHTML = `<p class="no-posts">No posts found for ${CURRENT_USER}.</p>`;
-            return;
-          }
-
-          userPostsList.innerHTML = userOnlyPosts.map(post => `
-            <div class="user-post-item" data-id="${post.id}">
-              <div class="user-post-thumb">
-                <img src="${post.imageUrl}" alt="${post.title}" onerror="this.src='https://via.placeholder.com/150'" />
-              </div>
-              <div class="user-post-info">
-                <span class="category"><span class="icon">${post.categoryIcon || '📝'}</span> ${post.category}</span>
-                <h3>${post.title}</h3>
-                <p class="card-meta">${post.dateAdded} • By ${post.author}</p>
-              </div>
-              <div class="menu-dropdown">
-                <button type="button" class="three-dots-btn" onclick="toggleDropdown(event, '${post.id}')" aria-label="Post Options">⋮</button>
-                <div class="dropdown-menu" id="dropdown-${post.id}" style="display: none;">
-                  <button type="button" class="dropdown-item edit-btn" onclick="triggerEdit('${post.id}')">Edit</button>
-                  <button type="button" class="dropdown-item delete-btn" onclick="triggerDelete('${post.id}')">Delete</button>
-                </div>
+        userPostsList.innerHTML = userOnlyPosts.map(post => `
+          <div class="user-post-item" data-id="${post.id}">
+            <div class="user-post-thumb">
+              <img src="${post.imageUrl}" alt="${post.title}" onerror="this.src='https://via.placeholder.com/150'" />
+            </div>
+            <div class="user-post-info">
+              <span class="category"><span class="icon">${post.categoryIcon || '📝'}</span> ${post.category}</span>
+              <h3>${post.title}</h3>
+              <p class="card-meta">${post.dateAdded} • By ${post.author}</p>
+            </div>
+            <div class="menu-dropdown">
+              <button type="button" class="three-dots-btn" onclick="toggleDropdown(event, '${post.id}')" aria-label="Post Options">⋮</button>
+              <div class="dropdown-menu" id="dropdown-${post.id}" style="display: none;">
+                <button type="button" class="dropdown-item edit-btn" onclick="triggerEdit('${post.id}')">Edit</button>
+                <button type="button" class="dropdown-item delete-btn" onclick="triggerDelete('${post.id}')">Delete</button>
               </div>
             </div>
-          `).join('');
-        })
-        .catch(err => console.error('Error loading posts list:', err));
-    };
+          </div>
+        `).join('');
+      })
+      .catch(err => console.error('Error loading posts list:', err));
+  };
 
+  // --- Form Handlers ---
+  if (postForm) {
     postForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
@@ -215,11 +224,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (!summaryVal) {
         const firstSentenceMatch = contentVal.match(/^[^.!?]*[.!?]/);
-        if (firstSentenceMatch) {
-          summaryVal = firstSentenceMatch[0].trim();
-        } else {
-          summaryVal = contentVal.length > 80 ? contentVal.substring(0, 80) + '...' : contentVal;
-        }
+        summaryVal = firstSentenceMatch ? firstSentenceMatch[0].trim() : (contentVal.length > 80 ? contentVal.substring(0, 80) + '...' : contentVal);
       }
 
       const payload = {
@@ -230,12 +235,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         content: contentVal
       };
 
-      const method = id ? 'PUT' : 'POST';
-      const url = id ? `/api/posts/${id}` : '/api/posts';
-
-      fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
+      fetch(id ? `/api/posts/${id}` : '/api/posts', {
+        method: id ? 'PUT' : 'POST',
+        headers: getAuthHeaders(),
         body: JSON.stringify(payload)
       })
       .then(res => {
@@ -262,59 +264,60 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (cancelBtn) cancelBtn.style.display = 'none';
     }
 
-    window.toggleDropdown = function(e, id) {
-      e.stopPropagation();
-      const currentDropdown = document.getElementById(`dropdown-${id}`);
-      
-      document.querySelectorAll('.dropdown-menu').forEach(menu => {
-        if (menu !== currentDropdown) menu.style.display = 'none';
-      });
-
-      if (currentDropdown) {
-        currentDropdown.style.display = (currentDropdown.style.display === 'none' || !currentDropdown.style.display) ? 'block' : 'none';
-      }
-    };
-
-    document.addEventListener('click', () => {
-      document.querySelectorAll('.dropdown-menu').forEach(menu => {
-        menu.style.display = 'none';
-      });
-    });
-
-    window.triggerEdit = function(id) {
-      fetch(`/api/posts/${id}`)
-        .then(res => {
-          if (!res.ok) throw new Error('Post not found');
-          return res.json();
-        })
-        .then(post => {
-          postIdInput.value = post.id;
-          titleInput.value = post.title;
-          categoryInput.value = post.category;
-          imageInput.value = post.imageUrl;
-          contentInput.value = post.content;
-          if (summaryInput) summaryInput.value = post.summary || '';
-          
-          if (formTitle) formTitle.textContent = 'Edit Post';
-          if (submitBtn) submitBtn.textContent = 'Save Changes';
-          if (cancelBtn) cancelBtn.style.display = 'inline-block';
-          window.scrollTo({ top: postForm.offsetTop - 100, behavior: 'smooth' });
-        })
-        .catch(err => console.error('Error loading post for edit:', err));
-    };
-
-    window.triggerDelete = function(id) {
-      if (confirm('Delete post? This action cannot be undone.')) {
-        fetch(`/api/posts/${id}`, { method: 'DELETE' })
-          .then(res => {
-            if (!res.ok) return res.json().then(err => Promise.reject(err));
-            return res.json();
-          })
-          .then(() => loadUserPosts())
-          .catch(err => alert(err.error || 'Error deleting post'));
-      }
-    };
-
     loadUserPosts();
   }
+
+  window.toggleDropdown = function(e, id) {
+    e.stopPropagation();
+    const currentDropdown = document.getElementById(`dropdown-${id}`);
+    
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+      if (menu !== currentDropdown) menu.style.display = 'none';
+    });
+
+    if (currentDropdown) {
+      currentDropdown.style.display = (currentDropdown.style.display === 'none' || !currentDropdown.style.display) ? 'block' : 'none';
+    }
+  };
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.dropdown-menu').forEach(menu => menu.style.display = 'none');
+  });
+
+  window.triggerEdit = function(id) {
+    fetch(`/api/posts/${id}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Post not found');
+        return res.json();
+      })
+      .then(post => {
+        postIdInput.value = post.id;
+        titleInput.value = post.title;
+        categoryInput.value = post.category;
+        imageInput.value = post.imageUrl;
+        contentInput.value = post.content;
+        if (summaryInput) summaryInput.value = post.summary || '';
+        
+        if (formTitle) formTitle.textContent = 'Edit Post';
+        if (submitBtn) submitBtn.textContent = 'Save Changes';
+        if (cancelBtn) cancelBtn.style.display = 'inline-block';
+        window.scrollTo({ top: postForm.offsetTop - 100, behavior: 'smooth' });
+      })
+      .catch(err => console.error('Error loading post for edit:', err));
+  };
+
+  window.triggerDelete = function(id) {
+    if (confirm('Delete post? This action cannot be undone.')) {
+      fetch(`/api/posts/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      })
+      .then(res => {
+        if (!res.ok) return res.json().then(err => Promise.reject(err));
+        return res.json();
+      })
+      .then(() => loadUserPosts())
+      .catch(err => alert(err.error || 'Error deleting post'));
+    }
+  };
 });

@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-
+const { users } = require('../../../data/mockDB');
 const router = express.Router();
 
 const BLOG_DIR = __dirname;
@@ -29,8 +29,26 @@ function getCategoryIcon(cat) {
 
 // Helper: Get logged-in user's display account name
 function getAccountName(req) {
+  // 1. Check req.user / req.session
   const user = req.user || (req.session && req.session.user);
-  return user ? (user.username || user.name || user.email) : null;
+  if (user) return user.username || user.name || user.email;
+
+  // 2. Check Authorization token header (Bearer <token>)
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    const foundUser = users.find(u => u.token === token);
+    if (foundUser) return foundUser.username || foundUser.email;
+  }
+
+  // 3. Check custom user email header
+  const headerEmail = req.headers['x-user-email'];
+  if (headerEmail) {
+    const foundUser = users.find(u => u.email === headerEmail);
+    if (foundUser) return foundUser.username || foundUser.email;
+  }
+
+  return null;
 }
 
 // GET posts

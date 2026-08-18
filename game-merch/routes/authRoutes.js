@@ -39,17 +39,8 @@ router.post('/login', (req, res) => {
     
     if (user) {
         const token = "mock_token_" + Buffer.from(user.email + Date.now()).toString('base64');
-        user.token = token; }
+        user.token = token; 
         
-     // Prevent locked accounts
-    if (user) {
-        if (user.isLocked) {
-            return res.status(403).json({ error: "Your account is locked. Please contact support." });
-        }
-
-        const token = "mock_token_" + Buffer.from(user.email + Date.now()).toString('base64');
-        user.token = token;
-
         return res.status(200).json({ 
             message: "Login successful", 
             token: token,

@@ -1,5 +1,25 @@
 [
   {
+    "id": "post-1787050752270",
+    "title": "pleaseasrarrarar",
+    "author": "ThanhHo",
+    "dateAdded": "Aug 18, 2026",
+    "category": "Merch",
+    "categoryIcon": "📱",
+    "summary": "iasdjadao",
+    "content": "iasdjadao",
+    "imageUrl": "https://via.placeholder.com/600x338",
+    "secondaryImage": "",
+    "comments": [
+      {
+        "id": "c-1787050760732",
+        "author": "ThanhHo",
+        "date": "Aug 18, 2026",
+        "text": "holy shit it works"
+      }
+    ]
+  },
+  {
     "id": "post-1786972941521",
     "title": "Test3",
     "author": "You",
@@ -30,10 +50,10 @@
         "text": "check3"
       },
       {
-        "id": "c-1786980158499",
+        "id": "c-1787050363972",
         "author": "Guest",
-        "date": "Aug 17, 2026",
-        "text": "test 4"
+        "date": "Aug 18, 2026",
+        "text": ":sob:"
       }
     ]
   },
@@ -54,6 +74,12 @@
         "author": "Blink",
         "date": "Aug 13, 2026",
         "text": "HEorjropajap"
+      },
+      {
+        "id": "c-1787048885045",
+        "author": "Guest",
+        "date": "Aug 18, 2026",
+        "text": "fga"
       }
     ]
   },
