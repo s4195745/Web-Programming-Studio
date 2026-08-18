@@ -18,12 +18,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   const submitBtn = postForm ? postForm.querySelector('.submit-btn') : null;
   const userPostsList = document.querySelector('.user-posts-list');
 
-// Read auth tokens/session data from sessionStorage set by auth-validation.js
+  // Track existing image during editing
+  let existingImageUrl = '';
+
+  // Read auth tokens/session data from sessionStorage set by auth-validation.js
   const currentUsername = sessionStorage.getItem("username");
   const currentEmail = sessionStorage.getItem("userEmail");
   const currentToken = sessionStorage.getItem("token");
 
-function getAuthHeaders() {
+  function getAuthHeaders() {
     const headers = { 'Content-Type': 'application/json' };
     if (currentToken) headers['Authorization'] = `Bearer ${currentToken}`;
     if (currentEmail) headers['x-user-email'] = currentEmail;
@@ -42,6 +45,29 @@ function getAuthHeaders() {
       console.error('Failed to get name:', e);
     }
   }
+
+// --- Helper: Read Image Input (Supports Files, Base64 Data URLs, & Web Links) ---
+  const processImageInput = (inputElem, fallbackUrl = '') => {
+    return new Promise((resolve) => {
+      if (!inputElem) return resolve(fallbackUrl);
+
+      // 1. Handle File Upload (<input type="file">)
+      if (inputElem.type === 'file' && inputElem.files && inputElem.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result); // Resolves as Base64 Data URL
+        reader.onerror = () => resolve(fallbackUrl);
+        reader.readAsDataURL(inputElem.files[0]);
+      } 
+      // 2. Handle Image URL Link (<input type="url"> or <input type="text">)
+      else if (inputElem.value && inputElem.value.trim()) {
+        resolve(inputElem.value.trim());
+      } 
+      // 3. Fallback to existing image or empty string
+      else {
+        resolve(fallbackUrl);
+      }
+    });
+  };
 
   // --- Main Feed ---
   if (postFeed) {
@@ -210,7 +236,7 @@ function getAuthHeaders() {
 
   // --- Form Handlers ---
   if (postForm) {
-    postForm.addEventListener('submit', (e) => {
+    postForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       if (!CURRENT_USER) {
@@ -224,13 +250,16 @@ function getAuthHeaders() {
 
       if (!summaryVal) {
         const firstSentenceMatch = contentVal.match(/^[^.!?]*[.!?]/);
-        summaryVal = firstSentenceMatch ? firstSentenceMatch[0].trim() : (contentVal.length > 80 ? contentVal.substring(0, 80) + '...' : contentVal);
+        summaryVal = firstSentenceMatch ? firstSentenceMatch[0].trim() : (contentVal.length > 50 ? contentVal.substring(0, 50) + '...' : contentVal);
       }
+
+      // Convert selected file to Base64
+      const finalImageUrl = await processImageInput(imageInput, existingImageUrl);
 
       const payload = {
         title: titleInput.value.trim(),
         category: categoryInput.value,
-        imageUrl: imageInput.value.trim(),
+        imageUrl: finalImageUrl,
         summary: summaryVal,
         content: contentVal
       };
@@ -247,6 +276,7 @@ function getAuthHeaders() {
       .then(() => {
         resetForm();
         loadUserPosts();
+        if (postFeed) fetchAndRenderFeed();
       })
       .catch(err => alert(err.error || 'Error saving post'));
     });
@@ -256,8 +286,9 @@ function getAuthHeaders() {
     function resetForm() {
       postIdInput.value = '';
       titleInput.value = '';
-      imageInput.value = '';
+      if (imageInput) imageInput.value = '';
       contentInput.value = '';
+      existingImageUrl = '';
       if (summaryInput) summaryInput.value = '';
       if (formTitle) formTitle.textContent = 'Create a New Post';
       if (submitBtn) submitBtn.textContent = 'Publish Post';
@@ -294,8 +325,16 @@ function getAuthHeaders() {
         postIdInput.value = post.id;
         titleInput.value = post.title;
         categoryInput.value = post.category;
-        imageInput.value = post.imageUrl;
         contentInput.value = post.content;
+        existingImageUrl = post.imageUrl || '';
+        
+        // Reset file input value
+        if (imageInput && imageInput.type === 'file') {
+          imageInput.value = '';
+        } else if (imageInput) {
+          imageInput.value = post.imageUrl || '';
+        }
+
         if (summaryInput) summaryInput.value = post.summary || '';
         
         if (formTitle) formTitle.textContent = 'Edit Post';
@@ -316,7 +355,10 @@ function getAuthHeaders() {
         if (!res.ok) return res.json().then(err => Promise.reject(err));
         return res.json();
       })
-      .then(() => loadUserPosts())
+      .then(() => {
+        loadUserPosts();
+        if (postFeed) fetchAndRenderFeed();
+      })
       .catch(err => alert(err.error || 'Error deleting post'));
     }
   };
