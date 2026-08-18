@@ -152,19 +152,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     `).join('');
   }
 
-  // --- Global Window Bindings for Inline HTML Handlers ---
+// --- Global Window Bindings for Inline HTML Handlers ---
 
   window.togglePostDetail = function(id) {
     const detailElem = document.getElementById(`detail-${id}`);
     const cardElem = document.getElementById(`card-${id}`);
     const btn = cardElem ? cardElem.querySelector('.read-link') : null;
 
-    if (detailElem) {
+    if (detailElem && cardElem) {
       if (detailElem.style.display === 'none') {
+        // Expand card details and container
         detailElem.style.display = 'block';
+        cardElem.classList.add('expanded');
         if (btn) btn.textContent = 'Show Less';
       } else {
+        // Collapse card details and container
         detailElem.style.display = 'none';
+        cardElem.classList.remove('expanded');
         if (btn) btn.textContent = 'Read More';
       }
     }
@@ -346,7 +350,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   window.triggerDelete = function(id) {
-    if (confirm('Delete post? This action cannot be undone.')) {
+    if (confirm('Confirm deletion?')) {
       fetch(`/api/posts/${id}`, {
         method: 'DELETE',
         headers: getAuthHeaders()
@@ -359,7 +363,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadUserPosts();
         if (postFeed) fetchAndRenderFeed();
       })
-      .catch(err => alert(err.error || 'Error deleting post'));
+      .catch(err => alert(err.error || 'Error.'));
     }
   };
 });
+
