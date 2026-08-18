@@ -16,7 +16,6 @@
 
   <main class="main-container">
     <div class="article-page">
-      
       <section class="manage-section">
         <h2 id="form-title">Create a New Post</h2>
         <form class="post-form" onsubmit="event.preventDefault();">
@@ -38,17 +37,19 @@
           </div>
 
           <div class="form-group">
-            <label for="post-image">Image URL</label>
+            <label for="post-image">Image URL (Optional)</label>
             <input type="url" id="post-image" class="form-input" placeholder="https://example.com/image.jpg" />
-            <div class="form-row">             
-                        </div>
-                    </div>
           </div>
 
-            <div class="form-group">
-              <label for="post-summary">Overview (Optional)</label>
-             <input type="text" id="post-summary" class="form-input" placeholder="Short description of your post." />
-            </div>
+          <div class="form-group">
+            <label for="post-secondary-image">Secondary Image URL (Optional)</label>
+            <input type="url" id="post-secondary-image" class="form-input" placeholder="https://example.com/secondary-image.jpg" />
+          </div>
+
+          <div class="form-group">
+            <label for="post-summary">Overview (Optional)</label>
+            <input type="text" id="post-summary" class="form-input" placeholder="Short description of your post." />
+          </div>
 
           <div class="form-group">
             <label for="post-content">Content</label>
@@ -67,22 +68,23 @@
       <section class="manage-section">
         <h2>Your Posts</h2>
         <div class="user-posts-list">
-
-            <div class="menu-dropdown">
-              <button type="button" class="three-dots-btn" aria-label="Post Options">⋮</button>
-              <div class="dropdown-menu">
-                <button type="button" class="dropdown-item edit-item">Edit</button>
-                <button type="button" class="dropdown-item delete-item">Delete</button>
-              </div>
+          <div class="menu-dropdown">
+            <button type="button" class="three-dots-btn" aria-label="Post Options">⋮</button>
+            <div class="dropdown-menu">
+              <button type="button" class="dropdown-item edit-item">Edit</button>
+              <button type="button" class="dropdown-item delete-item">Delete</button>
             </div>
           </div>
-
         </div>
       </section>
 
       <div class="bottom-nav">
         <a href="/blog" class="back-link">← Back to Posts</a>
+      </div>
+    </div>
+  </main>
+
   <%- include('../../partials/footer') %>
 <script src="/assets/js/blogscript.js"></script>
 </body>
-</html> 
+</html>

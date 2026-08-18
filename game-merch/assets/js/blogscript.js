@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const titleInput = document.getElementById('post-title');
   const categoryInput = document.getElementById('post-category');
   const imageInput = document.getElementById('post-image');
+  const secondaryImageInput = document.getElementById('post-secondary-image');
   const summaryInput = document.getElementById('post-summary');
   const contentInput = document.getElementById('post-content');
   const cancelBtn = document.querySelector('.cancel-btn');
@@ -20,6 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Track existing image during editing
   let existingImageUrl = '';
+  let existingSecondaryImageUrl = '';
 
   // Read auth tokens/session data from sessionStorage set by auth-validation.js
   const currentUsername = sessionStorage.getItem("username");
@@ -46,27 +48,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-// --- Helper: Read Image Input (Supports Files, Base64 Data URLs, & Web Links) ---
-  const processImageInput = (inputElem, fallbackUrl = '') => {
-    return new Promise((resolve) => {
-      if (!inputElem) return resolve(fallbackUrl);
-
-      // 1. Handle File Upload (<input type="file">)
-      if (inputElem.type === 'file' && inputElem.files && inputElem.files[0]) {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target.result); // Resolves as Base64 Data URL
-        reader.onerror = () => resolve(fallbackUrl);
-        reader.readAsDataURL(inputElem.files[0]);
-      } 
-      // 2. Handle Image URL Link (<input type="url"> or <input type="text">)
-      else if (inputElem.value && inputElem.value.trim()) {
-        resolve(inputElem.value.trim());
-      } 
-      // 3. Fallback to existing image or empty string
-      else {
-        resolve(fallbackUrl);
-      }
-    });
+  // --- Helper: Read Image Input safely ---
+  const getImageInputValue = (inputElem, fallbackUrl = '') => {
+    if (inputElem && inputElem.value && inputElem.value.trim()) {
+      return inputElem.value.trim();
+    }
+    return fallbackUrl;
   };
 
   // --- Main Feed ---
@@ -101,10 +88,13 @@ document.addEventListener('DOMContentLoaded', async () => {
               
               <div class="detailed-content" id="detail-${post.id}" style="display: none; margin-top: 15px;">
                 <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ccc;" />
+                
+                <!-- Secondary Image renders directly ABOVE content section -->
+                ${post.secondaryImage ? `<img src="${post.secondaryImage}" alt="Secondary Illustration" class="article-image" style="margin-bottom:15px; max-width:100%; border-radius:8px;" />` : ''}
+
                 <div class="article-body">
                   <p>${post.content ? post.content.replace(/\n/g, '<br>') : ''}</p>
                 </div>
-                ${post.secondaryImage ? `<img src="${post.secondaryImage}" alt="Secondary Illustration" class="article-image" style="margin-top:15px; max-width:100%;" />` : ''}
                 
                 <section class="comments-section" style="margin-top:20px;">
                   <h3>Comments</h3>
@@ -152,8 +142,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     `).join('');
   }
 
-// --- Global Window Bindings for Inline HTML Handlers ---
-
+  // --- Global Window Bindings for Inline HTML Handlers ---
   window.togglePostDetail = function(id) {
     const detailElem = document.getElementById(`detail-${id}`);
     const cardElem = document.getElementById(`card-${id}`);
@@ -161,12 +150,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (detailElem && cardElem) {
       if (detailElem.style.display === 'none') {
-        // Expand card details and container
         detailElem.style.display = 'block';
         cardElem.classList.add('expanded');
         if (btn) btn.textContent = 'Show Less';
       } else {
-        // Collapse card details and container
         detailElem.style.display = 'none';
         cardElem.classList.remove('expanded');
         if (btn) btn.textContent = 'Read More';
@@ -240,7 +227,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // --- Form Handlers ---
   if (postForm) {
-    postForm.addEventListener('submit', async (e) => {
+    postForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
       if (!CURRENT_USER) {
@@ -257,13 +244,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         summaryVal = firstSentenceMatch ? firstSentenceMatch[0].trim() : (contentVal.length > 50 ? contentVal.substring(0, 50) + '...' : contentVal);
       }
 
-      // Convert selected file to Base64
-      const finalImageUrl = await processImageInput(imageInput, existingImageUrl);
+      const finalImageUrl = getImageInputValue(imageInput, existingImageUrl);
+      const finalSecondaryImageUrl = getImageInputValue(secondaryImageInput, existingSecondaryImageUrl);
 
       const payload = {
         title: titleInput.value.trim(),
         category: categoryInput.value,
         imageUrl: finalImageUrl,
+        secondaryImage: finalSecondaryImageUrl,
         summary: summaryVal,
         content: contentVal
       };
@@ -291,8 +279,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       postIdInput.value = '';
       titleInput.value = '';
       if (imageInput) imageInput.value = '';
+      if (secondaryImageInput) secondaryImageInput.value = '';
       contentInput.value = '';
       existingImageUrl = '';
+      existingSecondaryImageUrl = '';
       if (summaryInput) summaryInput.value = '';
       if (formTitle) formTitle.textContent = 'Create a New Post';
       if (submitBtn) submitBtn.textContent = 'Publish Post';
@@ -331,13 +321,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         categoryInput.value = post.category;
         contentInput.value = post.content;
         existingImageUrl = post.imageUrl || '';
+        existingSecondaryImageUrl = post.secondaryImage || '';
         
-        // Reset file input value
-        if (imageInput && imageInput.type === 'file') {
-          imageInput.value = '';
-        } else if (imageInput) {
-          imageInput.value = post.imageUrl || '';
-        }
+        if (imageInput) imageInput.value = post.imageUrl || '';
+        if (secondaryImageInput) secondaryImageInput.value = post.secondaryImage || '';
 
         if (summaryInput) summaryInput.value = post.summary || '';
         
@@ -367,4 +354,3 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   };
 });
-

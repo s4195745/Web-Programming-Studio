@@ -29,11 +29,9 @@ function getCategoryIcon(cat) {
 
 // Helper: Get logged-in user's display account name
 function getAccountName(req) {
-  // 1. Check req.user / req.session
   const user = req.user || (req.session && req.session.user);
   if (user) return user.username || user.name || user.email;
 
-  // 2. Check Authorization token header (Bearer <token>)
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.split(' ')[1];
@@ -41,7 +39,6 @@ function getAccountName(req) {
     if (foundUser) return foundUser.username || foundUser.email;
   }
 
-  // 3. Check custom user email header
   const headerEmail = req.headers['x-user-email'];
   if (headerEmail) {
     const foundUser = users.find(u => u.email === headerEmail);
@@ -56,7 +53,6 @@ router.get('/api/posts', (req, res) => {
   let posts = loadPosts();
   const { query, searchType, category, userOnly } = req.query;
 
-  // Filter posts created by the current user when requested
   if (userOnly === 'true') {
     const currentAccount = getAccountName(req);
     if (!currentAccount) return res.json([]);
@@ -90,7 +86,7 @@ router.get('/api/current-user', (req, res) => {
   res.json({ accountName: accountName || 'Guest', isLoggedIn: !!accountName });
 });
 
-// CREATE post (Uses Account Name)
+// CREATE post
 router.post('/api/posts', (req, res) => {
   const accountName = getAccountName(req);
 
@@ -99,7 +95,7 @@ router.post('/api/posts', (req, res) => {
   }
 
   const posts = loadPosts();
-  const { title, category, imageUrl, content, summary } = req.body;
+  const { title, category, imageUrl, secondaryImage, content, summary } = req.body;
 
   const newPost = {
     id: `post-${Date.now()}`,
@@ -111,7 +107,7 @@ router.post('/api/posts', (req, res) => {
     summary: summary || (content.length > 80 ? content.substring(0, 80) + '...' : content),
     content,
     imageUrl: imageUrl || "https://via.placeholder.com/600x338",
-    secondaryImage: "",
+    secondaryImage: secondaryImage || "",
     comments: []
   };
 
@@ -120,7 +116,7 @@ router.post('/api/posts', (req, res) => {
   res.status(201).json(newPost);
 });
 
-// edit post
+// EDIT post
 router.put('/api/posts/:id', (req, res) => {
   const accountName = getAccountName(req);
   const posts = loadPosts();
@@ -132,7 +128,7 @@ router.put('/api/posts/:id', (req, res) => {
     return res.status(403).json({ error: "You can only edit your own posts." });
   }
 
-  const { title, category, imageUrl, content, summary } = req.body;
+  const { title, category, imageUrl, secondaryImage, content, summary } = req.body;
 
   posts[idx] = {
     ...posts[idx],
@@ -140,6 +136,7 @@ router.put('/api/posts/:id', (req, res) => {
     category: category || posts[idx].category,
     categoryIcon: category ? getCategoryIcon(category) : posts[idx].categoryIcon,
     imageUrl: imageUrl || posts[idx].imageUrl,
+    secondaryImage: secondaryImage !== undefined ? secondaryImage : posts[idx].secondaryImage,
     content: content || posts[idx].content,
     summary: summary !== undefined ? summary : posts[idx].summary
   };
@@ -148,7 +145,7 @@ router.put('/api/posts/:id', (req, res) => {
   res.json(posts[idx]);
 });
 
-// delete post
+// DELETE post
 router.delete('/api/posts/:id', (req, res) => {
   const accountName = getAccountName(req);
   let posts = loadPosts();
@@ -165,7 +162,7 @@ router.delete('/api/posts/:id', (req, res) => {
   res.json({ success: true, message: "Post deleted" });
 });
 
-// post
+// ADD comment
 router.post('/api/posts/:id/comments', (req, res) => {
   const accountName = getAccountName(req) || "Guest";
   const posts = loadPosts();
