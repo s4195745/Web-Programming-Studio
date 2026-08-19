@@ -6,6 +6,99 @@ document.addEventListener('DOMContentLoaded', () => {
     const isCheckoutPage = document.querySelector(".checkout-page");
     const isConfirmationPage = document.querySelector(".confirmation-page");
 
+    function setupDynamicAdminPanel() {
+  const user = JSON.parse(sessionStorage.getItem('user'));
+  const adminToggleBtn = document.getElementById('admin-panel-toggle-btn');
+  const adminSidePanel = document.getElementById('admin-side-panel');
+  const userTableBody = document.querySelector('#admin-users-table tbody');
+
+  // Hide admin panel elements by default if user is not an admin
+  if (!user || user.role !== 'admin') {
+    if (adminToggleBtn) adminToggleBtn.style.display = 'none';
+    if (adminSidePanel) adminSidePanel.style.display = 'none';
+    return;
+  }
+
+  // User is Admin: Show the toggle button
+  if (adminToggleBtn) {
+    adminToggleBtn.style.display = 'block';
+  }
+
+  // Toggle drawer open/close
+  window.toggleAdminPanel = function () {
+    if (adminSidePanel) {
+      adminSidePanel.classList.toggle('active');
+      if (adminSidePanel.classList.contains('active')) {
+        loadAdminUsers();
+      }
+    }
+  };
+
+  // Fetch users dynamically from admin API
+  async function loadAdminUsers() {
+    if (!userTableBody) return;
+    userTableBody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
+
+    try {
+      const response = await fetch('/api/admin/users', {
+        headers: {
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+        }
+      });
+
+      if (!response.ok) throw new Error('Failed to load users');
+
+      const users = await response.json();
+      userTableBody.innerHTML = '';
+
+      users.forEach(u => {
+        const tr = document.createElement('tr');
+        const isLocked = u.isLocked;
+
+        tr.innerHTML = `
+          <td>${u.id}</td>
+          <td>${u.username} (${u.email})</td>
+          <td><span class="status-badge ${isLocked ? 'locked' : 'active'}">${isLocked ? 'Locked' : 'Active'}</span></td>
+          <td>
+            <button class="btn-action ${isLocked ? 'unlock' : 'lock'}" onclick="toggleUserLock(${u.id}, ${isLocked})">
+              ${isLocked ? 'Unlock' : 'Lock'}
+            </button>
+          </td>
+        `;
+        userTableBody.appendChild(tr);
+      });
+    } catch (err) {
+      console.error(err);
+      userTableBody.innerHTML = '<tr><td colspan="4" class="error">Failed to load user list.</td></tr>';
+    }
+  }
+
+  // Lock/Unlock API call handler
+  window.toggleUserLock = async function (userId, currentlyLocked) {
+    const action = currentlyLocked ? 'unlock' : 'lock';
+    try {
+      const response = await fetch(`/api/admin/users/${userId}/${action}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+        }
+      });
+
+      if (response.ok) {
+        loadAdminUsers(); // Refresh dynamic list
+      } else {
+        alert(`Failed to ${action} user.`);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+}
+
+// Call on startup
+setupDynamicAdminPanel();
+
     // --- GLOBAL SEARCH & FILTER STATE ---
     let currentCategoryFilter = "all";
     let currentSearchQuery = "";

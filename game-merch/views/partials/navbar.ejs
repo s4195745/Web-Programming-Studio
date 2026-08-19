@@ -9,6 +9,9 @@
         <a href="/blog">Blog</a>
         <a href="/review">Review</a>
         <a href="/wishlist">Wishlist</a>
+            <% if (currentUser && currentUser.role && currentUser.role.toLowerCase() === 'admin') { %>
+        <a href="/admin">Admin</a>
+    <% } %>
     </div>
 
     <div class="nav-actions">

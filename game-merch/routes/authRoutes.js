@@ -38,13 +38,23 @@ router.post('/login', (req, res) => {
     const user = users.find(u => u.email === email && u.password === hashedPassword);
     
     if (user) {
+        // Prevent access if the account has been locked by an administrator
+        if (user.isLocked) {
+            return res.status(403).json({ error: "Your account is locked. Please contact support." });
+        }
+
         const token = "mock_token_" + Buffer.from(user.email + Date.now()).toString('base64');
         user.token = token; 
+
+        // Assign user to express-session if session middleware is active
+        if (req.session) {
+            req.session.user = { id: user.id, email: user.email, role: user.role, username: user.username };
+        }
         
         return res.status(200).json({ 
             message: "Login successful", 
             token: token,
-            user: { email: user.email, role: user.role, username: user.username, description: user.description, avatar: user.avatar } 
+            user: { id: user.id, email: user.email, role: user.role, username: user.username, description: user.description, avatar: user.avatar }
         });
     } else {
         return res.status(401).json({ error: "Invalid email or password." });

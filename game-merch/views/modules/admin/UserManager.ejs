@@ -1,62 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Admin - User Management</title>
-</head>
-<body>
-  <h1>User Management</h1>
-  <table id="users-table" border="1">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Username</th>
-        <th>Role</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+<%- include('../../partials/navbar') %>
 
-  <script>
-    async function loadUsers() {
-      const res = await fetch('/api/admin/users');
-      if (!res.ok) {
-        alert("Failed to load user list");
-        return;
-      }
-      const users = await res.json();
-      const tbody = document.querySelector('#users-table tbody');
-      tbody.innerHTML = '';
+<link rel="stylesheet" type="text/css" href="/assets/css/admin.css" />
 
-      users.forEach(user => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${user.id}</td>
-          <td>${user.username}</td>
-          <td>${user.role}</td>
-          <td>${user.isLocked ? 'Locked' : 'Active'}</td>
-          <td>
-            ${user.isLocked 
-              ? `<button onclick="toggleLock('${user.id}', 'unlock')">Unlock</button>` 
-              : `<button onclick="toggleLock('${user.id}', 'lock')">Lock</button>`}
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
+<!-- Middle-Right Floating Admin Panel -->
+<div id="admin-side-panel" class="admin-drawer">
+  <div class="admin-drawer-header">
+    <h3>User Management</h3>
+    <button class="admin-close-btn" onclick="toggleAdminPanel()">&times;</button>
+  </div>
+  
+  <div class="admin-drawer-body">
+    <table id="admin-users-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
 
-    async function toggleLock(userId, action) {
-      const res = await fetch(`/api/admin/users/${userId}/${action}`, { method: 'POST' });
-      if (res.ok) {
-        loadUsers();
-      } else {
-        alert(`Failed to ${action} user.`);
-      }
-    }
+<!-- Lock/Unlock Confirmation Modal -->
+<div id="admin-confirm-modal" class="admin-modal-overlay">
+  <div class="admin-modal-box">
+    <h4 id="admin-modal-title">Confirm Action</h4>
+    <p id="admin-modal-message">Are you sure you want to perform this action?</p>
+    <div class="admin-modal-actions">
+      <button class="admin-btn-cancel" onclick="closeAdminModal()">Cancel</button>
+      <button id="admin-modal-confirm-btn" class="admin-btn-confirm">Confirm</button>
+    </div>
+  </div>
+</div>
+<script src="/assets/js/adminscript.js"></script>
 
-    document.addEventListener('DOMContentLoaded', loadUsers);
-  </script>
-</body>
-</html>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAdminUsers();
+    });
+</script>
