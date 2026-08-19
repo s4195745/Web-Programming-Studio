@@ -1,15 +1,7 @@
 <%- include('../../partials/navbar') %>
 
 <link rel="stylesheet" type="text/css" href="/assets/css/admin.css" />
-
-<!-- Middle-Right Floating Admin Panel -->
-<div id="admin-side-panel" class="admin-drawer">
-  <div class="admin-drawer-header">
-    <h3>User Management</h3>
-    <button class="admin-close-btn" onclick="toggleAdminPanel()">&times;</button>
-  </div>
-  
-  <div class="admin-drawer-body">
+n-drawer-body">
     <table id="admin-users-table">
       <thead>
         <tr>
@@ -24,7 +16,7 @@
   </div>
 </div>
 
-<!-- Lock/Unlock Confirmation Modal -->
+<!-- lock confirmation -->
 <div id="admin-confirm-modal" class="admin-modal-overlay">
   <div class="admin-modal-box">
     <h4 id="admin-modal-title">Confirm Action</h4>
