@@ -2,7 +2,7 @@
 
 const { users } = require('../../../data/mockDB');
 
-// Helper to extract authenticated user from Session or Authorization Header
+// user check
 function getAuthenticatedUser(req) {
     if (req.session && req.session.user) {
         return users.find(u => u.id === req.session.user.id);
@@ -18,7 +18,7 @@ function getAuthenticatedUser(req) {
     return null;
 }
 
-// Middleware to check if user is authenticated
+// check if admin
 function isAuthenticated(req, res, next) {
     const currentUser = getAuthenticatedUser(req);
 
@@ -28,7 +28,7 @@ function isAuthenticated(req, res, next) {
         });
     }
 
-    // IMPORTANT: prevent locked accounts from accessing protected routes
+    // prevent locked accounts from accessing  
     if (currentUser.isLocked === true) {
         if (req.session) {
             req.session.destroy(() => {});
@@ -43,7 +43,7 @@ function isAuthenticated(req, res, next) {
     return next();
 }
 
-// Middleware to enforce Admin-only access
+// Mforce only admin access
 function requireAdmin(req, res, next) {
     const currentUser = req.currentUser || getAuthenticatedUser(req);
 
