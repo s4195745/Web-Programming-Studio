@@ -62,11 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
             displayProducts();
         } else {
             sessionStorage.setItem("pendingSearch", currentSearchQuery);
-            if(window.location.pathname.includes("landing_page.html")) {
-                window.location.href = "/shop";
-            } else {
-                window.location.href = "/shop";
-            }
+            // FIX: Removed redundant if/else pathing
+            window.location.href = "/shop";
         }
     }
 
@@ -109,11 +106,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 countSpan.classList.add("cart-item-count");
                 cartIcon.appendChild(countSpan);
             }
+            // FIX: Removed inline CSS, utilizing the existing 'active' class
             if (totalItems > 0) {
                 countSpan.textContent = totalItems;
-                countSpan.style.display = "flex";
+                countSpan.classList.add("active");
             } else {
-                countSpan.style.display = "none";
+                countSpan.classList.remove("active");
             }
         });
     }
@@ -285,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateProductDisplay(selectedColor);
 
-        // ADD TO CART (Refactored to remove inline CSS)
+        // ADD TO CART 
         addToCartBtn.addEventListener("click", () => {
             let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
             const existingItem = cart.find(item => item.id === productData.id && item.color === selectedColor.name && item.size === selectedSize);
@@ -308,7 +306,6 @@ document.addEventListener('DOMContentLoaded', () => {
             updateCartCount(); 
             showToast(`${productData.title} added to cart!`); 
             
-            // Replaced .style.position with a utility class from main.css
             addToCartBtn.classList.add("p-relative"); 
             const plusOne = document.createElement("span");
             plusOne.textContent = "+1";
@@ -341,7 +338,6 @@ document.addEventListener('DOMContentLoaded', () => {
             cart = cart.filter(item => item.title.toLowerCase().includes(searchTerm));
         }
 
-        // Refactored to remove inline CSS display toggling
         if (cart.length === 0) {
             cartItemsContainer.innerHTML = "<p>No items found.</p>";
             subtotalEl.textContent = "$0.00";
@@ -456,7 +452,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const expiryInput = document.getElementById("expiry");
         const cvvInput = document.getElementById("cvv");
 
-        // Helper to use the global message function from auth-validation.js or a local fallback
         const displayMessage = window.showAuthMessage || function(container, message, isError = true) {
             let existingMsg = container.querySelector('.system-msg');
             if (existingMsg) existingMsg.remove();
@@ -466,7 +461,6 @@ document.addEventListener('DOMContentLoaded', () => {
             container.insertBefore(msgDiv, container.firstChild);
         };
 
-        // Web Storage API for Checkout Form Retention
         const checkoutFields = [
             { el: nameInput, key: "checkout-name" },
             { el: addressInput, key: "checkout-address" }
@@ -483,7 +477,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // CLEAN INPUT VALIDATION (Uses External CSS Classes)
         function showError(input, isValid) {
             if (!isValid) {
                 input.classList.add('input-error');
@@ -532,11 +525,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // FETCH CREDENTIALS FROM SESSION STORAGE
             const userEmail = sessionStorage.getItem("userEmail");
             const token = sessionStorage.getItem("token") || sessionStorage.getItem("userPass"); 
 
-            // SECURE PAYLOAD
             const orderPayload = {
                 userEmail: userEmail,
                 token: token,
