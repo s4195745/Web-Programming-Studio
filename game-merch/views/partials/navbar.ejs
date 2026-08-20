@@ -9,8 +9,11 @@
         <a href="/blog">Blog</a>
         <a href="/review">Review</a>
         <a href="/wishlist">Wishlist</a>
+            <% if (currentUser && currentUser.role && currentUser.role.toLowerCase() === 'admin') { %>
+        <a href="/admin">Admin</a>
+    <% } %>
     </div>
-    
+
     <div class="nav-actions">
         <div class="menu-toggle" aria-label="Toggle Navigation">
             <i class="ri-menu-line"></i>
@@ -30,7 +33,7 @@
         
         <a href="/profile" class="nav-profile-link" aria-label="User Profile">
             <!-- Absolute path to the image using /assets/ -->
-           <img src="/assets/images/default-avatar.png" alt="User Profile" class="nav-avatar">
+            <img src="/assets/images/default-avatar.png" alt="User Profile" class="nav-avatar">
         </a>
     </div>
 </nav>

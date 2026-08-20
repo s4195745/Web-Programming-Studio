@@ -125,9 +125,66 @@ const products = [
 ];
 
 const users = [
-    { id: 1, email: "nguyenthechinh2807@gmail.com", password: hashPassword("Password123!"), role: "customer", username: "Nguyen The Chinh", description: "Information Technology student.", avatar: null, token: null },
-    { id: 2, email: "admin@lootbox.com", password: hashPassword("AdminPassword1!"), role: "admin", username: "Admin", description: "Site Administrator", avatar: null, token: null }
+    {
+        id: 1,
+        email: "nguyenthechinh2807@gmail.com",
+        password: hashPassword("Password123!"),
+        role: "customer",
+        username: "Nguyen The Chinh",
+        description: "Information Technology student.",
+        avatar: null,
+        token: null,
+        isLocked: false
+    },
+    {
+        id: 2,
+        email: "admin@lootbox.com",
+        password: hashPassword("AdminPassword1!"),
+        role: "admin",
+        username: "Admin",
+        description: "Site Administrator",
+        avatar: null,
+        token: null,
+        isLocked: false
+    },
+    {
+        id: 3,
+        email: "Hothanh@gmail.com",
+        password: hashPassword("Test123"),
+        role: "customer",
+        username: "ThanhHo",
+        description: "customer",
+        avatar: null,
+        token: null,
+        isLocked: false
+    }
 ];
+
+async function getAllUsers() {
+    return users;
+}
+
+async function updateUserLockStatus(id, isLocked) {
+    const user = users.find(u => u.id === parseInt(id, 10));
+
+    if (!user) {
+        return null;
+    }
+
+    user.isLocked = Boolean(isLocked);
+    return user;
+}
+
+async function getUserById(id) {
+    const user = users.find(u => u.id === parseInt(id, 10));
+
+    if (!user) {
+        return null;
+    }
+
+    const { password, token, ...safeUser } = user;
+    return safeUser;
+}
 
 const orders = [];
 
@@ -135,5 +192,8 @@ module.exports = {
     hashPassword,
     products,
     users,
-    orders
+    orders,
+    getAllUsers,
+    updateUserLockStatus,
+    getUserById
 };
