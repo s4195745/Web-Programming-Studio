@@ -43,7 +43,7 @@ function isAuthenticated(req, res, next) {
     return next();
 }
 
-// Mforce only admin access
+// force only admin access
 function requireAdmin(req, res, next) {
     const currentUser = req.currentUser || getAuthenticatedUser(req);
 

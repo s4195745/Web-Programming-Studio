@@ -16,14 +16,22 @@
             .replace(/'/g, '&#039;');
     }
 
+    // FIXED: Now properly grabs the token from sessionStorage and sends it to the backend
     async function apiRequest(url, options = {}) {
+        const token = sessionStorage.getItem('token');
+        const headers = {
+            'Content-Type': 'application/json',
+            ...(options.headers || {})
+        };
+
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
         const response = await fetch(url, {
             credentials: 'same-origin',
             ...options,
-            headers: {
-                'Content-Type': 'application/json',
-                ...(options.headers || {})
-            }
+            headers
         });
 
         let data = null;
@@ -80,6 +88,7 @@
                                 type="button"
                                 class="admin-user-link"
                                 data-user-id="${escapeHtml(user.id)}"
+                                style="background:none; border:none; color:var(--accent-color); cursor:pointer; font-family:inherit;"
                             >
                                 <strong>
                                     ${escapeHtml(user.username || 'N/A')}
@@ -94,15 +103,16 @@
                         </td>
 
                         <td>
-                            <span class="status-tag ${locked ? 'locked' : 'active'}">
+                            <span class="status-badge ${locked ? 'locked' : 'active'}">
                                 ${locked ? 'Locked' : 'Active'}
                             </span>
                         </td>
 
                         <td>
+                            <!-- FIXED: Class name updated to match admin.css -->
                             <button
                                 type="button"
-                                class="admin-btn"
+                                class="admin-action-btn ${locked ? 'unlock' : 'lock'}"
                                 data-lock-id="${escapeHtml(user.id)}"
                                 data-locked="${locked}"
                             >

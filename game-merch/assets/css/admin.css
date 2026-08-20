@@ -141,3 +141,7 @@
 .admin-btn-confirm:hover {
   opacity: 0.9;
 }
+
+.admin-modal-overlay.active {
+  display: flex;
+}

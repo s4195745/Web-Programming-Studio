@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
+// IMPORT ADMIN MIDDLEWARE
+const { isAuthenticated, requireAdmin } = require('../views/modules/admin/auth');
+
 router.get('/', (req, res) => { res.render('index'); });
 
 // Shopping Cart Module Pages
@@ -25,8 +28,9 @@ router.get('/delete_account', (req, res) => { res.render('modules/user_account_m
 router.get('/blog', (req, res) => { res.render('modules/blog/blog'); });
 router.get('/UserBlog', (req, res) => { res.render('modules/blog/UserBlog'); });
 
-//admin page
-router.get('/admin', (req, res) => { res.render('modules/admin/UserManager',);
+// admin page (SECURED)
+router.get('/admin', isAuthenticated, requireAdmin, (req, res) => { 
+    res.render('modules/admin/UserManager');
 });
 
 module.exports = router;
