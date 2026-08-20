@@ -38,7 +38,7 @@ app.use((req, res, next) => {
 const viewRoutes = require('./routes/viewRoutes');
 const authRoutes = require('./routes/authRoutes');
 const cartRoutes = require('./routes/cartRoutes');
-const blogRoutes = require('./views/modules/blog/blogSV');
+const blogRoutes = require('./routes/blogRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
 // --- MOUNT ROUTES ---

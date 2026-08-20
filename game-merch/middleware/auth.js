@@ -1,6 +1,6 @@
 // views/modules/admin/auth.js
 
-const { users } = require('../../../data/mockDB');
+const { users } = require('../data/mockDB');
 
 // user check
 function getAuthenticatedUser(req) {

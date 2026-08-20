@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // IMPORT ADMIN MIDDLEWARE
-const { isAuthenticated, requireAdmin } = require('../views/modules/admin/auth');
+const { isAuthenticated, requireAdmin } = require('../middleware/auth');
 
 router.get('/', (req, res) => { res.render('index'); });
 

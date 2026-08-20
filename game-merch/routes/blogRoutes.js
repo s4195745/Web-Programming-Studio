@@ -1,36 +1,37 @@
-//not sure if this is eneded tbh
-
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const { users } = require('../data/mockDB');
 const router = express.Router();
 
-const DATA_FILE = path.join(__dirname, '../data/posts.json');
+const BLOG_DIR = __dirname;
+const DATA_FILE = path.join(BLOG_DIR, '../data/posts.json');
 
-// routes
-router.get('/', (req, res) => {
-  res.render('modules/blog/blog');
-});
+const initialPosts = [];
 
-router.get('/UserBlog', (req, res) => {
-  res.render('modules/blog/UserBlog');
-});
+function loadPosts() {
+  if (!fs.existsSync(DATA_FILE)) {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(initialPosts, null, 2), 'utf8');
+    return initialPosts;
+  }
+  const fileData = fs.readFileSync(DATA_FILE, 'utf8');
+  return JSON.parse(fileData);
+}
 
-// Api
-router.get('/api/posts', (req, res) => { /* load & return posts */ });
-router.post('/api/posts', (req, res) => { /* create post */ });
-router.put('/api/posts/:id', (req, res) => { /* update post */ });
-router.delete('/api/posts/:id', (req, res) => { /* delete post */ });
-router.post('/api/posts/:id/comments', (req, res) => { /* add comment */ });
+function savePosts(posts) {
+  fs.writeFileSync(DATA_FILE, JSON.stringify(posts, null, 2), 'utf8');
+}
 
-const { users } = require('./mockDB'); // Ensure path correctly points to mockDB.js
+function getCategoryIcon(cat) {
+  const icons = { 'Merch': '📱', 'Fan-art': '🎨', 'Discussion': '💬', 'Review': '⭐' };
+  return icons[cat] || '📝';
+}
 
+// Helper: Get logged-in user's display account name
 function getAccountName(req) {
-  // 1. Check session / req.user
-  if (req.user) return req.user.username || req.user.name || req.user.email;
-  if (req.session && req.session.user) return req.session.user.username || req.session.user.email;
+  const user = req.user || (req.session && req.session.user);
+  if (user) return user.username || user.name || user.email;
 
-  // 2. Check Authorization Header token
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.split(' ')[1];
@@ -38,7 +39,6 @@ function getAccountName(req) {
     if (foundUser) return foundUser.username || foundUser.email;
   }
 
-  // 3. Fallback check for custom user email/username headers
   const headerEmail = req.headers['x-user-email'];
   if (headerEmail) {
     const foundUser = users.find(u => u.email === headerEmail);
@@ -48,4 +48,146 @@ function getAccountName(req) {
   return null;
 }
 
+// GET posts
+router.get('/api/posts', (req, res) => {
+  let posts = loadPosts();
+  const { query, searchType, category, userOnly } = req.query;
+
+  if (userOnly === 'true') {
+    const currentAccount = getAccountName(req);
+    if (!currentAccount) return res.json([]);
+    posts = posts.filter(p => p.author && p.author.toLowerCase() === currentAccount.toLowerCase());
+  }
+
+  if (category) {
+    posts = posts.filter(p => p.category.toLowerCase() === category.toLowerCase());
+  }
+
+  if (query) {
+    const q = query.toLowerCase();
+    posts = posts.filter(p => {
+      if (searchType === 'author') return p.author.toLowerCase().includes(q);
+      if (searchType === 'title') return p.title.toLowerCase().includes(q);
+      return (
+        p.title.toLowerCase().includes(q) ||
+        p.author.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q) ||
+        p.content.toLowerCase().includes(q)
+      );
+    });
+  }
+
+  res.json(posts);
+});
+
+// GET current account endpoint
+router.get('/api/current-user', (req, res) => {
+  const accountName = getAccountName(req);
+  res.json({ accountName: accountName || 'Guest', isLoggedIn: !!accountName });
+});
+
+// CREATE post
+router.post('/api/posts', (req, res) => {
+  const accountName = getAccountName(req);
+
+  if (!accountName) {
+    return res.status(401).json({ error: "Please sign in to create a post." });
+  }
+
+  const posts = loadPosts();
+  const { title, category, imageUrl, secondaryImage, content, summary } = req.body;
+
+  const newPost = {
+    id: `post-${Date.now()}`,
+    title,
+    author: accountName,
+    dateAdded: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    category,
+    categoryIcon: getCategoryIcon(category),
+    summary: summary || (content.length > 80 ? content.substring(0, 80) + '...' : content),
+    content,
+    imageUrl: imageUrl || "https://via.placeholder.com/600x338",
+    secondaryImage: secondaryImage || "",
+    comments: []
+  };
+
+  posts.unshift(newPost);
+  savePosts(posts);
+  res.status(201).json(newPost);
+});
+
+// EDIT post
+router.put('/api/posts/:id', (req, res) => {
+  const accountName = getAccountName(req);
+  const posts = loadPosts();
+  const idx = posts.findIndex(p => p.id === req.params.id);
+
+  if (idx === -1) return res.status(404).json({ error: "Post not found" });
+
+  if (posts[idx].author.toLowerCase() !== accountName.toLowerCase()) {
+    return res.status(403).json({ error: "You can only edit your own posts." });
+  }
+
+  const { title, category, imageUrl, secondaryImage, content, summary } = req.body;
+
+  posts[idx] = {
+    ...posts[idx],
+    title: title || posts[idx].title,
+    category: category || posts[idx].category,
+    categoryIcon: category ? getCategoryIcon(category) : posts[idx].categoryIcon,
+    imageUrl: imageUrl || posts[idx].imageUrl,
+    secondaryImage: secondaryImage !== undefined ? secondaryImage : posts[idx].secondaryImage,
+    content: content || posts[idx].content,
+    summary: summary !== undefined ? summary : posts[idx].summary
+  };
+
+  savePosts(posts);
+  res.json(posts[idx]);
+});
+
+// DELETE post
+router.delete('/api/posts/:id', (req, res) => {
+  const accountName = getAccountName(req);
+  let posts = loadPosts();
+  const post = posts.find(p => p.id === req.params.id);
+
+  if (!post) return res.status(404).json({ error: "Post not found" });
+
+  if (post.author.toLowerCase() !== accountName.toLowerCase()) {
+    return res.status(403).json({ error: "You can only delete your own posts." });
+  }
+
+  const filtered = posts.filter(p => p.id !== req.params.id);
+  savePosts(filtered);
+  res.json({ success: true, message: "Post deleted" });
+});
+
+// ADD comment
+router.post('/api/posts/:id/comments', (req, res) => {
+  const accountName = getAccountName(req) || "Guest";
+  const posts = loadPosts();
+  const post = posts.find(p => p.id === req.params.id);
+
+  if (!post) return res.status(404).json({ error: "Post not found" });
+
+  const newComment = {
+    id: `c-${Date.now()}`,
+    author: accountName,
+    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    text: req.body.text
+  };
+
+  post.comments.push(newComment);
+  savePosts(posts);
+  res.status(201).json(newComment);
+});
+
+router.get('/api/posts/:id', (req, res) => {
+  const posts = loadPosts();
+  const post = posts.find(p => p.id === req.params.id);
+  if (!post) return res.status(404).json({ error: "Post not found" });
+  res.json(post);
+});
+
+loadPosts();
 module.exports = router;

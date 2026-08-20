@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 // Ensure auth.js is moved to a middleware folder
-const { isAuthenticated, requireAdmin } = require('../views/modules/admin/auth'); 
+const { isAuthenticated, requireAdmin } = require('../middleware/auth'); 
 // Destructure the array directly for the dynamic prototype
 const { users } = require('../data/mockDB'); 
 
