@@ -16,25 +16,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   const contentInput = document.getElementById('post-content');
   const cancelBtn = document.querySelector('.cancel-btn');
   const formTitle = document.getElementById('form-title');
-  const submitBtn = postForm ? postForm.querySelector('.submit-btn') : null;
+  const submitBtn = postForm
+    ? postForm.querySelector('.submit-btn')
+    : null;
   const userPostsList = document.querySelector('.user-posts-list');
-
-  // HTML templates from the page
+  
+  // main feeds
   const blogCardTemplate = document.getElementById('blog-card-template');
   const commentTemplate = document.getElementById('comment-template');
-  const userPostTemplate = document.getElementById('user-post-template');
 
-  // Track existing image during editing
+  // track images in editting/creating
   let existingImageUrl = '';
   let existingSecondaryImageUrl = '';
-
-  // Allows adminDeletePost() and form handlers to refresh the feed
   let fetchAndRenderFeed = null;
-
-  // Read auth tokens/session data
-  const currentUsername = sessionStorage.getItem("username");
-  const currentEmail = sessionStorage.getItem("userEmail");
-  const currentToken = sessionStorage.getItem("token");
+ 
+  // auth
+  const currentUsername = sessionStorage.getItem('username');
+  const currentEmail = sessionStorage.getItem('userEmail');
+  const currentToken = sessionStorage.getItem('token');
 
   function getAuthHeaders() {
     const headers = {
@@ -42,11 +41,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     if (currentToken) {
-      headers['Authorization'] = `Bearer ${currentToken}`;
+      headers['Authorization'] =
+        `Bearer ${currentToken}`;
     }
 
     if (currentEmail) {
-      headers['x-user-email'] = currentEmail;
+      headers['x-user-email'] =
+        currentEmail;
     }
 
     return headers;
@@ -63,86 +64,180 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.currentUserRole ||
     sessionStorage.getItem('userRole') ||
     ''
-  ).trim().toLowerCase();
+  )
+    .trim()
+    .toLowerCase();
 
-  let IS_ADMIN = CURRENT_USER_ROLE === 'admin';
+  let IS_ADMIN =
+    CURRENT_USER_ROLE === 'admin';
 
-  // if no acconut, default to guest
+ 
+  // gete current user else default to guest
   if (!CURRENT_USER) {
     try {
-      const res = await fetch('/api/current-user', {
-        headers: getAuthHeaders()
-      });
+      const res = await fetch('/api/current-user',
+          {
+            headers: getAuthHeaders()
+          }
+        );
 
       const data = await res.json();
-
-      CURRENT_USER =
-        data.accountName !== 'Guest'
+      CURRENT_USER = data.accountName !== 'Guest'
           ? data.accountName
           : '';
 
       if (data.role) {
-        CURRENT_USER_ROLE = String(data.role).trim().toLowerCase();
+        CURRENT_USER_ROLE = String(data.role)
+            .trim()
+            .toLowerCase();
+
         IS_ADMIN = CURRENT_USER_ROLE === 'admin';
       }
 
     } catch (e) {
-      console.error('Failed to get current user:', e);
+      console.error(
+        'Failed to get current user:',
+        e
+      );
     }
   }
 
-  // image reader
-  const getImageInputValue = (inputElem, fallbackUrl = '') => {
-    if (
-      inputElem &&
-      inputElem.value &&
-      inputElem.value.trim()
-    ) {
-      return inputElem.value.trim();
-    }
 
-    return fallbackUrl;
-  };
+  // Iimage imput helper
+  const getImageInputValue =
+    (inputElem, fallbackUrl = '') => {
 
-  // render comments
+      if (
+        inputElem &&
+        inputElem.value &&
+        inputElem.value.trim()
+      ) {
+
+        return inputElem.value.trim();
+      }
+
+      return fallbackUrl;
+    };
+
+ 
+  // comment render
   function renderCommentsHtml(comments) {
+
     if (
       !comments ||
       !Array.isArray(comments) ||
       comments.length === 0
     ) {
+
       return '<p>No comments.</p>';
     }
+    if (commentTemplate) {
+      const fragment = document.createDocumentFragment();
+      comments.forEach(comment => {
+        const clone = commentTemplate.content.cloneNode(true);
+        const author = clone.querySelector('.comment-author');
+        const date =  clone.querySelector('.comment-date');
+        const text = clone.querySelector('.comment-text');
 
-    if (!commentTemplate) {
-      return '<p>No comments.</p>';
+        if (author) {
+          author.textContent = comment.author || 'Guest';
+        }
+
+        if (date) {
+          date.textContent = comment.date || '';
+        }
+
+        if (text) {
+          text.textContent = comment.text || '';
+        }
+
+        fragment.appendChild(clone);
+      });
+
+      const wrapper = document.createElement('div');
+      wrapper.appendChild(fragment);
+      return wrapper.innerHTML;
     }
 
-    const fragment = document.createDocumentFragment();
-    comments.forEach(comment => {
-    const clone = commentTemplate.content.cloneNode(true);
-    const item = clone.querySelector('.comment-item');
-    const author = clone.querySelector('.comment-author');
-    const date = clone.querySelector('.comment-date');
-    const text = clone.querySelector('.comment-text');
-      if (author) {
-        author.textContent = comment.author || 'Guest';
+    // fall back so no comments doesnt nuke the blog
+    return comments.map(comment => `
+      <div class="comment-item">
+
+        <span class="comment-author">
+          ${comment.author || 'Guest'}
+        </span>
+
+        <span class="comment-date">
+          ${comment.date || ''}
+        </span>
+
+        <p class="comment-text">
+          ${comment.text || ''}
+        </p>
+      </div>
+    `).join('');
+  }
+
+  // comment submission
+  async function submitComment(event, postId) {
+    event.preventDefault();
+
+    const input = document.getElementById( `commentInput-${postId}`);
+    const text = input
+        ? input.value.trim()
+        : '';
+
+    if (!text) {return;}
+    try {
+      const response =await fetch(`/api/posts/${postId}/comments`,
+          {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify({
+              text: text
+            })
+          }
+        );
+
+      if (!response.ok) {
+        const errorData =await response.json()
+            .catch(() => ({}));
+        throw errorData;
       }
 
-      if (date) {
-        date.textContent = comment.date || '';
+      const postResponse =await fetch(`/api/posts/${postId}`
+        );
+
+      if (!postResponse.ok) {
+        throw new Error('Failed to reload post'
+        );
       }
 
-      if (text) {
-        text.textContent = comment.text || '';
+      const post = await postResponse.json();
+      const listElem =document.getElementById(`commentList-${postId}`
+        );
+
+      if (listElem) {
+        listElem.innerHTML =renderCommentsHtml(
+            post.comments
+          );
       }
 
-      fragment.appendChild(clone);
-    });
+      if (input) {
+        input.value = '';
+      }
 
-    const wrapper = document.createElement('div');
-    wrapper.appendChild(fragment);
-    return wrapper.innerHTML;
+    } catch (err) {
+      console.error(
+        'Error posting comment:',
+        err
+      );
+
+      alert(
+        err.error ||
+        'Error posting comment.'
+      );
+    }
   }
 
   // main blog feed
@@ -161,22 +256,26 @@ document.addEventListener('DOMContentLoaded', async () => {
           : '';
 
       const params = new URLSearchParams({
-        query,
-        searchType,
-        category
-      });
+          query,
+          searchType,
+          category
+        });
 
-      fetch(`/api/posts?${params.toString()}`)
+
+      fetch(
+        `/api/posts?${params.toString()}`
+      )
         .then(res => {
-
           if (!res.ok) {
-            throw new Error('Failed to fetch posts');
+            throw new Error(
+              'Failed to fetch posts'
+            );
           }
 
           return res.json();
         })
-        .then(posts => {
 
+        .then(posts => {
           postFeed.innerHTML = '';
 
           if (
@@ -186,15 +285,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             postFeed.innerHTML =
               '<p class="no-posts">No blog posts found.</p>';
-
             return;
           }
 
           posts.forEach(post => {
             if (!blogCardTemplate) {
               console.error(
-                'blog-card-template was not found.'
+                'blog template.'
               );
+
               return;
             }
 
@@ -211,56 +310,56 @@ document.addEventListener('DOMContentLoaded', async () => {
             const articleContent = clone.querySelector('.article-content');
             const commentInput = clone.querySelector('.comment-input');
             const commentList = clone.querySelector('.comment-list');
-            const readButton = clone.querySelector('.read-link');
-            const adminDeleteButton = clone.querySelector('.admin-delete-post-btn');
+            const readButton =clone.querySelector('.read-link');
+            const adminDeleteButton =clone.querySelector('.admin-delete-post-btn');
+            if (card) {card.id =`card-${post.id}`;}
 
-            // blog card data
-            if (card) {
-              card.id = `card-${post.id}`;
-            }
-
+            // summary iamge
             if (image) {
-              image.src =
-                post.imageUrl ||
-                'https://via.placeholder.com/600x338?text=No+Image';
 
+              image.src = post.imageUrl ||'https://via.placeholder.com/600x338?text=No+Image';
               image.alt = post.title || 'Blog post';
-              image.onerror = function () {
-                this.src = 'https://via.placeholder.com/600x338?text=No+Image';
-              };
+              image.onerror = function () { this.src = 'https://via.placeholder.com/600x338?text=No+Image';};
             }
 
+            // catergories
             if (categoryIcon) {
               categoryIcon.textContent =
-                post.categoryIcon || '📝';
-            }
+                post.categoryIcon ||
+                '📝';}
 
             if (categoryName) {
               categoryName.textContent =
-                post.category || '';
-            }
+                post.category ||
+                '';}
 
+         
+            // post title
             if (title) {
               title.textContent =
-                post.title || '';
-            }
+                post.title ||
+                '';}
 
+
+            // post summary
             if (description) {
               description.textContent =
-                post.summary || '';
-            }
+                post.summary ||
+                '';}
 
+            // date and author
             if (meta) {
               meta.textContent =
                 `${post.dateAdded || ''} • By ${post.author || 'Unknown'}`;
             }
 
-           // read more content
+            // read more content
             if (detail) {
-              detail.id = `detail-${post.id}`;
-              detail.style.display = 'none';
-            }
+              detail.id =`detail-${post.id}`;
+              detail.style.display ='none';}
 
+
+            // 2nd image
             if (secondaryImage) {
               if (post.secondaryImage) {
                 secondaryImage.src = post.secondaryImage;
@@ -268,34 +367,54 @@ document.addEventListener('DOMContentLoaded', async () => {
                 secondaryImage.style.display = 'block';
 
               } else {
-                secondaryImage.style.display = 'none';
+                secondaryImage.style.display ='none';
               }
             }
+
+
+            // content
             if (articleContent) {
               articleContent.innerHTML =
                 post.content
-                  ? post.content.replace(/\n/g, '<br>')
+                  ? post.content.replace(
+                      /\n/g,
+                      '<br>')
                   : '';
             }
 
-            //comments
+            // comment input
             if (commentInput) {
+              commentInput.id =
+                `commentInput-${post.id}`;
 
-              commentInput.id = `commentInput-${post.id}`;
-              commentInput.placeholder = CURRENT_USER
+              commentInput.placeholder =
+                CURRENT_USER
                   ? `Write a comment as ${CURRENT_USER}...`
                   : 'Write a comment as Guest...';
             }
 
+            // COMMENTS
             if (commentList) {
-              commentList.id =
-                `commentList-${post.id}`;
-              commentList.innerHTML =
-                renderCommentsHtml(post.comments);
+             commentList.id = `commentList-${post.id}`;
+              commentList.innerHTML = renderCommentsHtml(
+                  post.comments
+                );
             }
 
+            const commentForm =clone.querySelector('.comment-form');
+            if (commentForm) {
+              commentForm.addEventListener('submit',
+                event => {
 
-            // Read More button
+                  submitComment(
+                    event,
+                    post.id
+                  );
+                }
+              );
+            }
+
+            // read more
             if (readButton) {
               readButton.textContent = 'Read More';
               readButton.addEventListener('click',
@@ -306,118 +425,28 @@ document.addEventListener('DOMContentLoaded', async () => {
                   }
 
                   const isHidden = detail.style.display === 'none';
-
                   if (isHidden) {
-                    detail.style.display = 'block';
+                    detail.style.display ='block';
                     card.classList.add('expanded');
-                    readButton.textContent ='Show Less';
+                    readButton.textContent = 'Show Less';
 
                   } else {
-                    detail.style.display ='none';
-                    card.classList.remove('expanded');
+                    detail.style.display = 'none';
+                    card.classList.remove('expanded');                  
                     readButton.textContent ='Read More';
                   }
                 }
               );
             }
-
-            // ---------------------------------------------
-            // Comment form
-            // ---------------------------------------------
-
-            const commentForm =
-              clone.querySelector('.comment-form');
-
-            if (commentForm) {
-              commentForm.addEventListener('submit',
-                event => {
-
-                  event.preventDefault();
-                  submitComment(
-                    event,
-                    post.id
-                  );
-                }
-              );
-            }
-
- // Submit Comment
-  async function submitComment(event, postId) {
-
-    event.preventDefault();
-
-    const input =
-      document.getElementById(
-        `commentInput-${postId}`
-      );
-
-    const text =
-      input
-        ? input.value.trim()
-        : '';
-
-    if (!text) {
-      return;
-    }
-
-    try {
-
-      const response =
-        await fetch(
-          `/api/posts/${postId}/comments`,
-          {
-            method: 'POST',
-            headers: getAuthHeaders(),
-            body: JSON.stringify({
-              text
-            })
-          }
-        );
-
-      if (!response.ok) {
-        throw new Error(
-          'Failed to post comment'
-        );
-      }
-
-      const postResponse =
-        await fetch(
-          `/api/posts/${postId}`
-        );
-
-      const post =
-        await postResponse.json();
-
-      const listElem =
-        document.getElementById(
-          `commentList-${postId}`
-        );
-
-      if (listElem) {
-
-        listElem.innerHTML =
-          renderCommentsHtml(
-            post.comments
-          );
-      }
-
-      if (input) {
-        input.value = '';
-      }
-
-    } catch (err) {
-
-      console.error(
-        'Error posting comment:',
-        err
-      );
-    }
-  }         
-            // admin's gun
+               
+            // admin only display
             if (adminDeleteButton) {
               if (IS_ADMIN) {
-                adminDeleteButton.style.display = 'inline-block';
-                adminDeleteButton.addEventListener('click',
+                adminDeleteButton.style.display =
+                  'inline-block';
+
+                adminDeleteButton.addEventListener(
+                  'click',
                   event => {
 
                     adminDeletePost(
@@ -428,7 +457,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 );
 
               } else {
-
                 adminDeleteButton.style.display = 'none';
               }
             }
@@ -436,17 +464,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             postFeed.appendChild(clone);
           });
         })
-        .catch(err => {
 
+        .catch(err => {
           console.error('Error fetching posts:',
             err
           );
 
-          postFeed.innerHTML ='<p class="error-msg">Failed to load posts.</p>';
+          postFeed.innerHTML = '<p class="error-msg">Failed to load posts.</p>';
         });
     };
 
+    // Initial feed load
     fetchAndRenderFeed();
+
+    // Search
     if (searchBtn) {
       searchBtn.addEventListener(
         'click',
@@ -454,18 +485,21 @@ document.addEventListener('DOMContentLoaded', async () => {
       );
     }
 
+
+    // Category
     if (categorySelect) {
+
       categorySelect.addEventListener(
         'change',
         fetchAndRenderFeed
       );
     }
 
+    // Enter refresj
     if (searchInput) {
       searchInput.addEventListener(
         'keyup',
         event => {
-
           if (event.key === 'Enter') {
             fetchAndRenderFeed();
           }
@@ -474,21 +508,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // ---------------------------------------------------------
-  // UserBlog Posts
-  // ---------------------------------------------------------
-
+// user blog
   const loadUserPosts = () => {
-
     if (!userPostsList) {
       return;
     }
 
     if (!CURRENT_USER) {
-
       userPostsList.innerHTML =
         '<p class="no-posts">Please log in to view and manage your posts.</p>';
-
       return;
     }
 
@@ -498,10 +526,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         headers: getAuthHeaders()
       }
     )
-      .then(res => res.json())
-      .then(userOnlyPosts => {
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(
+            'Failed to load user posts'
+          );
+        }
 
-        userPostsList.innerHTML = '';
+        return res.json();
+      })
+
+      .then(userOnlyPosts => {
 
         if (
           !Array.isArray(userOnlyPosts) ||
@@ -514,133 +549,78 @@ document.addEventListener('DOMContentLoaded', async () => {
           return;
         }
 
-        userOnlyPosts.forEach(post => {
+       // user blog render -  this shit is actually cursed i tried a bunch of other methods but it constantly breaks 
 
-          if (!userPostTemplate) {
-            console.error(
-              'user-post-template was not found.'
-            );
-            return;
-          }
+        userPostsList.innerHTML =
+          userOnlyPosts.map(post => `
 
-          const clone =
-            userPostTemplate.content.cloneNode(true);
+            <div
+              class="user-post-item"
+              data-id="${post.id}">
 
-          const item =
-            clone.querySelector('.user-post-item');
+              <div class="user-post-thumb">
+                <img
+                  src="${post.imageUrl || 'https://via.placeholder.com/150'}"
+                  alt="${post.title || ''}"
+                  onerror="this.src='https://via.placeholder.com/150'"/>
+              </div>
 
-          const thumb =
-            clone.querySelector('.user-post-thumb img');
+              <div class="user-post-info">
+                <span class="category">
+                  <span class="icon">
+                    ${post.categoryIcon || '📝'}
+                  </span>
 
-          const categoryIcon =
-            clone.querySelector('.category .icon');
+                  ${post.category || ''}
+                </span>
 
-          const categoryText =
-            clone.querySelector('.category-text');
+                <h3>
+                  ${post.title || ''}
+                </h3>
 
-          const postTitle =
-            clone.querySelector('.user-post-info h3');
+                <p class="card-meta">
+                  ${post.dateAdded || ''} • By ${post.author || ''}
+                </p>
+              </div>
 
-          const meta =
-            clone.querySelector('.card-meta');
+              <div class="menu-dropdown">
+                <button
+                  type="button"
+                  class="three-dots-btn"
+                  onclick="toggleDropdown(event, '${post.id}')"
+                  aria-label="Post Options"
+                >
+                  ⋮
+                </button>
 
-          const dotsButton =
-            clone.querySelector('.three-dots-btn');
+                <div
+                  class="dropdown-menu"
+                  id="dropdown-${post.id}"
+                  style="display: none;">
 
-          const dropdown =
-            clone.querySelector('.dropdown-menu');
+                  <button
+                    type="button"
+                    class="dropdown-item edit-btn"
+                    onclick="triggerEdit('${post.id}')">
+                    Edit
+                  </button>
 
-          const editButton =
-            clone.querySelector('.edit-btn');
 
-          const deleteButton =
-            clone.querySelector('.delete-btn');
+                  <button
+                    type="button"
+                    class="dropdown-item delete-btn"
+                    onclick="triggerDelete('${post.id}')">
+                    Delete
+                  </button>
 
-          if (item) {
-            item.dataset.id = post.id;
-          }
-
-          if (thumb) {
-
-            thumb.src =
-              post.imageUrl ||
-              'https://via.placeholder.com/150';
-
-            thumb.alt =
-              post.title || '';
-
-            thumb.onerror =
-              function () {
-                this.src =
-                  'https://via.placeholder.com/150';
-              };
-          }
-
-          if (categoryIcon) {
-            categoryIcon.textContent =
-              post.categoryIcon || '📝';
-          }
-
-          if (categoryText) {
-            categoryText.textContent =
-              post.category || '';
-          }
-
-          if (postTitle) {
-            postTitle.textContent =
-              post.title || '';
-          }
-
-          if (meta) {
-            meta.textContent =
-              `${post.dateAdded || ''} • By ${post.author || ''}`;
-          }
-
-          if (dotsButton) {
-
-            dotsButton.addEventListener(
-              'click',
-              event => {
-
-                toggleDropdown(
-                  event,
-                  post.id
-                );
-              }
-            );
-          }
-
-          if (dropdown) {
-            dropdown.id =
-              `dropdown-${post.id}`;
-          }
-
-          if (editButton) {
-
-            editButton.addEventListener(
-              'click',
-              () => {
-                triggerEdit(post.id);
-              }
-            );
-          }
-
-          if (deleteButton) {
-
-            deleteButton.addEventListener(
-              'click',
-              () => {
-                triggerDelete(post.id);
-              }
-            );
-          }
-
-          userPostsList.appendChild(clone);
-        });
-
+                </div>
+              </div>
+            </div>
+          `).join('');
       })
-      .catch(err => {
 
+
+      .catch(err => {
         console.error(
           'Error loading posts list:',
           err
@@ -648,63 +628,47 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
   };
 
-  // ---------------------------------------------------------
-  // Form Handlers
-  // ---------------------------------------------------------
+
 
   if (postForm) {
-
     postForm.addEventListener(
       'submit',
       event => {
-
         event.preventDefault();
 
         if (!CURRENT_USER) {
-
-          alert(
-            'Please sign in to publish a post.'
-          );
+          alert('Please sign in to publish a post.');
 
           return;
         }
 
-        const id =
-          postIdInput.value;
-
-        const contentVal =
-          contentInput.value.trim();
-
-        let summaryVal =
-          summaryInput
+        const id =postIdInput.value;
+        const contentVal = contentInput.value.trim();
+        let summaryVal = summaryInput
             ? summaryInput.value.trim()
             : '';
 
+        // default to first sentence or 50 words if no summary
         if (!summaryVal) {
-
-          const firstSentenceMatch =
-            contentVal.match(
+          const firstSentenceMatch = contentVal.match(
               /^[^.!?]*[.!?]/
             );
 
-          summaryVal =
-            firstSentenceMatch
+          summaryVal = firstSentenceMatch
               ? firstSentenceMatch[0].trim()
-              : (
-                contentVal.length > 50
-                  ? contentVal.substring(0, 50) + '...'
-                  : contentVal
-              );
+              : ( contentVal.length > 50
+                    ? contentVal.substring(0, 50) + '...'
+                    : contentVal )
+                    ;
         }
 
-        const finalImageUrl =
-          getImageInputValue(
+        // images links
+        const finalImageUrl = getImageInputValue(
             imageInput,
             existingImageUrl
           );
 
-        const finalSecondaryImageUrl =
-          getImageInputValue(
+        const finalSecondaryImageUrl =  getImageInputValue(
             secondaryImageInput,
             existingSecondaryImageUrl
           );
@@ -718,26 +682,23 @@ document.addEventListener('DOMContentLoaded', async () => {
           content: contentVal
         };
 
+        // create/edit posts
         fetch(
           id
             ? `/api/posts/${id}`
             : '/api/posts',
           {
-            method: id
-              ? 'PUT'
-              : 'POST',
+            method:
+              id
+                ? 'PUT'
+                : 'POST',
 
-            headers:
-              getAuthHeaders(),
-
-            body:
-              JSON.stringify(payload)
+            headers: getAuthHeaders(),
+            body: JSON.stringify(payload)
           }
         )
           .then(res => {
-
             if (!res.ok) {
-
               return res
                 .json()
                 .then(err =>
@@ -747,18 +708,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             return res.json();
           })
+
+          // refresh page
           .then(() => {
-
-            resetForm();
-
+            resetForm(); 
             loadUserPosts();
 
-            if (postFeed && fetchAndRenderFeed) {
+            if (
+              postFeed &&
+              fetchAndRenderFeed
+            ) {
+
               fetchAndRenderFeed();
             }
           })
-          .catch(err => {
 
+          .catch(err => {
             alert(
               err.error ||
               'Error saving post'
@@ -775,7 +740,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function resetForm() {
-
       postIdInput.value = '';
       titleInput.value = '';
 
@@ -788,7 +752,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       contentInput.value = '';
-
       existingImageUrl = '';
       existingSecondaryImageUrl = '';
 
@@ -797,49 +760,36 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       if (formTitle) {
-        formTitle.textContent =
-          'Create a New Post';
+        formTitle.textContent = 'Create a New Post';
       }
 
       if (submitBtn) {
-        submitBtn.textContent =
-          'Publish Post';
+        submitBtn.textContent = 'Publish Post';
       }
 
       if (cancelBtn) {
-        cancelBtn.style.display =
-          'none';
+        cancelBtn.style.display = 'none';
       }
     }
 
     loadUserPosts();
   }
-
-  // ---------------------------------------------------------
-  // UserBlog Dropdown
-  // ---------------------------------------------------------
-
+  
+  // drop down table for delete/edit
   function toggleDropdown(event, id) {
-
     event.stopPropagation();
 
-    const currentDropdown =
-      document.getElementById(
-        `dropdown-${id}`
-      );
-
+    const currentDropdown = document.getElementById(`dropdown-${id}`);
     document
       .querySelectorAll('.dropdown-menu')
       .forEach(menu => {
 
         if (menu !== currentDropdown) {
-          menu.style.display = 'none';
+          menu.style.display ='none';
         }
-
       });
 
     if (currentDropdown) {
-
       currentDropdown.style.display =
         (
           currentDropdown.style.display === 'none' ||
@@ -850,9 +800,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  window.toggleDropdown =
-    toggleDropdown;
-
+  window.toggleDropdown = toggleDropdown;
   document.addEventListener(
     'click',
     () => {
@@ -860,94 +808,64 @@ document.addEventListener('DOMContentLoaded', async () => {
       document
         .querySelectorAll('.dropdown-menu')
         .forEach(menu => {
+
           menu.style.display = 'none';
         });
-
     }
   );
 
-  // ---------------------------------------------------------
-  // Edit
-  // ---------------------------------------------------------
-
+  // edit functiom
   async function triggerEdit(id) {
-
     try {
-
-      const res =
-        await fetch(
-          `/api/posts/${id}`
+      const res = await fetch(`/api/posts/${id}`
         );
 
       if (!res.ok) {
-        throw new Error(
-          'Post not found'
+        throw new Error('Post not found'
         );
       }
 
-      const post =
-        await res.json();
-
-      postIdInput.value =
-        post.id;
-
-      titleInput.value =
-        post.title;
-
-      categoryInput.value =
-        post.category;
-
-      contentInput.value =
-        post.content;
-
-      existingImageUrl =
-        post.imageUrl || '';
-
-      existingSecondaryImageUrl =
-        post.secondaryImage || '';
+      const post = await res.json();
+      postIdInput.value = post.id;
+      titleInput.value = post.title;
+      categoryInput.value = post.category;
+      contentInput.value = post.content;
+      existingImageUrl = post.imageUrl || '';
+      existingSecondaryImageUrl = post.secondaryImage || '';
 
       if (imageInput) {
-        imageInput.value =
-          post.imageUrl || '';
+        imageInput.value = post.imageUrl || '';
       }
 
       if (secondaryImageInput) {
-        secondaryImageInput.value =
-          post.secondaryImage || '';
+        secondaryImageInput.value =  post.secondaryImage || '';
       }
 
+
       if (summaryInput) {
-        summaryInput.value =
-          post.summary || '';
+        summaryInput.value = post.summary || '';
       }
 
       if (formTitle) {
-        formTitle.textContent =
-          'Edit Post';
+        formTitle.textContent = 'Edit Post';
       }
 
       if (submitBtn) {
-        submitBtn.textContent =
-          'Save Changes';
+        submitBtn.textContent = 'Save Changes';
       }
 
       if (cancelBtn) {
-        cancelBtn.style.display =
-          'inline-block';
+        cancelBtn.style.display = 'inline-block';
       }
 
       if (postForm) {
-
         window.scrollTo({
-          top:
-            postForm.offsetTop - 100,
-          behavior:
-            'smooth'
+          top: postForm.offsetTop - 100,
+          behavior: 'smooth'
         });
       }
 
     } catch (err) {
-
       console.error(
         'Error loading post for edit:',
         err
@@ -955,24 +873,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  window.triggerEdit =
-    triggerEdit;
+  window.triggerEdit = triggerEdit;
 
-  // ---------------------------------------------------------
-  // User's own delete
-  // ---------------------------------------------------------
-
+  // delete functn
   async function triggerDelete(id) {
-
     if (!confirm('Confirm deletion?')) {
       return;
     }
 
-    try {
-
-      const res =
-        await fetch(
-          `/api/posts/${id}`,
+    try { const res = await fetch(`/api/posts/${id}`,
           {
             method: 'DELETE',
             headers: getAuthHeaders()
@@ -980,65 +889,77 @@ document.addEventListener('DOMContentLoaded', async () => {
         );
 
       if (!res.ok) {
-
-        const err =
-          await res.json();
-
+        const err = await res.json();
         throw err;
       }
 
+      // refresh blog
       loadUserPosts();
 
-      if (postFeed && fetchAndRenderFeed) {
+      if (
+        postFeed &&
+        fetchAndRenderFeed
+      ) {
+
         fetchAndRenderFeed();
       }
 
     } catch (err) {
-
       alert(
-        err.error ||
-        'Error.'
+        err.error || 'Error.'
       );
     }
   }
 
-  window.triggerDelete =
-    triggerDelete;
+  window.triggerDelete = triggerDelete;
 
-  // ---------------------------------------------------------
-  // ADMIN ONLY DELETE FROM MAIN FEED
-  // ---------------------------------------------------------
+
+  // =========================================================
+  // admin gun
+//⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀   ⢀⣴⢶⣶⣶⠼⣦⣤⣼⣼⡆⠀⠀⠀⠀⠀⠀⠀⠀
+//⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠖⣯⠿⠟⠛⠻⢶⣿⣯⣿⣿⣃⠀⠀⠀⠀⠀⠀⠀⠀
+//⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣖⣺⡿⠿⠷⠶⠒⢶⣶⠖⠀⠉⡻⢻⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀
+//⠀⠀⠀⠀⠀⠀⠀⠀⣴⢻⣭⣫⣿⠁⠀⠀⠀⠀⠀⠀⠀⢀⣾⠃⢀⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀
+//⠀⠀⠀⠀⢀⣖⡿⠋⢙⣿⠿⢿⠿⣿⡦⠄⠀⠀⠀⣠⣾⠟⠀⠀⣼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+//⠀⠀⢀⣰⣿⣴⣿⡿⠿⠿⠿⢿⣦⣄⠀⠀⠀⣠⣾⣿⠃⠀⢀⣸⡿⣳⣶⣲⡄⠀⠀⠀⠀⠀⠀
+//⠀⠀⣾⣽⡿⣛⣵⠾⠿⠿⠷⣦⣌⠻⣷⣄⢰⣿⠟⠁⠀⢠⣾⠿⢡⣯⠸⠧⢽⣄⠀⠀⠀⠀⠀
+//⠀⢸⡇⡟⣴⡿⢟⣽⣾⣿⣶⣌⠻⣧⣹⣿⡿⠋⠀⠀⠀⣾⠿⡇⣽⣿⣄⠀⠀⠉⠳⣄⢀⡀⠀
+//⠀⢸⠇⢳⣿⢳⣿⣿⣿⣿⣿⣿⡆⢹⡇⣿⡇⠀⡆⣠⣼⡏⢰⣿⣿⣿⣿⣦⠀⠀⠀⠈⠳⣅⠀
+//⠀⣸⡀⢸⣿⢸⣿⣿⣿⣿⣿⣿⡇⣸⡇⣿⡇⠀⡟⣻⢳⣷⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠘⣧
+//⢰⡟⡿⡆⠹⣧⡙⢿⣿⣿⠿⡟⢡⣿⢷⣿⣧⠾⢠⣿⣾⣿⣿⣿⣿⣿⣿⠁⠀⠀⠀⠀⠀⠀⠘
+//⠀⠻⡽⣦⠀⠈⠙⠳⢶⣦⡶⠞⢻⡟⡸⠟⠁⢠⠟⠉⠉⠙⠿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⡴
+//⠀⠀⢸⣿⡇⠀⠀⣀⣠⠀⢀⡀⠸⣹⠇⠀⣰⡟⡀⠀⠈⠛⠻⢿⣻⣿⡿⠀⠀⠀⠀⠀⠀⡠⠁
+//⠀ ⢸⣿⣇⣴⢿⣿⣿⣿⣮⣿⣷⡟⠀⣰⣿⢰⠀⣀⠀⠀⠀⢀⣉⣿⡇⠀⠀⠀⠀⠀⣸⠃⠀
+//⠀ ⢸⣿⡟⣯⠸⣿⣿⣿⣿⢈⣿⡇⣼⣿⠇⣸⡦⣙⣷⣦⣴⣯⠿⠛⢷⡀⠀⠀⠀⣰⡟⠀⠀
+//⠀ ⠘⣿⣿⡸⣷⣝⠻⠟⢋⣾⣟⣰⡏⣠⣤⡟⠀⠀⠈⠉⠁⠀⠀⠀⠀⢻⣶⠀⢀⣿⠁⠀⠀
+//⠀⠀⠀⢸⡿⣿⣦⣽⣛⣛⣛⣭⣾⣷⡶⠞⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⣿⡟⠀⠀⠀⠀
+//⠀ ⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡀⠁⢸⢻⠁⠀⠀⠀⠀
+//⠀⠀⠀⠀⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⣤⣤⣀⣀⣀⣀⣀⣠⣤⠶⠛⠁⢀⣾⡟⠀⠀⠀⠀⠀
+//⠀⠀⠀⠀⢿⣻⣿⣿⣿⣿⣿⣿⣎⣿⡅⠀⠈⠉⠉⠉⠉⠉⠁⠀⠀⠀⠀⣼⣿⠁⠀⠀⠀⠀⠀
+// ⠀⠀⠀⠈⢻⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⡷⠟⠀⠀⠀⠀⠀⠀
+//⠀⠀⠀⠀⠀⠀⠙⢿⣿⣿⠻⢿⣿⣿⣟⣂⣀⣀⣀⣀⣀⣀⣤⠴⠋⠁⣾⠀⠀⠀⠀⠀⠀⠀⠀
+//⠀⠀⠀⠀⠀⠀⠀⠈⢻⣿⣷⣷⡄⠀⠀⠀⠉⠉⠉⠉⠉⠀⠀⠀⢀⡞⠁⠀⠀⠀⠀⠀⠀⠀⠀
+//⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⣿⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+//⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⣷⣤⣤⣤⣤⣄⣤⣤⡤⠴⠞⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+// =========================================================
 
   async function adminDeletePost(id, event) {
-
     if (event) {
       event.preventDefault();
       event.stopPropagation();
     }
 
-    // Frontend protection
-    if (!IS_ADMIN) {
-
-      alert(
-        'You do not have permission to delete blog posts.'
-      );
-
-      return;
-    }
-
     if (
       !confirm(
-        'Delete this blog post from the main feed?\n\nThis cannot be undone.'
+        'Delete?\n\nThis cannot be undone.'
       )
     ) {
+
       return;
     }
 
     try {
-
-      const res =
-        await fetch(
-          `/api/posts/${encodeURIComponent(id)}`,
+      const res =await fetch(`/api/posts/${encodeURIComponent(id)}`,
           {
             method: 'DELETE',
             headers: getAuthHeaders()
@@ -1046,25 +967,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         );
 
       if (!res.ok) {
-
-        const err =
-          await res.json();
-
+        const err = await res.json();
         throw err;
       }
 
-      // Refresh main feed
-      if (postFeed && fetchAndRenderFeed) {
+      if (
+        postFeed &&
+        fetchAndRenderFeed
+      ) {
+
         fetchAndRenderFeed();
       }
-
-      // Refresh UserBlog
       loadUserPosts();
 
     } catch (err) {
-
       console.error(
-        'Admin deletion error:',
+        'Error:',
         err
       );
 
@@ -1074,7 +992,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       );
     }
   }
-
   window.adminDeletePost =
     adminDeletePost;
+
 });
