@@ -27,7 +27,7 @@ function getCategoryIcon(cat) {
   return icons[cat] || '📝';
 }
 
-// Helper: Get logged-in user's display account name
+// get logged in account name
 function getAccountName(req) {
   const user = req.user || (req.session && req.session.user);
   if (user) return user.username || user.name || user.email;
@@ -86,7 +86,7 @@ router.get('/api/current-user', (req, res) => {
   res.json({ accountName: accountName || 'Guest', isLoggedIn: !!accountName });
 });
 
-// CREATE post
+// POST(create) post
 router.post('/api/posts', (req, res) => {
   const accountName = getAccountName(req);
 
@@ -116,7 +116,7 @@ router.post('/api/posts', (req, res) => {
   res.status(201).json(newPost);
 });
 
-// EDIT post
+// PUT(edit) post
 router.put('/api/posts/:id', (req, res) => {
   const accountName = getAccountName(req);
   const posts = loadPosts();
@@ -148,21 +148,56 @@ router.put('/api/posts/:id', (req, res) => {
 // DELETE post
 router.delete('/api/posts/:id', (req, res) => {
   const accountName = getAccountName(req);
-  let posts = loadPosts();
-  const post = posts.find(p => p.id === req.params.id);
 
-  if (!post) return res.status(404).json({ error: "Post not found" });
-
-  if (post.author.toLowerCase() !== accountName.toLowerCase()) {
-    return res.status(403).json({ error: "You can only delete your own posts." });
+  if (!accountName) {
+    return res.status(401).json({
+      error: "Please sign in to delete a post."
+    });
   }
 
-  const filtered = posts.filter(p => p.id !== req.params.id);
-  savePosts(filtered);
-  res.json({ success: true, message: "Post deleted" });
+  let posts = loadPosts();
+  const post = posts.find(
+    p => p.id === req.params.id
+  );
+
+  if (!post) {
+    return res.status(404).json({
+      error: "Post not found"
+    });
+  }
+
+  /* check user role */
+  const currentUser = users.find(user => {
+    const username =
+      user.username ||
+      user.name ||
+      user.email;
+
+    return (
+      username &&
+      username.toLowerCase() ===
+      accountName.toLowerCase()
+    );
+  });
+
+  /* admin can delete anyone post  */
+  const isAdmin =
+    currentUser &&
+    String(currentUser.role).toLowerCase() === 'admin';
+
+  const filteredPosts =
+    posts.filter(
+      p => p.id !== req.params.id
+    );
+
+  savePosts(filteredPosts);
+  return res.json({
+    success: true,
+    message: "Post deleted"
+  });
 });
 
-// ADD comment
+// POST comment
 router.post('/api/posts/:id/comments', (req, res) => {
   const accountName = getAccountName(req) || "Guest";
   const posts = loadPosts();

@@ -1,69 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Merch Store - Home</title>
-    <link rel="stylesheet" type="text/css" href="/assets/css/blog.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/css/main.css" />
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+    <link
+        rel="stylesheet"
+        type="text/css"
+        href="/assets/css/blog.css"/>
+
+    <link
+        rel="stylesheet"
+        type="text/css"
+        href="/assets/css/main.css"/>
+
+    <link
+        rel="stylesheet"
+        type="text/css"
+        href="/assets/css/admin.css"/>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css"
+        rel="stylesheet"/>
+
     <script>
-  window.currentUser = "<%= (typeof user !== 'undefined' && user) ? (user.username || user.name) : '' %>";
+        window.currentUser = "<%= (typeof user !== 'undefined' && user) ? (user.username || user.name) : '' %>";
+        window.currentUserRole ="<%= (typeof user !== 'undefined' && user && user.role) ? user.role : '' %>";
     </script>
+
 </head>
 
- <%- include('../../partials/navbar') %>
+<%- include('../../partials/navbar') %>
 
-</body>
-  <header class="site-header">
+<header class="site-header">
     <div class="header-container">
-      <div class="brand">
-  </header>
+        <div class="brand"></div>
+    </div>
 
-<a href="/UserBlog" class="fixed-user-blog-btn">
-  <i class="fa-solid fa-pencil"></i>
-  <span>Your Blog</span>
+</header>
+<a
+    href="/UserBlog"
+    class="fixed-user-blog-btn">
+
+    <i class="fa-solid fa-pencil"></i>
+    <span>Your Blog</span>
 </a>
 
-    <!-- Search bar -->
-  <section class="search-filter-section">
-      <form class="post-form">
-        <div class="search-bar-row">
-          <input 
-            type="text" 
-            class="search-input" 
-            placeholder="Search..." 
-            aria-label="Search posts" 
-          />
-          <button type="button" class="search-btn">Search</button>
-        </div>
+<!-- Search -->
+<section class="search-filter-section">
+    <div class="search-bar-row">
+        <input
+            type="text"
+            class="search-input"
+            placeholder="Search..."
+            aria-label="Search posts"/>
 
         <div class="filter-dropdowns-row">
-          <div class="form-group">
-            <select class="search-type-select" aria-label="Search target">
-              <option value="title">Title</option>
-              <option value="author">Author</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <select class="category-select" aria-label="Filter by category">
-              <option value="">All Categories</option>
-              <option value="Merch">📱 Merch</option>
-              <option value="Fan-art">🎨 Fan-art</option>
-              <option value="Discussion">💬 Discussion</option>
-              <option value="Review">⭐ Review</option>
-            </select>
-          </div>
+            <div class="form-group">
+                <select
+                    class="search-type-select"
+                    aria-label="Search target">                 
+                    <option value="title">Title</option>
+                    <option value="author">Author</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <select
+                    class="category-select"
+                    aria-label="Filter by category">
+                    <option value="">All Categories</option>
+                    <option value="Merch">📱 Merch</option>
+                    <option value="Fan-art">🎨 Fan-art</option>
+                    <option value="Discussion">💬 Discussion</option>
+                    <option value="Review">⭐ Review</option>
+                </select>
+            </div>
         </div>
-      </form>
-    </section>
-    <div class="post-feed" id="postFeed">
-
     </div>
-  </main>
+</section>
 
-   <%- include('../../partials/footer') %>
+<!-- Main feed -->
+<div
+    class="post-feed"
+    id="postFeed"
+></div>
 
- <script src="/assets/js/blogscript.js"></script>
+<div
+    id="postFeedNoResults"
+    class="no-posts"
+    style="display:none;">
+    No blog posts found.
+</div>
+
+<div
+    id="postFeedError"
+    class="error-msg"
+    style="display:none;">
+    Failed to load posts.
+</div>
+
+
+<!-- Blog card template -->
+<template id="blog-card-template">
+    <article class="blog-card">
+        <div class="card-image-wrapper">
+
+            <img
+                class="card-image"
+                alt="Blog post"/>
+        </div>
+
+        <div class="category">
+            <span class="icon"></span>
+            <span class="category-name"></span>
+        </div>
+
+        <h2 class="card-title"></h2>
+        <p class="card-description"></p>
+        <div class="card-meta"></div>
+        <div
+            class="detailed-content"
+            style="display:none;margin-top:15px;">
+        <hr
+                style="margin:15px 0;border:0;border-top:1px solid #ccc;"/>
+
+            <img
+                class="article-image secondary-article-image"
+                alt="Secondary Illustration"
+                style="
+                    margin-bottom:15px;
+                    max-width:100%;
+                    border-radius:8px;
+                    display:none;
+                "/>
+
+            <div class="article-body">
+                <p class="article-content"></p>
+            </div>
+
+            <section
+                class="comments-section"
+                style="margin-top:20px;">
+
+                <h3>Comments</h3>
+                <form class="comment-form">
+                    <textarea
+                        rows="3"
+                        class="comment-input"
+                        required
+                    ></textarea>
+
+                    <button
+                        type="submit"
+                        class="submit-btn">
+                        Post Comment
+                    </button>
+                </form>
+                <div class="comment-list"></div>
+            </section>
+        </div>
+
+        <div class="blog-card-actions">
+            <button
+                type="button"
+                class="read-link"
+                style="
+                    background:none;
+                    border:none;
+                    cursor:pointer;
+                    padding:0;
+                    text-decoration:underline;
+                ">
+                Read More
+            </button>
+
+            <button
+                type="button"
+                class="admin-delete-post-btn"
+                aria-label="Delete blog post"
+                style="display:none;" >
+                Delete
+            </button>
+        </div>
+    </article>
+</template>
+
+
+<!-- Comment  -->
+<template id="comment-template">
+    <div class="comment-item">
+        <span class="comment-author"></span>
+        <span class="comment-date"></span>
+        <p class="comment-text"></p>
+    </div>
+</template>
+
+
+<!-- UserBlog  -->
+<template id="user-post-template">
+    <div class="user-post-item">
+        <div class="user-post-thumb">
+            <img alt="" />
+        </div>
+
+        <div class="user-post-info">
+            <span class="category">
+                <span class="icon"></span>
+                <span class="category-text"></span>
+            </span>
+
+            <h3></h3>
+            <p class="card-meta"></p>
+        </div>
+
+        <div class="menu-dropdown">
+            <button
+                type="button"
+                class="three-dots-btn"
+                aria-label="Post Options">
+                ⋮
+            </button>
+
+            <div
+                class="dropdown-menu"
+                style="display:none;">
+
+                <button
+                    type="button"
+                    class="dropdown-item edit-btn">
+                    Edit
+                </button>
+
+                <button
+                    type="button"
+                    class="dropdown-item delete-btn">
+                    Delete
+                </button>
+            </div>
+          </div>
+    </div>
+</template>
+
+</main>
+
+<%- include('../../partials/footer') %>
+
+<script src="/assets/js/blogscript.js"></script>
+
 </body>
 </html>
