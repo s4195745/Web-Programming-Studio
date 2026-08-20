@@ -28,6 +28,9 @@ router.get('/delete_account', (req, res) => { res.render('modules/user_account_m
 router.get('/blog', (req, res) => { res.render('modules/blog/blog'); });
 router.get('/UserBlog', (req, res) => { res.render('modules/blog/UserBlog'); });
 
+// Wishlist Module Pages
+router.get('/wishlist', (req, res) => { res.render('modules/wishlist/wishlist'); });
+
 // admin page (SECURED)
 router.get('/admin', isAuthenticated, requireAdmin, (req, res) => { 
     res.render('modules/admin/UserManager');

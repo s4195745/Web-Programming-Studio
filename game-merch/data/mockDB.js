@@ -186,6 +186,12 @@ async function getUserById(id) {
     return safeUser;
 }
 
+const wishlist = [
+    // Sample data: Nguyen The Chinh (user id 1) already has 2 saved items
+    { id: 1, userId: 1, productId: 1, purchased: false, addedAt: "2026-08-01T10:00:00.000Z" },
+    { id: 2, userId: 1, productId: 3, purchased: true, addedAt: "2026-07-20T10:00:00.000Z" }
+];
+
 const orders = [];
 
 module.exports = {
@@ -193,6 +199,7 @@ module.exports = {
     products,
     users,
     orders,
+    wishlist,
     getAllUsers,
     updateUserLockStatus,
     getUserById
