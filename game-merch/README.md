@@ -55,8 +55,8 @@ Community area for users to discuss gaming and related topics.
 
 ### 3. Wistlist and User Account Management (Hoang Xuan Quynh)
 Handles User's wishlist and profile. 
-* Wistlist (modules/wishlist): `wishlist.ejs`
-* Profile (modules/shared_module): `profile.ejs`, `edit_profile.ejs`, `verify_password.ejs`, `delete_account.ejs`
+* Wistlist (modules/wishlist): `wishlist.html`
+* Profile (modules/shared_module): `profile.html`, `edit_profile.html`, `verify_password.html`, `delete_account.html`
 * **CSS:** `assests/css/main`, `assets/css/wistlist.css`, `assets/css/auth.css`
 
 ### 4. Blog and Administrator (Ho Nguyen Thanh)
@@ -67,8 +67,8 @@ Handles news and updates, Admin page.
 
 ### 5. Product Review and User Account Management (Pham Khanh An)
 Allows users to read and leave reviews for merchandise.
-* Product Review (modules/review): `review.ejs`,
-* Profile (modules/shared_module): `profile.ejs`, `edit_profile.ejs`, `verify_password.ejs`, `delete_account.ejs`
+* Product Review (modules/review): `review.html`,
+* Profile (modules/shared_module): `profile.html`, `edit_profile.html`, `verify_password.html`, `delete_account.html`
 * **CSS:** `assests/css/main`, `assets/css/productreview.css`, `assets/css/auth.css` 
 
 
