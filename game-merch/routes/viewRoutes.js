@@ -8,7 +8,7 @@ const { isAuthenticated, requireAdmin } = require('../middleware/auth');
 router.get('/', (req, res) => { res.render('index'); });
 
 // Shopping Cart Module Pages
-router.get('/shop', (req, res) => { res.render('modules/shopping_cart/index'); });
+router.get('/shop', (req, res) => { res.render('modules/shopping_cart/shop'); });
 router.get('/cart', (req, res) => { res.render('modules/shopping_cart/cart'); });
 router.get('/product_detail', (req, res) => { res.render('modules/shopping_cart/product_detail'); });
 router.get('/checkout', (req, res) => { res.render('modules/shopping_cart/checkout'); });
