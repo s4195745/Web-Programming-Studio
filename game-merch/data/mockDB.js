@@ -186,13 +186,74 @@ async function getUserById(id) {
     return safeUser;
 }
 
+const wishlist = [
+    // Sample data: Nguyen The Chinh (user id 1) already has 2 saved items
+    { id: 1, userId: 1, productId: 1, purchased: false, addedAt: "2026-08-01T10:00:00.000Z" },
+    { id: 2, userId: 1, productId: 3, purchased: true, addedAt: "2026-07-20T10:00:00.000Z" }
+];
+
 const orders = [];
+
+//Forum threads
+
+const threads = [
+    {
+        id: 1, pinned: true,
+        title: "Forum rules & how to get the best support for your order",
+        content: "Pleadse read this before posting: how to describe your issue, attach proof of purchase, and what response to expect from the team.",
+        images:[], author: "Admin", timestamp: "2026-07-19T08:00", pinned: false, hidden: false, replies: []  
+    },
+    {
+        id: 2, pinned: false,
+        title: "Just got the Garen figure with the glowing sword — is the blade detail as sharp as in the photos?",
+        content: "", images: ["/assets/Product Images/Garen_figure.webp"],
+        author: "Oliver Holigate", timestamp: "2026-07-19T15:58", pinned: false, hidden: false,
+        replies: [
+            { author: "Alex", timestamp: "2026-07-19T16:00", image: "/assets/Product Images/reply for garen figure.jpg",
+              content: "Got mine today — the blade edge actually has a nice gradient, not flat purple like some photos show." }
+        ]
+    },
+    {
+        id: 3, pinned: false,
+        title: "Can the horned plush be machine washed, or just spot-cleaned?",
+        content: "", images: ["/assets/Product Images/Orn_plush.webp"],
+        author: "Hoang Dang", timestamp: "2026-07-19T11:15", pinned: false, hidden: false,
+        replies: [
+            { author: "Jacob", timestamp: "2026-07-19T13:00", image: null,
+              content: "Wouldn't risk the washing machine, the fur tangles easily. I used a damp cloth with mild soap." }
+        ]
+    },
+    {
+        id: 4, pinned: false,
+        title: "Between Garen and Galio, which one has better paint quality?",
+        content: "", images: ["/assets/Product Images/Galio_figure.webp"],
+        author: "Apex", timestamp: "2026-07-16T02:00", pinned: false, hidden: false,
+        replies: [
+            { author: "Pauloramte", timestamp: "2026-07-18T03:00", image: null,
+              content: "Own both. Garen's sword has a nicer gradient, Galio's gold trim lines are cleaner overall." }
+        ]
+    },
+    {
+        id: 5, pinned: false,
+        title: "Ordered the bundle of all 3 (Garen, Ornn, Galio) — will they ship safely in one box?",
+        content: "",
+        images: ["/assets/Product Images/Galio_figure.webp", "/assets/Product Images/Garen_figure.webp", "/assets/Product Images/Orn_plush.webp"],
+        author: "Beryl", timestamp: "2026-07-10T09:00", pinned: false, hidden: false,
+        replies: [
+            { author: "Sophia", timestamp: "2026-07-17T15:00", image: null,
+              content: "Ordered the same bundle last week, everything arrived intact — each item was foam-wrapped." }
+        ]
+    }
+];
+
 
 module.exports = {
     hashPassword,
     products,
     users,
     orders,
+    wishlist,
+    threads,
     getAllUsers,
     updateUserLockStatus,
     getUserById

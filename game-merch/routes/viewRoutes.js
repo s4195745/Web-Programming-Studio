@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { threads, products, } = require('../data/mockDB');
 
 // IMPORT ADMIN MIDDLEWARE
 const { isAuthenticated, requireAdmin } = require('../middleware/auth');
@@ -28,9 +29,17 @@ router.get('/delete_account', (req, res) => { res.render('modules/user_account_m
 router.get('/blog', (req, res) => { res.render('modules/blog/blog'); });
 router.get('/UserBlog', (req, res) => { res.render('modules/blog/UserBlog'); });
 
+// Wishlist Module Pages
+router.get('/wishlist', (req, res) => { res.render('modules/wishlist/wishlist'); });
+
 // admin page (SECURED)
 router.get('/admin', isAuthenticated, requireAdmin, (req, res) => { 
     res.render('modules/admin/UserManager');
+});
+
+//SITEMAP
+router.get('/sitemap', (req, res) => {
+    res.render('modules/sitemap/sitemap', { threads, products });
 });
 
 module.exports = router;

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Thread</title>
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/forum.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css">
+</head>
+
+<body>
+
+    <%- include('../../partials/navbar') %>
+
+    <div class="page_layout single_column">
+        <main class="main_content">
+            <a href="/forum/<%= thread.id %>" class="back_link"><i class="ri-arrow-left-line"></i> Back to Thread</a>
+
+            <div class="new_thread_box">
+                <h1 class="new_thread_heading">Edit thread</h1>
+
+                <form class="new_thread_form" action="/forum/<%= thread.id %>/edit" method="post" enctype="multipart/form-data">
+
+                    <div class="form_group">
+                        <label for="thread_title_input">Thread title</label>
+                        <input type="text" id="thread_title_input" name="thread_title" value="<%= thread.title %>" required>
+                    </div>
+
+                    <div class="form_group">
+                        <label for="thread_content_input">Content</label>
+                        <textarea id="thread_content_input" name="thread_content" rows="6" required><%= thread.content %></textarea>
+                    </div>
+
+                    <div class="form_group">
+                        <label for="thread_image_input">Add more images (optional)</label>
+                        <input type="file" id="thread_image_input" name="thread_image" accept="image/*" multiple>
+                        <span class="form_hint">New images will be added alongside existing ones.</span>
+                    </div>
+
+                    <div class="form_actions">
+                        <a href="/forum/<%= thread.id %>" class="cancel_btn">Cancel</a>
+                        <button type="submit" class="submit_btn">Save Changes</button>
+                    </div>
+
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="/assets/js/script.js"></script>
+
+    <%- include('../../partials/footer') %>
+</body>
+</html>

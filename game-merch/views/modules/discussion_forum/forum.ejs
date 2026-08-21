@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum</title>
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/forum.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css">
+</head>
+
+<body>
+
+    <%- include('../../partials/navbar') %>
+
+    <div class="page_layout">
+        <main class="main_content">
+
+            <div class="filter_content">
+                <form class="filter_form" action="/forum" method="get">
+                    <input type="text" name="q" class="search_input" placeholder="Search by title/ contents..." value="<%= q %>">
+                    <select name="sort" class="sort_options">
+                        <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest post</option>
+                        <option value="oldest" <%= sort === 'oldest' ? 'selected' : '' %>>Oldest post</option>
+                    </select>
+                    <button type="submit" class="apply_btn">Apply</button>
+                </form>
+            </div>
+
+            <!--Result meta-->
+            <p class="result_meta">Showing <%= threads.length %> threads &middot; sorted by <strong><%= sort === 'oldest' ? 'Oldest post' : 'Newest post' %></strong></p>
+            <!--Thread list-->
+            <div class="thread_list">
+
+                <% if (threads.length === 0) { %>
+                    <div class="empty_state">
+                        <i class="ri-search-eye-line"></i>
+                        <p>No threads found. Try a different title or contents!</p>
+                    </div>
+                <% } %>
+
+                <% threads.forEach(function(t) { %>
+                <article class="thread_card <%= t.pinned ? 'pinned' : '' %>">
+                    <a href="/forum/<%= t.id %>" class="card_stretch_link" aria-label="View thread: <%= t.title %>"></a>
+                    <% if (t.pinned) { %>
+                    <span class="pinned_badge"><i class="ri-pushpin-fill"></i>Pinned</span>
+                    <% } %>
+
+                    <div class="card_header">
+                        <img src="/assets/Product Images/avatar.jpg" alt="<%= t.author %> avatar" class="avatar">
+                        <span class="author_name"><%= t.author %></span>
+                        <time class="post_time" datetime="<%= t.timestamp %>"><%= t.timestamp %></time>
+
+                        <% if (!t.pinned && currentUser && currentUser.username === t.author) { %>
+                        <div class="options_menu">
+                            <input type="checkbox" id="menu_post_<%= t.id %>" class="options_toggle_checkbox" hidden>
+                            <label for="menu_post_<%= t.id %>" class="options_trigger">
+                                <i class="ri-more-2-fill"></i>
+                            </label>
+                            <div class="options_dropdown">
+                                <a href="/forum/<%= t.id %>/edit" class="options_item"><i class="ri-edit-line"></i>Edit</a>
+                                <a href="#" class="options_item delete_item" data-id="<%= t.id %>"><i class="ri-delete-bin-line"></i>Delete</a>
+                            </div>
+                        </div>
+                        <% } %>
+                    </div>
+
+                    <h3 class="thread_title"><%= t.title %></h3>
+
+                    <div class="thread_content">
+                        <% if (t.content) { %><p><%= t.content %></p><% } %>
+                        <% if (t.images.length === 1) { %>
+                        <img src="<%= t.images[0] %>" alt="Image attached to thread: <%= t.title %>" class="content_img">
+                        <% } else if (t.images.length > 1) { %>
+                        <div class="content_gallery">
+                            <% t.images.forEach(function(img) { %>
+                            <img src="<%= img %>" alt="Image attached to thread: <%= t.title %>" class="content_img">
+                            <% }); %>
+                        </div>
+                        <% } %>
+                    </div>
+
+                    <div class="card_footer">
+                        <input type="checkbox" id="like_thread_<%= t.id %>" class="reaction_toggle_checkbox" hidden>
+                        <label for="like_thread_<%= t.id %>" class="reaction_btn">
+                            <i class="ri-heart-line icon_outline"></i>
+                            <i class="ri-heart-fill icon_filled"></i>
+                        </label>
+                        <a href="/forum/<%= t.id %>" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
+                    </div>
+                </article>
+
+                <% if (t.replies && t.replies.length) { %>
+                <section class="replies_section">
+                    <h4 class="replies_heading">Reply</h4>
+                    <% t.replies.forEach(function(r, i) { %>
+                    <div class="reply_item">
+                        <div class="reply_header">
+                            <img src="/assets/Product Images/avatar.jpg" alt="<%= r.author %> avatar" class="avatar">
+                            <span class="author_name"><%= r.author %></span>
+                            <time class="post_time" datetime="<%= r.timestamp %>"><%= r.timestamp %></time>
+                        </div>
+                        <div class="reply_content">
+                            <p><%= r.content %></p>
+                        </div>
+                        <div class="reply_footer">
+                            <input type="checkbox" id="like_reply_<%= t.id %>_<%= i %>" class="reaction_toggle_checkbox" hidden>
+                            <label for="like_reply_<%= t.id %>_<%= i %>" class="reaction_btn">
+                                <i class="ri-heart-line icon_outline"></i>
+                                <i class="ri-heart-fill icon_filled"></i>
+                            </label>
+                        </div>
+                    </div>
+                    <% }); %>
+                </section>
+                <% } %>
+                <% }); %>
+            </div>
+
+            <button class="load_more_btn">Load more threads</button>
+        </main>
+
+        <aside class="sidebar">
+            <div class="sidebar_box">
+                <div class="sidebar_box_header">
+                    <h3>Related Products</h3>
+                    <a href="/shop">View Shop</a>
+                </div>
+
+                <% products.forEach(function(p) { %>
+                <a href="/product_detail" class="product_item js-related-product" data-product="<%= JSON.stringify(p) %>">
+                    <div class="product_thumb">
+                        <img src="<%= p.colors ? p.colors[0].mainImage.replace('../../assets', '/assets') : '' %>" alt="<%= p.title %>">
+                    </div>
+                    <div class="product_info">
+                        <div class="product_name"><%= p.title %></div>
+                        <div class="product_price">$<%= p.price.toFixed(2) %></div>
+                    </div>
+                </a>
+                <% }); %>
+
+                <a href="/shop" class="sidebar_cta">View All Products</a>
+            </div>
+        </aside>
+    </div>
+
+    <!--FLOATING CTA: Ask question (always visible when scrolling)-->
+    <a href="/forum/new" class="ask_question_fab">
+        <i class="ri-add-line"></i>
+        <span>Ask Question Now !</span>
+    </a>
+
+    <div class="confirm_modal_overlay" id="delete_modal">
+        <div class="confirm_modal_box">
+            <p>Are you sure you want to delete this thread?</p>
+            <div class="confirm_modal_actions">
+                <button id="cancel_delete_btn">Cancel</button>
+                <button class="confirm_delete_btn" id="confirm_delete_btn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // Sidebar related products
+        document.querySelectorAll('.js-related-product').forEach(function(el) {
+            el.addEventListener('click', function() {
+                const product = JSON.parse(el.getAttribute('data-product'));
+                sessionStorage.setItem('selectedProduct', JSON.stringify(product));
+            });
+        });
+
+        // Toast notification
+        function showToast(message) {
+            const existingToast = document.querySelector('.toast-message');
+            if (existingToast) existingToast.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'toast-message';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(function() { toast.classList.add('show'); }, 10);
+            setTimeout(function() {
+                toast.classList.remove('show');
+                setTimeout(function() { toast.remove(); }, 300);
+            }, 3000);
+        }
+
+        // Modal confirm delete
+        const modal = document.getElementById('delete_modal');
+        let pendingDeleteId = null;
+
+        document.querySelectorAll('.delete_item').forEach(function(el) {
+            el.addEventListener('click', function(e) {
+                e.preventDefault();
+                pendingDeleteId = el.getAttribute('data-id');
+                modal.classList.add('active');
+            });
+        });
+
+        document.getElementById('cancel_delete_btn').addEventListener('click', function() {
+            modal.classList.remove('active');
+            pendingDeleteId = null;
+        });
+
+        document.getElementById('confirm_delete_btn').addEventListener('click', function() {
+            if (!pendingDeleteId) return;
+
+            fetch('/forum/' + pendingDeleteId + '/delete', { method: 'POST' })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    modal.classList.remove('active');
+                    if (data.error) {
+                        showToast(data.error);
+                    } else {
+                        showToast('Thread deleted successfully.');
+                        setTimeout(function() { location.reload(); }, 1000);
+                    }
+                })
+                .catch(function(err) {
+                    console.error(err);
+                    showToast('Something went wrong.');
+                });
+        });
+    });
+    </script>
+
+    <script src="/assets/js/script.js"></script>
+
+    <%- include('../../partials/footer') %>
+</body>
+</html>
