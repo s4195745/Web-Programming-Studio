@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sitemap</title>
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css">
+</head>
+
+<body>
+
+    <%- include('../../partials/navbar.ejs') %>
+    
+    <div class="sitemap_layout">
+        <h1 class="sitemap_heading">Sitemap</h1>
+        <p class="sitemap_subheading">A full list of every page in Lootbox, organized by section.</p>
+
+        <div class="sitemap_grid">
+
+            <!--Shop-->
+            <div class="sitemap_section">
+                <h3><i class="ri-store-2-line"></i> Shop</h3>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/shop">Shopping</a></li>
+                    <li><a href="/cart">Cart</a></li>
+                    <li><a href="/checkout">Checkout</a></li>
+                    <% products.forEach(function(p){ %>
+                    <li><a href="/product_detail"><%= p.title %></a></li>
+                    <% }); %>
+                </ul>
+            </div>
+
+            <!--Discussion Forum-->
+            <div class="sitemap_section">
+                <h3><i class="ri-discuss-line"></i> Discussion Forum</h3>
+                <ul>
+                    <li><a href="/forum">Forum</a></li>
+                    <li><a href="/forum/new"> Ask a question</a></li>
+                    <% threads.forEach(function(t) { %>
+                    <li><a href="/forum/<%= t.id %>"><%= t.title %></a></li>
+                    <% }); %>
+                </ul>
+            </div>
+
+            <!--Blog-->
+            <div class="sitemap_section">
+                <h3><i class="ri-article-line"></i> Blog</h3>
+                <ul>
+                   <li><a href="/blog">Blog</a></li>
+                </ul>
+            </div>
+
+            <!--Review-->
+            <div class="sitemap_section">
+                <h3><i class="ri-star-line"></i> Review</h3>
+                <ul>
+                    <li><a href="/review">Reviews</a></li>
+                </ul>
+            </div>
+
+            <!--Wishlist-->
+            <div class="sitemap_section">
+                <h3><i class="ri-bookmark-fill"></i> Wishlist</h3>
+                <ul>
+                    <li><a href="/wishlist">Wishlist</a></li>
+                </ul>
+            </div>
+
+            <!--Account-->
+            <div class="sitemap_section">
+                <h3><i class="ri-user-line"></i> Account</h3>
+                <ul>
+                    <li><a href="../shared_module/login.html">Login</a></li>
+                    <li><a href="../shared_module/register.html">Register</a></li>
+                    <li><a href="../shared_module/profile.html">My Profile</a></li>
+                    <li><a href="../shared_module/edit_profile.html">Edit Profile</a></li>
+                    <li><a href="../shared_module/forgot_password.html">Change password</a></li>
+                    <li><a href="../shared_module/forgot_password_confirm.html">Password Confirmatiom</a></li>
+                    <li><a href="../shared_module/verify_password.html">Verify Password</a></li>
+                    <li><a href="../shared_module/delete_account.html">Delete Account</a></li>
+                    
+                </ul>
+            </div>
+
+            <!--Other-->
+            <div class="sitemap_section">
+                <h3><i class="ri-links-line"></i>Others</h3>
+                <ul>
+                    <li><a href="/sitemap"> Sitemap</a></li>
+                    <li><a href="/admin">Admin Control Panel</a></li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../../partials/footer.ejs') %>
+
+</body>
+</html>

@@ -41,6 +41,7 @@ const cartRoutes = require('./routes/cartRoutes');
 const blogRoutes = require('./routes/blogRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
+const forumRoutes = require('./routes/forumRoutes');
 
 // --- MOUNT ROUTES ---
 // UI View Routes
@@ -48,6 +49,7 @@ app.use('/', authRoutes);
 app.use('/', viewRoutes);
 app.use('/', blogRoutes);
 app.use('/', adminRoutes);
+app.use('/', forumRoutes);
 
 
 // API Routes 
@@ -61,3 +63,6 @@ app.set('views', path.join(__dirname, 'views'));
 app.listen(PORT, () => { 
     console.log(`Server is running at http://localhost:${PORT}`); 
 });
+
+// Reply button 
+app.use(express.urlencoded({ extended: true }));

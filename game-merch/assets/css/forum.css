@@ -182,6 +182,7 @@ a {
     gap: 8px;
     margin-bottom: 10px;
     z-index: 2;
+
 }
 
 .thread_title,
@@ -761,7 +762,7 @@ a {
         bottom: 16px;
     } 
     /* new_thread.html */
-    .page_layout .single_column {
+    .page_layout.single_column {
         max-width: 100%;
     }
     .new_thread_box {
@@ -777,11 +778,25 @@ a {
     }
 }
 
-/*Adding EDIT/ DELETE button on earch thread*/
-.card_header {
-    position: relative;
-    z-index: 2;
+    /* Extra small phones: 400px and below */
+@media (max-width: 400px) {
+    .thread_card {
+        padding: 12px;
+    }
+    .avatar {
+        width: 24px;
+        height: 24px;
+    }
+    .thread_title {
+        font-size: 14px;
+    }
+    .sidebar_box_header h3 {
+        font-size: 12px;
+    }
 }
+
+
+/*Adding EDIT/ DELETE button on earch thread*/
 
 .options_menu {
     margin-left: auto;
@@ -847,4 +862,69 @@ a {
 
 .options_item.delete_item:hover {
     background: #fdeaf0;
+}
+
+/* Confirm Delete Modal */
+.confirm_modal_overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+}
+.confirm_modal_overlay.active {
+    display: flex;
+}
+.confirm_modal_box {
+    background: #fff;
+    border-radius: 8px;
+    padding: 24px;
+    max-width: 340px;
+    width: 90%;
+    text-align: center;
+}
+.confirm_modal_box p {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 20px;
+}
+.confirm_modal_actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+.confirm_modal_actions button {
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background: #fff;
+}
+.confirm_modal_actions .confirm_delete_btn {
+    background: #e0245e;
+    color: #fff;
+    border-color: #e0245e;
+}
+
+/* Toast */
+.toast-message {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #222;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 200;
+}
+.toast-message.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
 }

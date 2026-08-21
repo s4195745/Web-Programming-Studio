@@ -3,17 +3,17 @@
 ## Academic Information
 * **Institution:** RMIT University
 * **Course:** [COSC3060 Web Programming]
-* **Assignment:** Assignment 1 - Static Website (HTML/CSS)
+* **Assignment:** Assessment Task 2 - Web application prototype
 
 ## Team Members (Group HN-G2)
 This project was collaboratively built by a team of 5 members. Each member was responsible for a specific functional module of the website.
 
-| Student ID | Full Name          | Role / Module                           |
-| s4195745   | Nguyen The Chinh   | Shopping Cart, User Account Management  |
-| s4077090   | Hoang Xuan Quynh   | Wishlist, User Account Management       |
-| s4197975   | Dang Viet Hoang    | Discussion Forum, Sitemap               |
-| s4200917   | Ho Nguyen Thanh    | Blog, Administrator                     |
-| s4199811   | Pham Khanh An      | Product Review, User Account Management |
+| Student ID | Full Name          | Role / Module                            |
+| s4195745   | Nguyen The Chinh   | Shopping Cart, User Account Management   |
+| s4077090   | Hoang Xuan Quynh   | Wishlist, User Account Management        |
+| s4197975   | Dang Viet Hoang    | Discussion Forum, Sitemap, Administrator |
+| s4200917   | Ho Nguyen Thanh    | Blog, Administrator, Sitemap             |
+| s4199811   | Pham Khanh An      | Product Review, User Account Management  |
 
 ---
 
@@ -63,7 +63,7 @@ Allows users to read and leave reviews for merchandise.
 ## 🚀 How to Run the Project
 1. Extract the `.zip` file.
 2. Navigate to the root folder.
-3. Open `landing_page.html` in any modern web browser (Google Chrome, Firefox, Safari, Edge) to start exploring the website.
+3. Open the terminal in vs code, Ctr C to clear out all the cache (just in case), type " cd game-merch ", and then type " node server.js ", you should see a line "Server is running at http://localhost:3000", copy the http and paste it to your browser. 
 4. Navigate through the top menu to access different modules built by the team.
 
 ---
