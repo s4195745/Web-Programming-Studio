@@ -194,6 +194,39 @@ const wishlist = [
 
 const orders = [];
 
+const reviews = [
+    {
+        id: 1,
+        userId: 1,
+        productId: 1,
+        rating: 5,
+        title: "Great plush, exactly as pictured",
+        description: "The fabric feels premium and the stitching is really clean. Bigger than I expected too.",
+        image: null,
+        createdAt: "2026-07-10T09:00:00.000Z"
+    },
+    {
+        id: 2,
+        userId: 3,
+        productId: 3,
+        rating: 4,
+        title: "Solid figure, good detail",
+        description: "The sculpt and paint work are sharper than I expected at this size, though the base feels a bit light.",
+        image: null,
+        createdAt: "2026-07-05T09:00:00.000Z"
+    },
+    {
+        id: 3,
+        userId: 2,
+        productId: 2,
+        rating: 5,
+        title: "Super soft, great gift",
+        description: "Bought this as a gift and it did not disappoint, colours are vivid and it's very cuddly.",
+        image: null,
+        createdAt: "2026-06-28T09:00:00.000Z"
+    }
+];
+
 //Forum threads
 
 const threads = [
@@ -254,6 +287,7 @@ module.exports = {
     orders,
     wishlist,
     threads,
+    reviews,
     getAllUsers,
     updateUserLockStatus,
     getUserById
