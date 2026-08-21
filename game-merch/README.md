@@ -38,11 +38,18 @@ Community area for users to discuss gaming and related topics.
 * Others: SHARED FOOTER,
 * **CSS:** `assests/css/main`, `assets/css/forum.css` 
 
-### 3. Wistlist and User Account Management (Hoang Xuan Quynh)
-Handles User's wishlist and profile. 
-* Wistlist (modules/wishlist): `wishlist.html`
-* Profile (modules/shared_module): `profile.html`, `edit_profile.html`, `verify_password.html`, `delete_account.html`
-* **CSS:** `assests/css/main`, `assets/css/wistlist.css`, `assets/css/auth.css`
+### 3. Wishlist (Hoang Xuan Quynh)
+Handles Wishlist — save products, mark as purchased, remove, move to cart.
+ **View:**
+* Wishlist (modules/wishlist): `wishlist.ejs`
+
+**assets/css:**
+`assets/css/wishlist.css`
+
+**assets/js:**
+`wishlistscript.js`
+
+**routes:** `wishlistRoutes.js`
 
 ### 4. Blog and Administrator (Ho Nguyen Thanh)
 Handles news and updates, Admin page.
@@ -50,11 +57,18 @@ Handles news and updates, Admin page.
 * Administrator (modules/shared_module): `admin.html`
 * **CSS:** `assests/css/main`, `assets/css/blog.css`, `assets/admin.css` 
 
-### 5. Product Review and User Account Management (Pham Khanh An)
-Allows users to read and leave reviews for merchandise.
-* Product Review (modules/review): `review.html`,
-* Profile (modules/shared_module): `profile.html`, `edit_profile.html`, `verify_password.html`, `delete_account.html`
-* **CSS:** `assests/css/main`, `assets/css/productreview.css`, `assets/css/auth.css` 
+### 5. Product Review and Rating (Pham Khanh An)
+Handles Product Review and Rating — write, edit, delete own reviews; browse, search and filter all reviews.
+ **View:**
+* Product Review (modules/review): `productreview.ejs`
+
+**assets/css:**
+`assets/css/productreview.css`
+
+**assets/js:**
+`reviewscript.js`
+
+**routes:** `reviewRoutes.js`
 
 *(Note: All pages share the global navigation and footer styled in `assets/css/main.css`)*
 
