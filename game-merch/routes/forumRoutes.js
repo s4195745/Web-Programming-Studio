@@ -17,7 +17,7 @@ const upload = multer({storage: storage});
 
 router.get('/forum', (req, res) => {
     const { q, sort } = req.query;
-    let result = threads.filter (t => !t.hidden);
+    let result = threads.filter(t => !t.hidden);
 
     if (q) {
         const keyword = q.toLowerCase();
@@ -35,8 +35,8 @@ router.get('/forum', (req, res) => {
         ? new Date(a.timestamp) - new Date(b.timestamp)
         : new Date(b.timestamp) - new Date(a.timestamp);
     });
-    
-        res.render('modules/discussion_forum/forum', { threads: result, q: q || '', sort: sort || 'newest', products: products });
+
+    res.render('modules/discussion_forum/forum', { threads: result, q: q || '', sort: sort || 'newest', products: products });
 });
 
 router.get('/forum/new', (req, res) => {
@@ -91,10 +91,18 @@ router.post('/forum/:id/edit', upload.array('thread_image', 5), (req, res) => {
     res.redirect('/forum/' + thread.id);
 });
 
-// SOFT-DELETE 
+// SOFT-DELETE — chỉ chủ bài đã đăng nhập mới xoá được
 router.post('/forum/:id/delete', (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ error: 'Please log in first.' });
+    }
+
     const thread = threads.find(t => t.id === Number(req.params.id));
-    if (!thread) return res.status(404).send('Thread not found');
+    if (!thread) return res.status(404).json({ error: 'Thread not found' });
+
+    if (thread.author !== req.session.user.username) {
+        return res.status(403).json({ error: 'You can only delete your own posts.' });
+    }
 
     thread.hidden = true;
 
