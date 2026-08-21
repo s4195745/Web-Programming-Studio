@@ -60,15 +60,15 @@ Handles User's wishlist and profile.
 
 ### 4. Blog and Administrator (Ho Nguyen Thanh)
 Handles news and updates, Admin page.
-* Blog (modules/blog): `blog.ejs`, `blog1Blog.ejs`,`blog2Blog.ejs`,`UserBlog.ejs`,
-* Administrator (modules/shared_module): `admin.ejs`
-* **CSS:** `assests/css/main`, `assets/css/blog.css`, `assets/admin.css` 
+* adminscript.js, blogscript.js, blog.ejs. UserBlog.ejs, posts.json, admin.css, blog.css 
 
 ### 5. Product Review and User Account Management (Pham Khanh An)
 Allows users to read and leave reviews for merchandise.
 * Product Review (modules/review): `review.html`,
 * **CSS:** `assests/css/main`, `assets/css/productreview.css`, `assets/css/auth.css` 
 ---
+
+* Global/Shared file: `server.js`, `main.css.`, `viewroute.js`, `mockDB.js`. 
 
 ## Installation setup Instructions & How to Run the Project
 To run this application locally on your machine, follow these exact steps:
@@ -86,6 +86,21 @@ To run this application locally on your machine, follow these exact steps:
 * User Account Management: Go to landing page and create an account (or log in the account in the mockDB.js ), After Created, you should move to the edit profile page, you can upload an avatar, change your name or gmail. you can delete your account with password confirmation. If you wish to change your password, you can change it right on that page with password confirmation also. For the forgot password, click forgot password on login page, enter your email and it should show you the code was sent. 
 
 * Administration: Go to the landing page and login to the admin account, admin@lootbox.com/AdminPassword1. You should go directly to the admin page. Here you can lock/unlock all the account, to check you can go back to the login page and enter thier gmail/password. Other actions that admin can do is to delete posts on forum and blog, just go there with your admin account and you should see a clear delete button for each post. 
+
+* Discussion forum: Create an account or log in from the navigation bar, then click the Forum tab on the navigation bar. You should see existing discussion threads; try searching by keyword in the search bar or sorting threads by Newest or Oldest. Click on the Ask a question button, enter the required title and content, select a category, and optionally attach an image before clicking submit. Once published, the feed will update with your new thread at the top. Click into your thread to view the full discussion, type a comment in the reply box, and submit to see it appended immediately. Finally, test the Edit button to update your thread content, or use the Delete button to remove the thread after confirming the prompt. 
+
+* Wishlist:
+Log in with a demo account (e.g. nguyenthechinh2807@gmail.com / Password123!), then go to /wishlist.
+Confirm the two seeded items load, each showing product image, name, price, and status (Saved/Purchased).
+Type in the search box — list should filter live by product name, no page reload.
+Change the Sort and Status dropdowns — list should reorder/filter instantly.
+Refresh the page — the last search/sort/filter should still be applied (sessionStorage).
+Click Move to Cart on an item — it should disappear from the wishlist and appear in the cart badge/count.
+Click Mark as Purchased on an item — its status badge should update to "Purchased".
+Click Remove on an item — it should disappear immediately.
+Try adding the same product to the wishlist twice (e.g. from a product page) — second attempt should be blocked with a "already in your wishlist" message.
+Log out and visit /wishlist directly — should show the login prompt instead of the item grid.
+
 
 
 
