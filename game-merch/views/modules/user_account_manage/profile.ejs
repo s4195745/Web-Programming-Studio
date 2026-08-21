@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/auth.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+</head>
+<body class="dashboard-bg">
+
+ <%- include('../../partials/navbar') %>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-wrapper">
+        
+        <!-- Sidebar Menu -->
+        <aside class="dashboard-sidebar">
+            <ul>
+                <li><a href="/profile" class="active">Profile</a></li>
+                <li><a href="/edit_profile">Edit Profile</a></li>
+                <li><a href="/cart">Orders</a></li>
+                <li><a href="/wishlist">Wish List</a></li>
+                <li><a href="#">Help / FAQ</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="dashboard-content">
+            <div class="dashboard-card">
+                
+                <!-- Welcome Section -->
+                <div class="card-header-flex">
+                    <div>
+                        <div class="card-title">Welcome Back</div>
+                        <div class="card-subtitle">Ready to shop or join the forum?</div>
+                    </div>
+                    <button type="button" class="btn-orange" onclick="window.location.href='/shop'">Shop Now</button>
+                </div>
+
+                <!-- Personal Profile Data Displayed for Assessment Requirements -->
+                <div class="profile-display">
+                    <!-- Swapped static image for a generic placeholder avatar -->
+                    <img src="../../assets/images/default-avatar.jpg" alt="User Profile" class="profile-avatar">
+                    <div class="profile-text">
+                        <!-- Removed hardcoded data -->
+                        <strong class="profile-name">Loading...</strong>
+                        <p class="profile-email">Loading...</p>
+                        <p></p>
+                    </div>
+                </div>
+            </div>
+
+            <a href="/login" class="sign-out-link">SIGN OUT</a>
+        </main>
+    </div>
+    
+    <script src="/assets/js/auth-validation.js"></script>
+    <script src="/assets/js/script.js"></script>
+    
+  <%- include('../../partials/footer') %>
+
+</body>
+</html>

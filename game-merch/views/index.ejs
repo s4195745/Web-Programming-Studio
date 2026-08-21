@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Merch Store - Home</title>
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/landing_page.css"> 
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+</head>
+<body>
+
+    <%- include('partials/navbar') %>
+
+    <main>
+        <!-- Hero Section (Top Banner) -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <div class="hero-graphics">
+                    <h1 class="hero-title">LootBox.</h1>
+                </div>
+                
+                <div class="hero-login-box">
+                    <h2>Welcome Back</h2>
+                    <!-- Login form  -->
+                    <form id="landing-login-form">
+                        <div class="home-form-group">
+                            <label for="landing-login-email">Email Address</label>
+                            <input type="email" id="landing-login-email" placeholder="Enter your email" required>
+                        </div>
+                        
+                        <div class="home-form-group">
+                            <label for="landing-login-password">Password</label>
+                            <input type="password" id="landing-login-password" placeholder="Enter your password" required>
+                        </div>
+                        
+                        <button type="submit" class="btn-home-login">Secure Login</button>
+                    </form>
+                    
+                    <div class="home-login-links">
+                        <a href="/register">Create account</a>
+                        <a href="/forgot_password">Forgot password?</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Collections -->
+        <section class="collections-section">
+            <div class="cards-grid">
+                <article class="collection-card">
+                    <div class="card-image-bg">
+                        <img src="/assets/images/hk.jpg" alt="Classic Shirts" class="card-item-image">
+                    </div>
+                    <div class="card-footer footer-red">
+                        <p>Plushies</p>
+                        <a href="/shop" class="btn-card">SHOP NOW</a>
+                    </div>
+                </article>
+
+                <article class="collection-card">
+                    <div class="card-image-bg">
+                        <img src="/assets/images/lol.jpg" alt="Expedition Collection" class="card-item-image">
+                    </div>
+                    <div class="card-footer footer-gold">
+                        <p>More plushies</p>
+                        <a href="/shop" class="btn-card">SHOP NOW</a>
+                    </div>
+                </article>
+
+                <article class="collection-card">
+                    <div class="card-image-bg">
+                        <img src="/assets/images/endfield.jpg" alt="New Plushes" class="card-item-image">
+                    </div>
+                    <div class="card-footer footer-yellow">
+                        <p>EVEN MORE PLUSHIES</p>
+                        <a href="/shop" class="btn-card">SHOP NOW</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+        
+    <script src="/assets/js/auth-validation.js"></script>
+    <script src="/assets/js/script.js"></script>
+
+    <%- include('partials/footer') %>
+
+</body>
+</html>

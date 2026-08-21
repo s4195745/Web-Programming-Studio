@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Merch Store - Home</title>
+    <link rel="stylesheet" type="text/css" href="/assets/css/blog.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/css/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+    <script>
+  window.currentUser = "<%= (typeof user !== 'undefined' && user) ? (user.username || user.name) : '' %>";
+    </script>
+</head>
+
+ <%- include('../../partials/navbar') %>
+
+</body>
+  <header class="site-header">
+    <div class="header-container">
+      <div class="brand">
+  </header>
+
+<a href="/UserBlog" class="fixed-user-blog-btn">
+  <i class="fa-solid fa-pencil"></i>
+  <span>Your Blog</span>
+</a>
+
+    <!-- Search bar -->
+  <section class="search-filter-section">
+      <form class="post-form">
+        <div class="search-bar-row">
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Search..." 
+            aria-label="Search posts" 
+          />
+          <button type="button" class="search-btn">Search</button>
+        </div>
+
+        <div class="filter-dropdowns-row">
+          <div class="form-group">
+            <select class="search-type-select" aria-label="Search target">
+              <option value="title">Title</option>
+              <option value="author">Author</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <select class="category-select" aria-label="Filter by category">
+              <option value="">All Categories</option>
+              <option value="Merch">📱 Merch</option>
+              <option value="Fan-art">🎨 Fan-art</option>
+              <option value="Discussion">💬 Discussion</option>
+              <option value="Review">⭐ Review</option>
+            </select>
+          </div>
+        </div>
+      </form>
+    </section>
+    <div class="post-feed" id="postFeed">
+
+    </div>
+  </main>
+
+   <%- include('../../partials/footer') %>
+
+ <script src="/assets/js/blogscript.js"></script>
+</body>
+</html>

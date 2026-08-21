@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/auth.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+</head>
+<body>
+
+    <%- include('../../partials/navbar') %>
+
+    <div class="auth-container">
+        
+        <form class="auth-form" id="register-form">
+            <h2>Register</h2>
+            
+            <div class="input-group">
+                <input type="text" id="reg-username" name="username" placeholder="Username" required>
+                <span class="error-msg" id="reg-username-error"></span>
+            </div>
+            
+            <div class="input-group">
+                <input type="email" id="reg-email" name="email" placeholder="Email" required>
+                <span class="error-msg" id="reg-email-error"></span>
+            </div>
+            
+            <div class="input-group">
+                <input type="password" id="reg-password" name="password" placeholder="Password" required>
+                <span class="error-msg" id="reg-password-error"></span>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="reg-confirm-password" name="confirm-password" placeholder="Confirm Password" required>
+                
+                <span class="error-msg" id="reg-confirm-password-error"></span>
+            </div>
+
+            <div class="input-group">
+                <textarea id="reg-description" name="description" placeholder="Short description about yourself..." required></textarea>
+                <span class="error-msg" id="reg-description-error"></span>
+            </div>
+            
+            <button type="submit" class="auth-btn" id="reg-submit">Register</button>
+            <p class="auth-link">Already have an account? <a href="/login">Login</a></p>
+        </form>
+    </div>
+    
+    <script src="/assets/js/auth-validation.js"></script>
+    <script src="/assets/js/script.js"></script>
+    
+  <%- include('../../partials/footer') %>
+</body>
+</html>

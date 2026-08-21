@@ -1,0 +1,659 @@
+/* ==========================================================================
+   AUTHENTICATION & DASHBOARD STYLESHEET
+   ========================================================================== */
+
+/* Global body styling for authentication pages */
+body {
+    background-color: #eaedf2; 
+    min-height: 100vh; 
+    padding-top: 120px; 
+    display: flex;
+    flex-direction: column; 
+}
+
+/* ================= AUTHENTICATION CONTAINER ================= */
+.auth-container {
+    background-color: #ffffff;
+    padding: 40px 35px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto 50px auto; 
+}
+
+/* Authentication Header */
+.auth-header {
+    margin-bottom: 25px;
+}
+
+.auth-header p {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.auth-header h2 {
+    color: #222;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+/* Form Input Groups */
+.input-group {
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.input-group input,
+.input-group textarea {
+    width: 100%;
+    padding: 14px 15px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: #ffffff;
+    font-size: 15px;
+    color: #333;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+    border-color: #ff7b00;
+}
+
+.input-group input::placeholder,
+.input-group textarea::placeholder {
+    color: #9ca3af;
+}
+
+/* Password Eye Icon */
+.eye-icon {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 18px;
+    user-select: none;
+}
+
+/* Form Options (Remember Me & Forgot Password) */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    font-size: 14px;
+}
+
+.form-options label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #555;
+    cursor: pointer;
+}
+
+.form-options input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.form-options a {
+    color: #ff7b00;
+    text-decoration: none;
+}
+
+.form-options a:hover {
+    text-decoration: underline;
+}
+
+/* Authentication Submit Button */
+.auth-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: #ff7b00;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: inherit;
+}
+
+.auth-btn:hover {
+    background-color: #ff7b00;
+}
+
+/* Divider Element */
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 25px 0;
+    color: #888;
+    font-size: 14px;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.divider::before {
+    margin-right: 15px;
+}
+
+.divider::after {
+    margin-left: 15px;
+}
+
+/* Social Login Section */
+.social-login {
+    display: flex;
+    gap: 15px;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.social-btn {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #ffffff;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    transition: background-color 0.2s;
+}
+
+.social-btn:hover {
+    background-color: #f3f4f6;
+}
+
+.auth-link {
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+}
+
+.auth-link a {
+    color: #ff7b00;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-link a:hover {
+    text-decoration: underline;
+}
+
+/* Message Container */
+.message-container {
+    text-align: center;
+}
+
+.message-icon {
+    font-size: 50px;
+    margin-bottom: 15px;
+}
+
+/* ================= PROFILE STYLES ================= */
+.profile-info {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.profile-info h3 {
+    font-size: 24px;
+    color: #222;
+    margin-bottom: 8px;
+}
+
+.profile-info p {
+    color: #555;
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.profile-info .email-display {
+    display: inline-block;
+    background-color: #f3f4f6;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+/* Outline Button */
+.btn-outline {
+    background-color: transparent;
+    color: #007bff;
+    border: 2px solid #007bff;
+    margin-top: 10px;
+}
+
+.btn-outline:hover {
+    background-color: #f0f8ff;
+}
+
+/* Danger Button */
+.btn-danger {
+    background-color: transparent;
+    color: #dc3545;
+    border: 2px solid #dc3545;
+    margin-top: 30px;
+}
+
+.btn-danger:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* File Upload Field */
+.file-upload {
+    padding: 10px !important;
+    background-color: #ffffff !important;
+    font-size: 14px;
+}
+
+/* ================= DASHBOARD LAYOUT ================= */
+.dashboard-wrapper {
+    margin-top: 100px; 
+    max-width: 1200px;
+    width: 100%; 
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 20px 50px;
+    display: flex;
+    gap: 50px;
+    flex: 1; 
+}
+
+/* Sidebar Navigation */
+.dashboard-sidebar {
+    width: 220px;
+    flex-shrink: 0;
+}
+
+.dashboard-sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.dashboard-sidebar li {
+    margin-bottom: 15px;
+}
+
+.dashboard-sidebar a {
+    text-decoration: none;
+    color: #888;
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+}
+
+.dashboard-sidebar a:hover,
+.dashboard-sidebar a.active {
+    color: #222;
+}
+
+/* Dashboard Main Content */
+.dashboard-content {
+    flex-grow: 1;
+    max-width: 800px;
+}
+
+.dashboard-card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    margin-bottom: 25px;
+    border: 1px solid #eaeaea;
+}
+
+.card-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px; 
+    margin-bottom: 20px;
+    flex-wrap: wrap; 
+}
+
+.card-header-flex > div {
+    flex-grow: 1;
+    min-width: 200px;
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #333;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+}
+
+.card-subtitle {
+    font-size: 15px;
+    color: #666;
+}
+
+/* Orange Action Button */
+.btn-orange {
+    background-color: #e35f26;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background-color 0.2s;
+}
+
+.btn-orange:hover {
+    background-color: #c74d1c;
+}
+
+/* Profile Display Section */
+.profile-display {
+    display: flex;
+    align-items: flex-start; 
+    gap: 20px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eaeaea;
+}
+
+/* Consolidated Profile Avatar */
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0; 
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e35f26;
+    background-color: #f0f1f4; 
+    overflow: hidden; 
+}
+
+.profile-text p {
+    color: #555;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-top: 5px;
+}
+
+/* Edit Profile Form Rows */
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 15px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.form-row:last-child {
+    border-bottom: none;
+}
+
+.form-label {
+    width: 30%;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    padding-top: 10px;
+}
+
+.form-input-wrapper {
+    width: 70%;
+}
+
+.form-input-wrapper input[type="text"],
+.form-input-wrapper input[type="email"],
+.form-input-wrapper input[type="password"],
+.form-input-wrapper textarea {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    background-color: #fcfcfc;
+}
+
+.form-input-wrapper textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Danger Zone Card */
+.danger-zone {
+    border: 1px solid #ffcdd2;
+    background-color: #fffafb;
+}
+
+.danger-zone .card-title {
+    color: #d32f2f;
+}
+
+.btn-danger {
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.btn-danger:hover {
+    background-color: #b71c1c;
+}
+
+.sign-out-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: #e35f26;
+    font-weight: 700;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.sign-out-link:hover {
+    text-decoration: underline;
+}
+
+/* ================= UTILITY CLASSES ================= */
+/* Dashboard background */
+.dashboard-bg {
+    background-color: #f7f7f7;
+}
+
+/* Button grouping container */
+.action-buttons {
+    margin-top: 25px;
+    display: flex;
+    gap: 15px;
+}
+
+/* Remove bottom border and padding */
+.no-border-bottom {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+}
+
+/* Cancel Button styling */
+.btn-cancel {
+    background-color: transparent;
+    color: #555;
+    border: 1px solid #ccc;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-cancel:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.btn-cancel.dark-border {
+    border-color: #333;
+}
+
+/* File input field reset */
+.form-input-wrapper input[type="file"] {
+    border: none;
+    padding: 0;
+    background: transparent;
+}
+
+/* Message Container Elements */
+.message-container .danger-icon,
+.message-container .danger-heading {
+    color: #dc3545;
+}
+
+.message-container .warning-text {
+    font-size: 15px;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.message-container .warning-subtext {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 30px;
+}
+
+.message-container .success-text {
+    font-size: 15px;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 30px;
+}
+
+/* Form and Profile Text Utilities */
+.instruction-text {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.profile-name {
+    font-size: 18px;
+    color: #333;
+}
+
+.profile-email {
+    margin-bottom: 5px;
+    color: #e35f26;
+}
+
+/* ================= MOBILE RESPONSIVENESS FOR AUTH & DASHBOARD ================= */
+@media (max-width: 768px) {
+    /* Stack the dashboard layout vertically */
+    .dashboard-wrapper {
+        flex-direction: column;
+        gap: 20px;
+        padding: 0 15px 30px;
+        margin-top: 80px; 
+    }
+
+    /* Turn sidebar into a horizontal scrolling row on mobile */
+    .dashboard-sidebar {
+        width: 100%;
+        border-bottom: 1px solid #eaeaea;
+        padding-bottom: 10px;
+    }
+    
+    .dashboard-sidebar ul {
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        gap: 20px;
+        padding-bottom: 5px;
+    }
+
+    .dashboard-sidebar li {
+        margin-bottom: 0;
+    }
+
+    /* Stack form rows vertically */
+    .form-row {
+        flex-direction: column;
+    }
+
+    .form-label {
+        width: 100%;
+        padding-bottom: 8px;
+    }
+
+    .form-input-wrapper {
+        width: 100%;
+    }
+
+    /* Allow buttons to take full width on mobile */
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .action-buttons button, 
+    .action-buttons a {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .card-header-flex {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+        .auth-container {
+        padding: 30px 20px;
+        width: 92%; 
+        margin: 20px auto 40px auto; 
+    }
+
+   
+    .social-login {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    
+    .form-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+     
+}

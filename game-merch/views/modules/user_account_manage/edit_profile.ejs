@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Edit</title>
+    
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/auth.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+</head>
+<body class="dashboard-bg">
+
+ <%- include('../../partials/navbar') %>
+
+<!-- Dashboard Container -->
+    <div class="dashboard-wrapper">
+        
+        <!-- Sidebar Menu -->
+        <aside class="dashboard-sidebar">
+            <ul>
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="/edit_profile" class="active">Edit Profile</a></li>
+                <li><a href="/cart">Orders</a></li>
+                <li><a href="/wishlist">Wish List</a></li>
+                <li><a href="#">Help / FAQ</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="dashboard-content">
+            
+            <form id="edit-profile-form">
+                <!-- Editable Data Form -->
+                <div class="dashboard-card">
+                    <div class="card-header-flex">
+                        <div class="card-title">Account Details</div>
+                        <button type="submit" class="btn-orange">Save Changes</button>
+                    </div>
+
+                    <div class="form-row">
+                        <label class="form-label">Profile Picture</label>
+                        <div class="form-input-wrapper">
+                            <input type="file" id="avatar" name="avatar" accept="image/*">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label class="form-label">Username</label>
+                        <div class="form-input-wrapper">
+                            <!-- ADDED: id="edit-username" -->
+                            <input type="text" id="edit-username" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label class="form-label">Email</label>
+                        <div class="form-input-wrapper">
+                            <!-- ADDED: id="edit-email" -->
+                            <input type="email" id="edit-email" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label class="form-label">Short Description</label>
+                        <div class="form-input-wrapper">
+                            <!-- ADDED: id="edit-desc" -->
+                            <textarea id="edit-desc" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label class="form-label">Password</label>
+                        <div class="form-input-wrapper">
+                            <!-- Link to the password verification page -->
+                            <a href="/verify_password" class="no-decoration">
+                                <button type="button" class="btn-cancel dark-border">Change Password</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Danger Zone for Account Deletion -->
+            <div class="dashboard-card danger-zone">
+                <div class="card-title">Danger Zone</div>
+                <div class="card-subtitle mb-20">
+                    Deactivating or deleting your account will permanently remove your data, wishlist, and forum posts. This action cannot be undone. Are you sure you want to proceed?
+                </div>
+                <a href="/delete_account" class="no-decoration">
+                    <button type="button" class="btn-danger">Confirm Delete Account</button>
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <script src="/assets/js/auth-validation.js"></script>
+    <script src="/assets/js/script.js"></script>
+    
+
+  <%- include('../../partials/footer') %>
+</body>
+</html>

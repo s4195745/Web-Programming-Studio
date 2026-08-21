@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/cart.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+</head>
+<body>
+    
+ <%- include('../../partials/navbar') %>
+
+    <!-- ================= CONFIRMATION PAGE ================= -->
+    <div class="confirmation-page">
+        <h2 class="success-msg">Payment Successful!</h2>
+        <p class="success-desc">Thank you for your purchase. Here is your receipt.</p>
+        
+        <div id="order-summary" class="order-summary-box">
+            <!-- JS will inject the receipt here -->
+        </div>
+
+        <div class="continue-shopping">
+            <a href="/shop" class="btn action-btn">Continue Shopping</a>
+        </div>
+    </div>
+
+    
+    <script src="/assets/js/auth-validation.js"></script>
+    <script src="/assets/js/script.js"></script>
+
+
+
+  <%- include('../../partials/footer') %>
+</body>
+</html>

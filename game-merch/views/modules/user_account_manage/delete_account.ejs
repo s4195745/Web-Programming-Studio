@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/auth.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+</head>
+<body>
+
+ <%- include('../../partials/navbar') %>
+
+    <div class="auth-container message-container">
+        <!-- Danger Icon -->
+        <div class="message-icon danger-icon">⚠️</div>
+        <div class="auth-header mb-15">
+            <h2 class="danger-heading">Delete Account?</h2>
+        </div>
+        
+        <p class="warning-text">
+            Are you sure you want to delete your account?
+        </p>
+        <p class="warning-subtext">
+            This action cannot be undone. All your data, wishlist, and forum posts will be permanently removed.
+        </p>
+
+        <a href="#" class="no-decoration" id="confirm-delete-btn">
+            <button type="button" class="auth-btn btn-danger no-margin-top">Yes, Delete My Account</button>
+        </a>
+        
+        <!-- Cancel button redirects back to edit profile -->
+        <a href="/edit_profile" class="no-decoration">
+            <button type="button" class="auth-btn btn-outline">Cancel</button>
+        </a>
+    </div>
+    
+    <script src="/assets/js/auth-validation.js"></script>
+    <script src="/assets/js/script.js"></script>
+    
+  <%- include('../../partials/footer') %>
+
+</body>
+</html>

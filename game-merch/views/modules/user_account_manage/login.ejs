@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/auth.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+</head>
+<body> 
+ 
+    <%- include('../../partials/navbar') %>
+    
+    <div class="auth-container">
+        <div class="auth-header">
+            <p>Please enter your details</p>
+            <h2>Welcome Back</h2>
+        </div>
+
+        <form class="auth-form" id="login-form">
+            <div class="input-group">
+                    <input type="email" id="login-email" name="email" placeholder="Email address" required>
+                    <span class="error-msg" id="login-email-error"></span>
+                </div>
+                
+                <div class="input-group">
+                    <input type="password" id="login-password" name="password" placeholder="Password" required>
+                    <span class="error-msg" id="login-password-error"></span>
+            </div>
+
+            <div class="form-options">
+                <label>
+                    <input type="checkbox" name="remember"> Remember me
+                </label>
+                <!-- Link to forgot password page -->
+                <a href="/forgot_password">Forgot password?</a>
+            </div>
+            
+            <button type="submit" class="auth-btn">Sign In</button>
+            
+            <div class="divider">Or</div>
+
+            <div class="social-login">
+                <button type="button" class="social-btn">Google</button>
+                <button type="button" class="social-btn">Facebook</button>
+                <button type="button" class="social-btn">Apple</button>
+            </div>
+
+            <p class="auth-link">Don't have an account? <a href="/register">Sign up</a></p>
+        </form>
+    </div>
+
+    <script src="/assets/js/auth-validation.js"></script>
+    <script src="/assets/js/script.js"></script>
+    
+
+  <%- include('../../partials/footer') %>
+</body>
+</html>

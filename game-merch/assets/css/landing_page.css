@@ -1,0 +1,249 @@
+/* --- HERO SECTION --- */
+.hero-section {
+    background-color: #ffffff; 
+    /* Added padding-top to prevent the fixed nav bar from hiding the content */
+    padding: 120px 20px 60px;
+    min-height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero-content {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 40px;
+}
+
+.hero-graphics {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+}
+
+.hero-title {
+    font-size: 80px; 
+    font-weight: 900; 
+    color: #111; 
+    margin: 0;
+    letter-spacing: -2px; 
+    text-align: center;
+    transition: font-size 0.3s ease; 
+}
+
+.hero-image {
+    width: 100%;
+    height: 100%;
+    min-height: 350px; 
+    object-fit: cover; 
+    border-radius: 8px; 
+}
+
+/* --- HERO LOGIN BOX --- */
+.hero-login-box {
+    background-color: #111; 
+    color: white;
+    padding: 40px 30px; 
+    border-radius: 24px; 
+    width: 100%;
+    max-width: 350px;
+    box-shadow: 0 20px 24px rgba(0, 0, 0, 0.15); 
+}
+
+.hero-login-box h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 22px;
+    text-align: center;
+}
+
+.home-form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    text-align: left; 
+}
+
+.home-form-group label {
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: #ccc;
+    font-weight: 600;
+}
+
+.home-form-group input {
+    padding: 12px;
+    border: 1px solid #333;
+    border-radius: 8px; 
+    background-color: #222; 
+    color: white;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.home-form-group input:focus {
+    outline: none;
+    border-color: #d12e3e; 
+}
+
+.btn-home-login {
+    background-color: #ff7b00;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px; 
+    width: 100%;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+}
+
+.btn-home-login:hover {
+    background-color: #a82330;
+}
+
+.home-login-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    font-size: 13px;
+}
+
+.home-login-links a {
+    color: #aaa;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.home-login-links a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+/* --- 3 CARDS SECTION --- */
+.collections-section {
+    background-color: #ffffff; 
+    padding: 60px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.cards-grid {
+    max-width: 1200px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px; 
+}
+
+.collection-card {
+    background-color: #222;
+    border-radius: 24px;
+    overflow: hidden; 
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15); 
+}
+
+.card-image-bg {
+    height: 300px;
+    padding: 0; 
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; 
+}
+
+.card-item-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+}
+
+/* Card Footers */
+.card-footer {
+    padding: 25px 20px;
+    text-align: center;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.card-footer p {
+    margin: 0;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.footer-red {
+    background-color: #3900e6;
+}
+
+.footer-gold {
+    background-color: #b59846; 
+}
+
+.footer-yellow {
+    background-color: #fdbc08;
+}
+
+.btn-card {
+    display: inline-block;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px 24px;
+    border-radius: 8px; 
+    border: 1px solid rgba(255,255,255,0.3);
+    transition: background-color 0.2s;
+}
+
+.btn-card:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* --- RESPONSIVE DESIGN --- */
+@media (max-width: 900px) {
+    .hero-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 30px;
+    }
+    
+    .hero-login-box {
+        margin-top: 10px;
+    }
+
+    .hero-title {
+        font-size: 60px; 
+    }
+
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr); 
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding-top: 100px; 
+    }
+
+    .hero-title {
+        font-size: 45px; 
+    }
+
+    .cards-grid {
+        grid-template-columns: 1fr; /
+    }
+}

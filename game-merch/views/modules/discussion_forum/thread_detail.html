@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thread Details</title>
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/forum.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css">
+</head>
+
+<body>
+          <!-- ================= SHARED NAVIGATION ================= -->
+    <nav>
+        <a href="../../landing_page.html" class="logo">LootBox.</a>
+        <div class="nav-links">
+            <a href="../shopping_cart/index.html">Shop</a>
+            <a href="../discussion_forum/forum.html">Forum</a>
+            <a href="../blog/blog.html">Blog</a>
+            <a href="../review/productreview.html">Review</a>
+            <a href="../wishlist/wishlist.html">Wishlist</a>
+        </div>
+        <!-- Search and Cart Grouping -->
+        <div class="nav-actions">
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" placeholder="Search..." aria-label="Search">
+                <button type="button" aria-label="Submit search"><i class="ri-search-line"></i></button>
+            </div>
+
+            <!-- Cart Icon -->
+            <a href="../shopping_cart/cart.html" class="cart-icon">
+                <i class="ri-shopping-bag-line"></i>
+                <span class="cart-item-count active">2</span>
+            </a>
+            <!-- User Avatar Link to Profile Page -->
+            <a href="../shared_module/profile.html" class="nav-profile-link">
+                
+                <img src="../../assets/images/Nguyen The Chinh.jpg" alt="User Profile" class="nav-avatar">
+            </a>
+        </div>
+    </nav>
+
+    <div class="page_layout">
+        <main class="main_content">
+
+            <!-- Breadcrumb back to forum list -->
+            <a href="forum.html" class="back_link"><i class="ri-arrow-left-line"></i> Back to Forum</a>
+
+            <!--ORIGINAL POST-->
+            <article class="thread_detail_post">
+                <div class="card_header">
+                    <img src="../../assets/Product Images/avatar.jpg" alt="avatar" class="avatar">
+                    <span class="author_name">Oliver Holigate</span>
+                    <time class="post_time" datetime="2026-07-19T15:58">2 hours ago</time>
+                    <div class="options_menu">
+                        <input type="checkbox" id="menu_post_1" class="options_toggle_checkbox" hidden>
+                        <label for="menu_post_1" class="options_trigger">
+                            <i class="ri-more-2-fill"></i>
+                        </label>
+                        <div class="options_dropdown">
+                            <a href="#" class="options_item"><i class="ri-edit-line"></i>Edit</a>
+                            <a href="#" class="options_item delete_item"><i class="ri-delete-bin-line"></i>Delete</a>
+                        </div>
+                    </div>
+                </div>
+                <h1 class="thread_title">Just got the Garen figure with the glowing sword — is the blade detail as
+                    sharp as in the photos?</h1>
+
+                <div class="thread_content">
+                    <div class="content_gallery">
+                        <img src="../../assets/Product Images/Garen_figure.webp" alt="Garen figure front view"
+                            class="content_img">
+                        <img src="../../assets/Product Images/Garen_figure.webp" alt="Garen figure side view"
+                            class="content_img">
+                    </div>
+                    <p>Ordered this last week after seeing it in the shop banner. The sword looked super sharp and
+                        detailed in the product photos, but I know sometimes figures look better online than in
+                        person. Anyone who already has it, how does the blade edge actually look up close?</p>
+                </div>
+
+                <div class="card_footer">
+                    <input type="checkbox" id="like_thread_1" class="reaction_toggle_checkbox" hidden>
+                    <label for="like_thread_1" class="reaction_btn">
+                        <i class="ri-heart-line icon_outline"></i>
+                        <i class="ri-heart-fill icon_filled"></i>
+                    </label>
+                </div>
+            </article>
+
+            <!--REPLIES-->
+            <section class="replies_section">
+                <h4 class="replies_heading">Replies (2)</h4>
+
+                <!-- Reply 1 (top-level) -->
+                <div class="reply_item">
+                    <div class="reply_header">
+                        <img src="../../assets/Product Images/avatar.jpg" alt="avatar" class="avatar">
+                        <span class="author_name">Alex</span>
+                        <time class="post_time" datetime="2026-07-19T16:10">1 hour ago</time>
+                    </div>
+                    <div class="reply_content">
+                        <img src="../../assets/Product Images/reply for garen figure.jpg"
+                            alt="Customer photo of Garen figure blade close-up" class="content_img">
+                        <p>Got mine today — the blade edge actually has a nice gradient, not flat purple like some
+                            photos show. Minor paint overflow near the wing joint, but overall solid quality.</p>
+                    </div>
+                    <div class="reply_footer">
+                        <input type="checkbox" id="like_reply_thread_1" class="reaction_toggle_checkbox">
+                        <label for="like_reply_thread_1" class="reaction_btn">
+                            <i class="ri-heart-line icon_outline"></i>
+                            <i class="ri-heart-fill icon_filled"></i>
+                        </label>
+                        <button class="reply_to_btn"><i class="ri-reply-line"></i> Reply</button>
+                    </div>
+
+                    <!-- Nested reply (reply to Alex's comment) -->
+                    <div class="reply_item nested_reply">
+                        <div class="reply_header">
+                            <img src="../../assets/Product Images/avatar.jpg" alt="avatar" class="avatar">
+                            <span class="author_name">Minh Tran</span>
+                            <time class="post_time" datetime="2026-07-19T16:25">45 minutes ago</time>
+                        </div>
+                        <div class="reply_content">
+                            <p>Good to know, thanks! Was worried the wing joint paint issue might be common across the
+                                whole batch.</p>
+                        </div>
+                        <div class="reply_footer">
+                            <input type="checkbox" id="like_Minh_Tran_comment" class="reaction_toggle_checkbox" hidden>
+                            <label for="like_Minh_Tran_comment" class="reaction_btn">
+                                <i class="ri-heart-line icon_outline"></i>
+                                <i class="ri-heart-fill icon_filled"></i>
+                            </label>
+                            <button class="reply_to_btn"><i class="ri-reply-line"></i> Reply</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reply 2 (top-level) -->
+                <div class="reply_item">
+                    <div class="reply_header">
+                        <img src="../../assets/Product Images/avatar.jpg" alt="avatar" class="avatar">
+                        <span class="author_name">Hoang Dang</span>
+                        <time class="post_time" datetime="2026-07-19T17:00">30 minutes ago</time>
+                    </div>
+                    <div class="reply_content">
+                        <p>Same here, blade edge looks great in hand. Definitely sharper looking than I expected from a
+                            figure at this price point.</p>
+                    </div>
+                    <div class="reply_footer">
+                        <input type="checkbox" id="like_Hoang_Dang_comment" class="reaction_toggle_checkbox" hidden>
+                        <label for="like_Hoang_Dang_comment" class="reaction_btn">
+                            <i class="ri-heart-line icon_outline"></i>
+                            <i class="ri-heart-fill icon_filled"></i>
+                        </label>
+                        <button class="reply_to_btn"><i class="ri-reply-line"></i> Reply</button>
+                    </div>
+                </div>
+            </section>
+
+            <!--QUICK REPLY INPUT-->
+            <form class="quick_reply_form" action="" method="post">
+                <input type="text" name="reply_text" class="quick_reply_input" placeholder="Join the conversation...">
+                <button type="button" class="quick_reply_btn"><i class="ri-send-plane-fill"></i></button>
+            </form>
+
+        </main>
+
+        <!--SIDEBAR-->
+        <aside class="sidebar">
+            <div class="sidebar_box">
+                <div class="sidebar_box_header">
+                    <h3>Related Products</h3>
+                    <a href="../../index.html">View Shop</a>
+                </div>
+
+                <a href="#" class="product_item">
+                    <div class="product_thumb">
+                        <img src="../../assets/Product Images/Garen_figure.webp" alt="Garen figure product thumbnail">
+                    </div>
+                    <div class="product_info">
+                        <div class="product_name">Pengu Garen Figure</div>
+                        <div class="product_price">$36.99</div>
+                        <div class="product_tag">Mentioned in this thread</div>
+                    </div>
+                </a>
+
+                <a href="#" class="product_item">
+                    <div class="product_thumb">
+                        <img src="../../assets/Product Images/Galio_figure.webp" alt="Galio plush product thumbnail">
+                    </div>
+                    <div class="product_info">
+                        <div class="product_name">Baby Galio Plush</div>
+                        <div class="product_price">$31.99</div>
+                        <div class="product_tag">New arrival</div>
+                    </div>
+                </a>
+
+                <a href="#" class="product_item">
+                    <div class="product_thumb">
+                        <img src="../../assets/Product Images/Orn_plush.webp" alt="Ornn plush product thumbnail">
+                    </div>
+                    <div class="product_info">
+                        <div class="product_name">Spirit of Hearth-Home Ornn Plush</div>
+                        <div class="product_price">$31.99</div>
+                        <div class="product_tag">Best seller this week</div>
+                    </div>
+                </a>
+
+                <a href="../../index.html" class="sidebar_cta">View All Products</a>
+            </div>
+        </aside>
+    </div>
+
+    <!--FLOATING CTA-->
+    <a href="new_thread.html" class="ask_question_fab">
+        <i class="ri-add-line"></i>
+        <span>Ask Question Now!</span>
+    </a>
+
+    <!--FOOTER-->
+    <footer class="site_footer">
+        <div class="footer_container">
+            <div class="footer_column">
+                <h4>About Us</h4>
+                <p>LootBox. is a marketplace for game merchandise, from apparel to collectible figures. Follow us on Facebook or Instagram for a weekly dose of news, updates, helpful tips, and exclusive offers. </p>
+            </div>
+
+            <div class="footer_column">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#">Rechercher</a></li>
+                    <li><a href="#">Legal Notice</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Refund Policy</a></li>
+                    <li><a href="#">Shipping Policy</a></li>
+                    <li><a href="#">Terms of Sale</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+
+            <div class="footer_column">
+                <h4>Follow Us</h4>
+                <div class="social_icons">
+                    <a href="#"><i class="ri-facebook-fill"></i></a>
+                    <a href="#"><i class="ri-discord-fill"></i></a>
+                    <a href="#"><i class="ri-instagram-line"></i></a>
+                </div>
+            </div>
+
+            <div class="footer_column">
+                <h4>Sitemap</h4>
+                <ul>
+                    <li><a href="../../landing_page.html">Home</a></li>
+                    <li><a href="../blog/blog.html">Blog</a></li>
+                    <li><a href="../shopping_cart/index.html">Shop all</a></li>
+                    <li><a href="../discussion_forum/forum.html">Forum</a></li>
+                    <li><a href="../shared_module/sitemap.html" class="view_sitemap">View Sitemap →</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="back_to_top"> <!--Because this is static so the Back_to_top button will appear in whole page-->
+            <a href="#">
+                <i class="ri-arrow-up-line"></i>
+            </a>
+        </div>
+    </footer>
+
+
+</body>
+
+</html>
