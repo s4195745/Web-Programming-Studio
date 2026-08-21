@@ -20,6 +20,12 @@ This project was collaboratively built by a team of 5 members. Each member was r
 ## 📝 Project Description
 LootBox is a website prototype for a gaming merchandise marketplace.The platform integrates a shopping experience with community features, allowing users to browse products, read blogs, participate in forum discussions, and manage their personal accounts.
 
+## Tech Stack
+* **Backend:** Node.js, Express.js
+* **Frontend:** EJS (Embedded JavaScript templating), HTML5, CSS3, Vanilla JS
+* **Database:** Simulated Mock Database (`mockDB.js`)
+* **Authentication:** Express-Session
+
 ---
 
 ## 📂 Module Details & File Structure
@@ -33,10 +39,9 @@ Handles Shopping Cart, User authenticater.
 
 ### 2. Discussion Forum  and Sitemap (Dang Viet Hoang)
 Community area for users to discuss gaming and related topics.
-* Disscussion Forum (modules/discussion_forum): `forum.html`, `new_thread.html`,`thread_detail.html`
-* Sitemap (modules/shared_module): `sitemap.html`
-* Others: SHARED FOOTER,
-* **CSS:** `assests/css/main`, `assets/css/forum.css` 
+* Disscussion Forum (modules/discussion_forum): `forum.ejs`, `new_thread.ejs`,`thread_detail.ejs`, `edit_thread.ejs`
+* Sitemap (views/modules/sitemap):  `sitemap.ejs`
+* **CSS:** `assets/css/forum.css` 
 
 ### 3. Wishlist (Hoang Xuan Quynh)
 Handles Wishlist — save products, mark as purchased, remove, move to cart.
@@ -72,21 +77,19 @@ Handles Product Review and Rating — write, edit, delete own reviews; browse, s
 
 *(Note: All pages share the global navigation and footer styled in `assets/css/main.css`)*
 
+
+
 ---
 
-## 🚀 How to Run the Project
+## Installation setup Instructions & How to Run the Project
+To run this application locally on your machine, follow these exact steps:
+
 1. Extract the `.zip` file.
 2. Navigate to the root folder.
 3. Open the terminal in vs code, Ctr C to clear out all the cache (just in case), type " cd game-merch ", and then type " node server.js ", you should see a line "Server is running at http://localhost:3000", copy the http and paste it to your browser. 
 4. Navigate through the top menu to access different modules built by the team.
-
 ---
 
-## 🛠️ Technologies Used
-* Semantic **HTML5**
-* Custom **CSS3** 
-* **Remix Icon / FontAwesome** (for static vector icons)
-* **Google Fonts** (Outfit typography)
 
 ## 📌 References
 * Icons provided by [Remix Icon](https://remixicon.com/)

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist | LootBox.</title>
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/wishlist.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+</head>
+
+<body>
+
+<%- include('../../partials/navbar') %>
+
+    <main id="main-content" class="wishlist-page">
+        <section class="page-hero">
+            <div class="container">
+                <p class="breadcrumb"><a href="/">Home</a> / Wishlist</p>
+                <h1>My Wishlist</h1>
+                <p>Items you've saved for later. Move a piece to your cart when you're ready to buy, or mark it as purchased once you own it.</p>
+            </div>
+        </section>
+
+        <div class="container">
+            <!-- Shown only when the visitor is not logged in -->
+            <div class="login-prompt" id="wishlist-login-prompt" hidden>
+                <p>You need to be logged in to view and manage your wishlist.</p>
+                <a href="/login" class="btn btn-primary btn-sm">Log in</a>
+            </div>
+
+            <div id="wishlist-content" hidden>
+                <div class="wishlist-summary" style="margin-top: 32px;">
+                    <div class="wishlist-summary__stat">
+                        <span>Saved items</span>
+                        <strong id="stat-saved">0</strong>
+                    </div>
+                    <div class="wishlist-summary__stat">
+                        <span>Estimated total value</span>
+                        <strong id="stat-value">$0.00</strong>
+                    </div>
+                    <div class="wishlist-summary__stat">
+                        <span>Already purchased</span>
+                        <strong id="stat-purchased">0</strong>
+                    </div>
+                </div>
+
+                <form class="toolbar" aria-label="Search, sort and filter wishlist" id="wishlist-toolbar">
+                    <div class="toolbar__filters">
+                        <div class="field">
+                            <label for="wishlist-search">Search</label>
+                            <input type="text" id="wishlist-search" name="search" placeholder="Search saved items...">
+                        </div>
+                        <div class="field">
+                            <label for="wishlist-sort">Sort by</label>
+                            <select id="wishlist-sort" name="sort">
+                                <option value="date-added">Date added (newest first)</option>
+                                <option value="price-asc">Price: low to high</option>
+                                <option value="price-desc">Price: high to low</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="wishlist-status">Status</label>
+                            <select id="wishlist-status" name="status">
+                                <option value="all">All items</option>
+                                <option value="saved">Saved (not purchased)</option>
+                                <option value="purchased">Purchased</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="section-title">
+                    <h2>Saved items</h2>
+                    <p class="result-count" id="wishlist-result-count">0 items</p>
+                </div>
+
+                <ul class="card-grid" id="wishlist-grid"></ul>
+
+                <div class="empty-state" id="wishlist-empty" hidden>
+                    <div class="empty-state__icon" aria-hidden="true">&#9825;</div>
+                    <h2 id="wishlist-empty-heading">Your wishlist is empty</h2>
+                    <p style="margin-bottom: 16px;" id="wishlist-empty-text">Browse the shop and save something you like to see it here.</p>
+                    <a href="/shop" class="btn btn-primary">Browse Shop</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+<%- include('../../partials/footer') %>
+
+    <script src="/assets/js/auth-validation.js"></script>
+    <script src="/assets/js/cartscript.js"></script>
+    <script src="/assets/js/wishlistscript.js"></script>
+</body>
+</html>

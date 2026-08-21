@@ -64,6 +64,21 @@
                             </div>
                         </div>
                         <% } %>
+
+                        <!--admin button html-->
+                        <% if (IS_ADMIN && !t.pinned) { %>
+                        <div class="options_menu admin_options_menu">
+                            <input type="checkbox" id="admin_menu_post_<%= t.id %>" class="options_toggle_checkbox" hidden>
+                            <label for="admin_menu_post_<%= t.id %>" class="options_trigger">
+                                <i class="ri-shield-star-line"></i>
+                            </label>
+                            <div class="options_dropdown">
+                                <a href="#" class="options_item admin_delete_item" data-id="<%= t.id %>">
+                                    <i class="ri-delete-bin-line"></i>Admin Delete
+                                </a>
+                            </div>
+                        </div>
+                        <% } %>
                     </div>
 
                     <h3 class="thread_title"><%= t.title %></h3>
@@ -225,10 +240,50 @@
                     showToast('Something went wrong.');
                 });
         });
+
+        // Admin delete
+        document.querySelectorAll('.admin_delete_item').forEach(function(el) {
+            el.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const id = el.getAttribute('data-id');
+
+                if (!confirm('Delete?\nThis cannot be undone.')) {
+                    return;
+                }
+
+                fetch('/forum/' + id + '/admin-delete', {
+                    method: 'POST'
+                })
+                    .then(function(res) {
+                        return res.json();
+                    })
+                    .then(function(data) {
+                        if (data.error) {
+                            showToast(data.error);
+                        } else {
+                            showToast('Thread deleted successfully.');
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        }
+                    })
+                    .catch(function(err) {
+                        console.error(
+                            'Error:',
+                            err
+                        );
+
+                        showToast('Error.');
+                    });
+            });
+        });
+    
     });
     </script>
 
-    <script src="/assets/js/script.js"></script>
+    <script src="/assets/js/cartscript.js"></script>
+    <script src="/assets/js/auth-validation.js"></script>
 
     <%- include('../../partials/footer') %>
 </body>

@@ -104,20 +104,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
   // Iimage imput helper
-  const getImageInputValue =
-    (inputElem, fallbackUrl = '') => {
+// Iimage imput helper
+const getImageInputValue =
+  (inputElem, fallbackUrl = '') => {
 
-      if (
-        inputElem &&
-        inputElem.value &&
-        inputElem.value.trim()
-      ) {
+    if (inputElem) {
+      return inputElem.value.trim();
+    }
 
-        return inputElem.value.trim();
-      }
-
-      return fallbackUrl;
-    };
+    return fallbackUrl;
+  };
 
  
   // comment render

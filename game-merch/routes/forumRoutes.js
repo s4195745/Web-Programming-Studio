@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { threads, products } = require('../data/mockDB');
+const { threads, products, users } = require('../data/mockDB');
 const multer = require('multer');
 
 //Set up multer for upload image (optional)
@@ -36,7 +36,14 @@ router.get('/forum', (req, res) => {
         : new Date(b.timestamp) - new Date(a.timestamp);
     });
 
-    res.render('modules/discussion_forum/forum', { threads: result, q: q || '', sort: sort || 'newest', products: products });
+    const currentUser = res.locals.currentUser || req.session.user || null;
+    const IS_ADMIN =
+    currentUser &&
+    String(currentUser.role || '')
+        .trim()
+        .toLowerCase() === 'admin';
+
+    res.render('modules/discussion_forum/forum', { threads: result, q: q || '', sort: sort || 'newest', products: products,  currentUser: currentUser, IS_ADMIN: IS_ADMIN});
 });
 
 router.get('/forum/new', (req, res) => {
@@ -91,16 +98,27 @@ router.post('/forum/:id/edit', upload.array('thread_image', 5), (req, res) => {
     res.redirect('/forum/' + thread.id);
 });
 
-// SOFT-DELETE — chỉ chủ bài đã đăng nhập mới xoá được
+// SOFT-DELETE (confirm author)
 router.post('/forum/:id/delete', (req, res) => {
-    if (!req.session.user) {
+    if (!req.session || !req.session.user) {
         return res.status(401).json({ error: 'Please log in first.' });
     }
 
     const thread = threads.find(t => t.id === Number(req.params.id));
     if (!thread) return res.status(404).json({ error: 'Thread not found' });
 
-    if (thread.author !== req.session.user.username) {
+    // Fetch the  user data from  database
+    const freshUser = users.find(u => u.id === Number(req.session.user.id));
+
+    if (!freshUser) {
+        return res.status(401).json({ error: 'User account not found.' });
+    }
+
+    // case-insensitive comparison
+    const threadAuthor = String(thread.author || '').trim().toLowerCase();
+    const currentUsername = String(freshUser.username || '').trim().toLowerCase();
+
+    if (threadAuthor !== currentUsername) {
         return res.status(403).json({ error: 'You can only delete your own posts.' });
     }
 
@@ -109,11 +127,50 @@ router.post('/forum/:id/delete', (req, res) => {
     res.json({ message: 'Thread hidden successfully' });
 });
 
+//   admins  delete any forum post
+router.post('/forum/:id/admin-delete', (req, res) => {
+    if (!req.session || !req.session.user) {
+        return res.status(401).json({ error: 'Please log in first.' });
+    }
+    const freshUser = users.find(u => u.id === Number(req.session.user.id));
+
+    if (!freshUser) {
+        return res.status(401).json({ error: 'User account not found.' });
+    }
+
+    const currentUser = res.locals.currentUser || req.session.user || null;
+    const isAdmin =
+        String(freshUser.role || '')
+            .trim()
+            .toLowerCase() === 'admin';
+
+    if (!isAdmin) {
+        return res.status(403).json({ error: 'Admin access required.' });
+    }
+
+    const thread = threads.find(t => t.id === Number(req.params.id));
+    if (!thread) return res.status(404).json({ error: 'Thread not found' });
+
+    if (thread.pinned) {
+        return res.status(403).json({ error: 'Pinned posts cannot be deleted.' });
+    }
+
+    thread.hidden = true;
+
+    res.json({ message: 'Thread deleted successfully by admin.' });
+});
+
+// CREATE NEW THREAD
 router.post('/forum', upload.array('thread_image', 5), (req, res) => {
-    const { author_name, thread_title, thread_content } = req.body;
+    // 1. Check if the user is authenticated
+    if (!req.session || !req.session.user) {
+        return res.status(401).send("You must be logged in to post.");
+    }
+    
+    
+    const { thread_title, thread_content } = req.body;
 
     const newId = threads.length > 0 ? Math.max(...threads.map(t => t.id)) + 1 : 1;
-
     const images = req.files ? req.files.map(f => '/assets/uploads/' + f.filename) : [];
 
     threads.push({
@@ -122,7 +179,8 @@ router.post('/forum', upload.array('thread_image', 5), (req, res) => {
         title: thread_title,
         content: thread_content,
         images: images,
-        author: author_name,
+        // 2. Force the author to be the securely logged-in session username
+        author: req.session.user.username,
         timestamp: new Date().toISOString().slice(0, 16),
         replies: []
     });

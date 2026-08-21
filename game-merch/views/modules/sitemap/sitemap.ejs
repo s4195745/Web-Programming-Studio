@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sitemap</title>
+    <title>Sitemap - LootBox</title>
     <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css">
 </head>
@@ -13,13 +13,16 @@
 
     <%- include('../../partials/navbar.ejs') %>
     
-    <div class="sitemap_layout">
+    <!-- Added top padding to prevent the fixed navbar from overlapping the title -->
+    <div class="sitemap_layout" style="padding-top: 120px;">
         <h1 class="sitemap_heading">Sitemap</h1>
-        <p class="sitemap_subheading">A full list of every page in Lootbox, organized by section.</p>
+        <p class="sitemap_subheading" style="display: block; color: #666; margin-bottom: 20px;">
+            A full list of every key page in Lootbox, organized by section.
+        </p>
 
         <div class="sitemap_grid">
 
-            <!--Shop-->
+            <!-- Shop -->
             <div class="sitemap_section">
                 <h3><i class="ri-store-2-line"></i> Shop</h3>
                 <ul>
@@ -27,75 +30,71 @@
                     <li><a href="/shop">Shopping</a></li>
                     <li><a href="/cart">Cart</a></li>
                     <li><a href="/checkout">Checkout</a></li>
-                    <% products.forEach(function(p){ %>
-                    <li><a href="/product_detail"><%= p.title %></a></li>
-                    <% }); %>
                 </ul>
             </div>
 
-            <!--Discussion Forum-->
+            <!-- Discussion Forum -->
             <div class="sitemap_section">
                 <h3><i class="ri-discuss-line"></i> Discussion Forum</h3>
                 <ul>
-                    <li><a href="/forum">Forum</a></li>
-                    <li><a href="/forum/new"> Ask a question</a></li>
-                    <% threads.forEach(function(t) { %>
-                    <li><a href="/forum/<%= t.id %>"><%= t.title %></a></li>
-                    <% }); %>
+                    <li><a href="/forum">Forum Hub</a></li>
+                    <li><a href="/forum/new">Ask a Question</a></li>
+
                 </ul>
             </div>
 
-            <!--Blog-->
+            <!-- Blog -->
             <div class="sitemap_section">
                 <h3><i class="ri-article-line"></i> Blog</h3>
                 <ul>
-                   <li><a href="/blog">Blog</a></li>
+                   <li><a href="/blog">Blog Feed</a></li>
+                   <li><a href="/UserBlog">Manage Your Blog</a></li>
                 </ul>
             </div>
 
-            <!--Review-->
+            <!-- Review & Wishlist (Combined to save space) -->
             <div class="sitemap_section">
                 <h3><i class="ri-star-line"></i> Review</h3>
                 <ul>
                     <li><a href="/review">Reviews</a></li>
                 </ul>
-            </div>
-
-            <!--Wishlist-->
-            <div class="sitemap_section">
-                <h3><i class="ri-bookmark-fill"></i> Wishlist</h3>
+                
+                <h3 style="margin-top: 25px;"><i class="ri-bookmark-fill"></i> Wishlist</h3>
                 <ul>
                     <li><a href="/wishlist">Wishlist</a></li>
                 </ul>
             </div>
 
-            <!--Account-->
+            <!-- Account -->
             <div class="sitemap_section">
                 <h3><i class="ri-user-line"></i> Account</h3>
                 <ul>
-                    <li><a href="../shared_module/login.html">Login</a></li>
-                    <li><a href="../shared_module/register.html">Register</a></li>
-                    <li><a href="../shared_module/profile.html">My Profile</a></li>
-                    <li><a href="../shared_module/edit_profile.html">Edit Profile</a></li>
-                    <li><a href="../shared_module/forgot_password.html">Change password</a></li>
-                    <li><a href="../shared_module/forgot_password_confirm.html">Password Confirmatiom</a></li>
-                    <li><a href="../shared_module/verify_password.html">Verify Password</a></li>
-                    <li><a href="../shared_module/delete_account.html">Delete Account</a></li>
-                    
+                    <!-- Fixed URLs to match viewRoutes.js -->
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/register">Register</a></li>
+                    <li><a href="/profile">My Profile</a></li>
+                    <li><a href="/edit_profile">Edit Profile</a></li>
+                    <li><a href="/change_password">Change Password</a></li>
+                    <li><a href="/verify_password">Verify Password</a></li>
+                    <li><a href="/forgot_password">Forgot Password</a></li>
+                    <li><a href="/delete_account">Delete Account</a></li>
                 </ul>
             </div>
 
-            <!--Other-->
+            <!-- Other -->
             <div class="sitemap_section">
-                <h3><i class="ri-links-line"></i>Others</h3>
+                <h3><i class="ri-links-line"></i> Others</h3>
                 <ul>
-                    <li><a href="/sitemap"> Sitemap</a></li>
+                    <li><a href="/sitemap">Sitemap</a></li>
                     <li><a href="/admin">Admin Control Panel</a></li>
-
                 </ul>
             </div>
+            
         </div>
     </div>
+
+    <script src="/assets/js/auth-validation.js"></script>
+    <script src="/assets/js/cartscript.js"></script>
 
     <%- include('../../partials/footer.ejs') %>
 

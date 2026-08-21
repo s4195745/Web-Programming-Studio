@@ -152,9 +152,80 @@
                 <a href="/shop" class="sidebar_cta">View All Products</a>
             </div>
         </aside>    
-
     </div>
-    <script src="/assets/js/script.js"></script>
+    <!--  DELETE MODAL HTML -->
+    <div class="confirm_modal_overlay" id="delete_modal">
+        <div class="confirm_modal_box">
+            <p>Are you sure you want to delete this thread?</p>
+            <div class="confirm_modal_actions">
+                <button id="cancel_delete_btn">Cancel</button>
+                <button class="confirm_delete_btn" id="confirm_delete_btn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELETE LOGIC -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toast notification helper
+            function showToast(message) {
+                const existingToast = document.querySelector('.toast-message');
+                if (existingToast) existingToast.remove();
+    
+                const toast = document.createElement('div');
+                toast.className = 'toast-message';
+                toast.textContent = message;
+                document.body.appendChild(toast);
+    
+                setTimeout(function() { toast.classList.add('show'); }, 10);
+                setTimeout(function() {
+                    toast.classList.remove('show');
+                    setTimeout(function() { toast.remove(); }, 300);
+                }, 3000);
+            }
+    
+            // Modal confirm delete
+            const modal = document.getElementById('delete_modal');
+            let pendingDeleteId = null;
+    
+            document.querySelectorAll('.delete_item').forEach(function(el) {
+                el.addEventListener('click', function(e) {
+                    e.preventDefault(); // This stops the '#' from appearing in the URL
+                    pendingDeleteId = el.getAttribute('data-id');
+                    modal.classList.add('active');
+                });
+            });
+    
+            document.getElementById('cancel_delete_btn').addEventListener('click', function() {
+                modal.classList.remove('active');
+                pendingDeleteId = null;
+            });
+    
+            document.getElementById('confirm_delete_btn').addEventListener('click', function() {
+                if (!pendingDeleteId) return;
+    
+                fetch('/forum/' + pendingDeleteId + '/delete', { method: 'POST' })
+                    .then(function(res) { return res.json(); })
+                    .then(function(data) {
+                        modal.classList.remove('active');
+                        if (data.error) {
+                            showToast(data.error);
+                        } else {
+                            showToast('Thread deleted successfully.');
+                            //  Redirect to the main forum page after deleting
+                            setTimeout(function() { window.location.href = '/forum'; }, 1000); 
+                        }
+                    })
+                    .catch(function(err) {
+                        console.error(err);
+                        showToast('Something went wrong.');
+                    });
+            });
+        });
+    </script>
+
+    <script src="/assets/js/cartscript.js"></script>
+    <script src="/assets/js/auth-validation.js"></script>
 
 
     <%- include('../../partials/footer') %>

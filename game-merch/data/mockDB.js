@@ -186,7 +186,46 @@ async function getUserById(id) {
     return safeUser;
 }
 
+const wishlist = [
+    // Sample data: Nguyen The Chinh (user id 1) already has 2 saved items
+    { id: 1, userId: 1, productId: 1, purchased: false, addedAt: "2026-08-01T10:00:00.000Z" },
+    { id: 2, userId: 1, productId: 3, purchased: true, addedAt: "2026-07-20T10:00:00.000Z" }
+];
+
 const orders = [];
+
+const reviews = [
+    {
+        id: 1,
+        userId: 1,
+        productId: 1,
+        rating: 5,
+        title: "Great plush, exactly as pictured",
+        description: "The fabric feels premium and the stitching is really clean. Bigger than I expected too.",
+        image: null,
+        createdAt: "2026-07-10T09:00:00.000Z"
+    },
+    {
+        id: 2,
+        userId: 3,
+        productId: 3,
+        rating: 4,
+        title: "Solid figure, good detail",
+        description: "The sculpt and paint work are sharper than I expected at this size, though the base feels a bit light.",
+        image: null,
+        createdAt: "2026-07-05T09:00:00.000Z"
+    },
+    {
+        id: 3,
+        userId: 2,
+        productId: 2,
+        rating: 5,
+        title: "Super soft, great gift",
+        description: "Bought this as a gift and it did not disappoint, colours are vivid and it's very cuddly.",
+        image: null,
+        createdAt: "2026-06-28T09:00:00.000Z"
+    }
+];
 
 //Forum threads
 
@@ -195,7 +234,7 @@ const threads = [
         id: 1, pinned: true,
         title: "Forum rules & how to get the best support for your order",
         content: "Pleadse read this before posting: how to describe your issue, attach proof of purchase, and what response to expect from the team.",
-        images:[], author: "Admin", timestamp: "2026-07-19T08:00", pinned: false, hidden: false, replies: []  
+        images:[], author: "Admin", timestamp: "2026-07-19T08:00", hidden: false, replies: []  
     },
     {
         id: 2, pinned: false,
@@ -246,7 +285,9 @@ module.exports = {
     products,
     users,
     orders,
+    wishlist,
     threads,
+    reviews,
     getAllUsers,
     updateUserLockStatus,
     getUserById

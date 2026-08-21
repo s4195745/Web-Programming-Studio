@@ -40,7 +40,9 @@ const authRoutes = require('./routes/authRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const blogRoutes = require('./routes/blogRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const wishlistRoutes = require('./routes/wishlistRoutes');
 const forumRoutes = require('./routes/forumRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 
 // --- MOUNT ROUTES ---
 // UI View Routes
@@ -54,6 +56,8 @@ app.use('/', forumRoutes);
 // API Routes 
 app.use('/api', authRoutes);
 app.use('/api', cartRoutes);
+app.use('/api', wishlistRoutes);
+app.use('/api', reviewRoutes);
 
 app.set('views', path.join(__dirname, 'views'));
 
