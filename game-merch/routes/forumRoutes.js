@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { threads, products } = require('../data/mockDB');
+const { threads, products, users } = require('../data/mockDB');
 const multer = require('multer');
 
 //Set up multer for upload image (optional)
@@ -91,29 +91,42 @@ router.post('/forum/:id/edit', upload.array('thread_image', 5), (req, res) => {
     res.redirect('/forum/' + thread.id);
 });
 
-// SOFT-DELETE — chỉ chủ bài đã đăng nhập mới xoá được
+// SOFT-DELETE (Only the author can delete)
 router.post('/forum/:id/delete', (req, res) => {
-    if (!req.session.user) {
+    if (!req.session || !req.session.user) {
         return res.status(401).json({ error: 'Please log in first.' });
     }
 
     const thread = threads.find(t => t.id === Number(req.params.id));
     if (!thread) return res.status(404).json({ error: 'Thread not found' });
 
-    if (thread.author !== req.session.user.username) {
+    // 1. Fetch the freshest user data directly from the database
+    const freshUser = users.find(u => u.id === req.session.user.id);
+    const secureUsername = freshUser ? freshUser.username : req.session.user.username;
+
+    // 2. Perform a foolproof, case-insensitive comparison without trailing spaces
+    const threadAuthor = String(thread.author).trim().toLowerCase();
+    const currentUsername = String(secureUsername).trim().toLowerCase();
+
+    if (threadAuthor !== currentUsername) {
         return res.status(403).json({ error: 'You can only delete your own posts.' });
     }
 
     thread.hidden = true;
-
     res.json({ message: 'Thread hidden successfully' });
 });
 
+// CREATE NEW THREAD
 router.post('/forum', upload.array('thread_image', 5), (req, res) => {
-    const { author_name, thread_title, thread_content } = req.body;
+    // 1. Check if the user is authenticated
+    if (!req.session || !req.session.user) {
+        return res.status(401).send("You must be logged in to post.");
+    }
+    
+    
+    const { thread_title, thread_content } = req.body;
 
     const newId = threads.length > 0 ? Math.max(...threads.map(t => t.id)) + 1 : 1;
-
     const images = req.files ? req.files.map(f => '/assets/uploads/' + f.filename) : [];
 
     threads.push({
@@ -122,7 +135,8 @@ router.post('/forum', upload.array('thread_image', 5), (req, res) => {
         title: thread_title,
         content: thread_content,
         images: images,
-        author: author_name,
+        // 2. Force the author to be the securely logged-in session username
+        author: req.session.user.username,
         timestamp: new Date().toISOString().slice(0, 16),
         replies: []
     });
