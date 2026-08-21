@@ -39,10 +39,9 @@ Handles Shopping Cart, User authenticater.
 
 ### 2. Discussion Forum  and Sitemap (Dang Viet Hoang)
 Community area for users to discuss gaming and related topics.
-* Disscussion Forum (modules/discussion_forum): `forum.html`, `new_thread.html`,`thread_detail.html`
-* Sitemap (modules/shared_module): `sitemap.html`
-* Others: SHARED FOOTER,
-* **CSS:** `assests/css/main`, `assets/css/forum.css` 
+* Disscussion Forum (modules/discussion_forum): `forum.ejs`, `new_thread.ejs`,`thread_detail.ejs`, `edit_thread.ejs`
+* Sitemap (views/modules/sitemap):  `sitemap.ejs`
+* **CSS:** `assets/css/forum.css` 
 
 ### 3. Wistlist and User Account Management (Hoang Xuan Quynh)
 Handles User's wishlist and profile. 

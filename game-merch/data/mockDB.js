@@ -234,7 +234,7 @@ const threads = [
         id: 1, pinned: true,
         title: "Forum rules & how to get the best support for your order",
         content: "Pleadse read this before posting: how to describe your issue, attach proof of purchase, and what response to expect from the team.",
-        images:[], author: "Admin", timestamp: "2026-07-19T08:00", pinned: false, hidden: false, replies: []  
+        images:[], author: "Admin", timestamp: "2026-07-19T08:00", hidden: false, replies: []  
     },
     {
         id: 2, pinned: false,
