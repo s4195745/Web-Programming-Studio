@@ -32,6 +32,9 @@ router.get('/UserBlog', (req, res) => { res.render('modules/blog/UserBlog'); });
 // Wishlist Module Pages
 router.get('/wishlist', (req, res) => { res.render('modules/wishlist/wishlist'); });
 
+// Product Review Module Pages
+router.get('/review', (req, res) => { res.render('modules/review/productreview'); });
+
 // admin page (SECURED)
 router.get('/admin', isAuthenticated, requireAdmin, (req, res) => { 
     res.render('modules/admin/UserManager');
