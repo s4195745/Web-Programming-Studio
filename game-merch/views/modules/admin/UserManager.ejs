@@ -1,36 +1,54 @@
-<%- include('../../partials/navbar') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - User Management</title>
+    <!-- ADDED: main.css to fix the navbar styling -->
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/admin.css" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+</head>
+<body class="dashboard-bg">
 
-<link rel="stylesheet" type="text/css" href="/assets/css/admin.css" />
-n-drawer-body">
-    <table id="admin-users-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>User</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-</div>
+    <%- include('../../partials/navbar') %>
 
-<!-- lock confirmation -->
-<div id="admin-confirm-modal" class="admin-modal-overlay">
-  <div class="admin-modal-box">
-    <h4 id="admin-modal-title">Confirm Action</h4>
-    <p id="admin-modal-message">Are you sure you want to perform this action?</p>
-    <div class="admin-modal-actions">
-      <button class="admin-btn-cancel" onclick="closeAdminModal()">Cancel</button>
-      <button id="admin-modal-confirm-btn" class="admin-btn-confirm">Confirm</button>
+    <!-- FIXED: Restored the broken div tag -->
+    <div class="admin-drawer-body" style="margin-top: 100px;">
+        <table id="admin-users-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
     </div>
-  </div>
-</div>
-<script src="/assets/js/adminscript.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        loadAdminUsers();
-    });
-</script>
+    <!-- lock confirmation -->
+    <div id="admin-confirm-modal" class="admin-modal-overlay">
+      <div class="admin-modal-box">
+        <h4 id="admin-modal-title">Confirm Action</h4>
+        <p id="admin-modal-message">Are you sure you want to perform this action?</p>
+        <div class="admin-modal-actions">
+          <button class="admin-btn-cancel" onclick="closeAdminModal()">Cancel</button>
+          <button id="admin-modal-confirm-btn" class="admin-btn-confirm">Confirm</button>
+        </div>
+      </div>
+    </div>
+    
+    <script src="/assets/js/adminscript.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAdminUsers();
+        });
+    </script>
+
+    <%- include('../../partials/footer') %>
+    <script src="/assets/js/script.js"></script>
+</body>
+</html>

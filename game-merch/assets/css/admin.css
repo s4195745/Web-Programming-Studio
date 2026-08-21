@@ -141,3 +141,35 @@
 .admin-btn-confirm:hover {
   opacity: 0.9;
 }
+
+.admin-modal-overlay.active {
+  display: flex;
+}
+
+/* admin only delete button for blog feeed */
+.blog-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.admin-delete-post-btn {
+  border: 0;
+  border-radius: 6px;
+  padding: 7px 12px;
+  cursor: pointer;
+  font: inherit;
+  background: #b42318;
+  color: #fff;
+}
+
+.admin-delete-post-btn:hover {
+  background: #8f1d15;
+}
+
+.admin-delete-post-btn:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}

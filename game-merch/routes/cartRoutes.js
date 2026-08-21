@@ -46,6 +46,15 @@ router.post('/checkout', (req, res) => {
             const dbProduct = products.find(p => p.id === clientItem.id);
             if (!dbProduct) throw new Error(`Product ${clientItem.id} not found in database.`);
             
+            // ---  Variant Validation ---
+            const isValidVariant = dbProduct.colors.some(colorObj => 
+                colorObj.name === clientItem.color && colorObj.sizes.includes(clientItem.size)
+            );
+
+            if (!isValidVariant) {
+                throw new Error(`Invalid variant: Color '${clientItem.color}' with Size '${clientItem.size}' does not exist for product '${dbProduct.title}'.`);
+            }
+            
             secureTotalPaid += (dbProduct.price * clientItem.quantity);
             
             return { ...clientItem, price: dbProduct.price };

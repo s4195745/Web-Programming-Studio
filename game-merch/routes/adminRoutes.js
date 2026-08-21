@@ -1,26 +1,23 @@
 const express = require('express');
-const path = require('path');
 const router = express.Router();
+// Ensure auth.js is moved to a middleware folder
+const { isAuthenticated, requireAdmin } = require('../middleware/auth'); 
+// Destructure the array directly for the dynamic prototype
+const { users } = require('../data/mockDB'); 
 
-const { isAuthenticated, requireAdmin } = require('../views/modules/admin/auth');
-const db = require(path.join(__dirname, '../data/mockDB'));
-
-// page
+// Page route
 router.get('/admin/users', isAuthenticated, requireAdmin, (req, res) => {
-    res.render('UserManager');
+    res.render('modules/admin/UserManager');
 });
 
-// pull user from 
-router.get('/api/admin/users', isAuthenticated, requireAdmin, async (req, res) => {
+// API to get all users
+router.get('/api/admin/users', isAuthenticated, requireAdmin, (req, res) => {
     try {
-        const users = await db.getAllUsers();
-
         const safeUsers = users.map(({ password, token, ...user }) => ({
             ...user,
             isLocked: Boolean(user.isLocked)
         }));
-
-        res.json(safeUsers);
+        res.status(200).json(safeUsers);
     } catch (error) {
         console.error('Failed to retrieve accounts:', error);
         res.status(500).json({ error: 'Failed to load accounts.' });
@@ -28,48 +25,38 @@ router.get('/api/admin/users', isAuthenticated, requireAdmin, async (req, res) =
 });
 
 // Lock user
-router.post('/api/admin/users/:id/lock', isAuthenticated, requireAdmin, async (req, res) => {
+router.post('/api/admin/users/:id/lock', isAuthenticated, requireAdmin, (req, res) => {
     try {
-        const updatedUser = await db.updateUserLockStatus(
-            req.params.id,
-            true
-        );
+        const user = users.find(u => u.id === parseInt(req.params.id));
+        if (!user) return res.status(404).json({ error: 'User not found.' });
+
+        user.isLocked = true;
 
         res.json({
             message: 'Account locked successfully.',
-            user: {
-                id: updatedUser.id,
-                isLocked: true
-            }
+            user: { id: user.id, isLocked: true }
         });
     } catch (error) {
         console.error('Failed to lock account:', error);
-        res.status(500).json({
-            error: 'Failed to lock account.'
-        });
+        res.status(500).json({ error: 'Failed to lock account.' });
     }
 });
 
 // Unlock user
-router.post('/api/admin/users/:id/unlock', isAuthenticated, requireAdmin, async (req, res) => {
+router.post('/api/admin/users/:id/unlock', isAuthenticated, requireAdmin, (req, res) => {
     try {
-        const updatedUser = await db.updateUserLockStatus(
-            req.params.id,
-            false
-        );
+        const user = users.find(u => u.id === parseInt(req.params.id));
+        if (!user) return res.status(404).json({ error: 'User not found.' });
+
+        user.isLocked = false;
 
         res.json({
             message: 'Account unlocked successfully.',
-            user: {
-                id: updatedUser.id,
-                isLocked: false
-            }
+            user: { id: user.id, isLocked: false }
         });
     } catch (error) {
         console.error('Failed to unlock account:', error);
-        res.status(500).json({
-            error: 'Failed to unlock account.'
-        });
+        res.status(500).json({ error: 'Failed to unlock account.' });
     }
 });
 
