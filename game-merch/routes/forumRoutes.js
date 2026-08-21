@@ -36,7 +36,7 @@ router.get('/forum', (req, res) => {
         : new Date(b.timestamp) - new Date(a.timestamp);
     });
 
-    res.render('modules/discussion_forum/forum', { threads: result, q: q || '', sort: sort || 'newest', products: products });
+    res.render('modules/discussion_forum/forum', { threads: result, q: q || '', sort: sort || 'newest', products: products});
 });
 
 router.get('/forum/new', (req, res) => {
