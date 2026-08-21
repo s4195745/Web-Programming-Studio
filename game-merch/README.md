@@ -47,16 +47,15 @@ Handles Shopping Cart, User authenticater.
 **Others:**  `index.ejs` `data/mockDB.js` 
 
 
-### 2. Discussion Forum  and Sitemap (Dang Viet Hoang)
+### 2. Discussion Forum  and Administrator (Dang Viet Hoang)
 Community area for users to discuss gaming and related topics.
 * Disscussion Forum (modules/discussion_forum): `forum.ejs`, `new_thread.ejs`,`thread_detail.ejs`, `edit_thread.ejs`
 * Sitemap (views/modules/sitemap):  `sitemap.ejs`
 * **CSS:** `assets/css/forum.css` 
 
-### 3. Wistlist and User Account Management (Hoang Xuan Quynh)
+### 3. Wistlist (Hoang Xuan Quynh)
 Handles User's wishlist and profile. 
 * Wistlist (modules/wishlist): `wishlist.html`
-* Profile (modules/shared_module): `profile.html`, `edit_profile.html`, `verify_password.html`, `delete_account.html`
 * **CSS:** `assests/css/main`, `assets/css/wistlist.css`, `assets/css/auth.css`
 
 ### 4. Blog and Administrator (Ho Nguyen Thanh)
@@ -68,12 +67,7 @@ Handles news and updates, Admin page.
 ### 5. Product Review and User Account Management (Pham Khanh An)
 Allows users to read and leave reviews for merchandise.
 * Product Review (modules/review): `review.html`,
-* Profile (modules/shared_module): `profile.html`, `edit_profile.html`, `verify_password.html`, `delete_account.html`
 * **CSS:** `assests/css/main`, `assets/css/productreview.css`, `assets/css/auth.css` 
-
-
-
-
 ---
 
 ## Installation setup Instructions & How to Run the Project
