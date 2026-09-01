@@ -8,14 +8,14 @@ document.addEventListener("DOMContentLoaded", function() {
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
-    };
+    }
 
     function getCurrentUser() {
-        return{
+        return {
             username: sessionStorage.getItem('username') || null,
             role: (sessionStorage.getItem('userRole') || '').toLowerCase()
         };
-    };
+    }
 
     function showToast(message) {
         const existingToast = document.querySelector('.toast-message');
@@ -26,22 +26,21 @@ document.addEventListener("DOMContentLoaded", function() {
         toast.textContent = message;
         document.body.appendChild(toast);
 
-        setTimeout(function () {toast.classList.add('show');}, 10);
+        setTimeout(function () { toast.classList.add('show'); }, 10);
         setTimeout(function () {
             toast.classList.remove('show');
-            setTimeout(function () {toast.remove();}, 300);
+            setTimeout(function () { toast.remove(); }, 300);
         }, 3000);
-    };
-
-    // name
-    function getThreadIdFromPath() {
-        const match = window.location.pathname.match(/\/forum\/thread\/(\d+)/);
-        return match ? Number(match[1]) : null;
     }
 
-    //Sidebar: related products
+    function getThreadIdFromPath() {
+        const match = window.location.pathname.match(/\/forum\/([a-fA-F0-9]{24})/);
+        return match ? match[1] : null;
+    }
+
+    // Sidebar: related products
     function renderRelatedProducts() {
-        const container = document.getElementById('forum-related-products');
+        const container = document.getElementById('forum_related_products');
         if (!container) return;
 
         fetch('/api/forum/related-products')
@@ -74,16 +73,15 @@ document.addEventListener("DOMContentLoaded", function() {
                     });
 
                     fragment.appendChild(a);
-                })
+                });
                 container.appendChild(fragment);
             })
             .catch(function (err) {
-                console.error('Error loading related products:', err)
+                console.error('Error loading related products:', err);
             });
     }
     
     // Build HTML for thread card
-
     function buildReplyHtml(threadId, reply, index) {
         return `
             <div class="reply_item">
@@ -97,9 +95,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
                 <div class="reply_footer">
                     <input type="checkbox" id="reply-like-${threadId}-${index}" class="reply_toggle_checkbox" hidden>
-                    <label for="like_reply_${threadId}_${index}" class="reaction_btn">
+                    <label for="reply-like-${threadId}-${index}" class="reaction_btn">
                         <i class="ri-heart-line icon_outline"></i>
-                        <i class="ri_heart_fill icon_filled"></i>
+                        <i class="ri-heart-fill icon_filled"></i>
                     </label>
                 </div>     
             </div>
@@ -115,37 +113,38 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="content_gallery">
                 ${t.images.map(function (img) {
                     return `<img src="${escapeHtml(img)}" alt="Image attached to thread: ${escapeHtml(t.title)}" class="content_img">`;
-                })}
+                }).join('')}
             </div> 
         `;
     }
 
     function buildThreadCardHtml(t, currentUser) {
-        const isOwner = currentUser.username === t.author;
-            currentUser.username.trim().toLowerCase() === String(t.author).trim().toLowerCase()
+        const isOwner = currentUser.username &&
+            currentUser.username.trim().toLowerCase() === String(t.author || '').trim().toLowerCase();
         const isAdmin = currentUser.role === 'admin';
+        const threadId = t._id;
 
         const optionsMenuHtml = (!t.pinned && isOwner) ? `
             <div class="options_menu">
-                <input type="checkbox" id="menu_post_${t.id}" class="options_toggle_checkbox" hidden>
-                <label for="menu_post_${t.id}" class="options_trigger">
+                <input type="checkbox" id="menu_post_${threadId}" class="options_toggle_checkbox" hidden>
+                <label for="menu_post_${threadId}" class="options_trigger">
                     <i class="ri-more-2-fill"></i>
                 </label>
                 <div class="options_dropdown">
-                    <a href="/forum/${t.id}/edit" class="options_item"><i class="ri-edit-line"></i>Edit</a>
-                    <a href="#" class="options_item delete_item" data-id="${t.id}"><i class="ri-delete-bin-line"></i>Delete</a>
+                    <a href="/forum/${threadId}/edit" class="options_item"><i class="ri-edit-line"></i>Edit</a>
+                    <a href="#" class="options_item delete_item" data-id="${threadId}"><i class="ri-delete-bin-line"></i>Delete</a>
                 </div>
             </div>
             ` : '';
 
         const adminMenuHtml = (isAdmin && !t.pinned) ? `
             <div class="options_menu admin_options_menu">
-                <input type="checkbox" id="admin_menu_post_${t.id}" class="options_toggle_checkbox" hidden>
-                <label for="admin_menu_post_${t.id}" class="options_trigger">
+                <input type="checkbox" id="admin_menu_post_${threadId}" class="options_toggle_checkbox" hidden>
+                <label for="admin_menu_post_${threadId}" class="options_trigger">
                     <i class="ri-shield-star-line"></i>
                 </label>
                 <div class="options_dropdown">
-                    <a href="#" class="options_item admin_delete_item" data-id="${t.id}">
+                    <a href="#" class="options_item admin_delete_item" data-id="${threadId}">
                         <i class="ri-delete-bin-line"></i>Delete
                     </a>
                 </div>
@@ -155,21 +154,21 @@ document.addEventListener("DOMContentLoaded", function() {
         const repliesHtml = (t.replies && t.replies.length) ? `
             <section class="replies_section">
                 <h4 class="replies_heading">Reply</h4>
-                ${t.pinned.replies(function (r, i) { return buildReplyHtml(t.id, r, i); }).join('')} 
+                ${t.replies.map(function (r, i) { return buildReplyHtml(threadId, r, i); }).join('')} 
             </section>
         ` : '';
 
         return `
             <article class="thread_card ${t.pinned ? 'pinned' : ''}">
-                <a href="/forum ${t.id}" class="card_stretch_link" aria-label="View thread: ${escapeHtml(t.title)}"></a>
+                <a href="/forum/${threadId}" class="card_stretch_link" aria-label="View thread: ${escapeHtml(t.title)}"></a>
                 ${t.pinned ? '<span class="pinned_badge"><i class="ri-pushpin-fill"></i>Pinned</span>' : ''}
 
                 <div class="card_header">
                     <img src="/assets/Product Images/avatar.jpg" alt="${escapeHtml(t.author)} avatar" class="avatar">
                     <span class="author_name">${escapeHtml(t.author)}</span>
-                <time class="post_time" datetime="${escapeHtml(t.timestamp)}">${escapeHtml(t.timestamp)}</time>
-                ${optionsMenuHtml}
-                ${adminMenuHtml}
+                    <time class="post_time" datetime="${escapeHtml(t.timestamp)}">${escapeHtml(t.timestamp)}</time>
+                    ${optionsMenuHtml}
+                    ${adminMenuHtml}
                 </div>
 
                 <h3 class="thread_title">${escapeHtml(t.title)}</h3>
@@ -180,28 +179,26 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
 
                 <div class="card_footer">
-                    <input type="checkbox" id="like_thread_${t.id}" class="thread_toggle_checkbox" hidden>
-                    <label for="like_thread_${t.id}" class="reaction_btn">
+                    <input type="checkbox" id="like_thread_${threadId}" class="thread_toggle_checkbox" hidden>
+                    <label for="like_thread_${threadId}" class="reaction_btn">
                         <i class="ri-heart-line icon_outline"></i>
                         <i class="ri-heart-fill icon-filled"></i>
                     </label>
-                    <a href="/forum/${t.id}" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
+                    <a href="/forum/${threadId}" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
                 </div>
             </article>
             ${repliesHtml}
         `;
     }
 
-    // THREAD LIST
+    // Thread list
     const threadListEl = document.getElementById('forum_thread_list');
 
     function getLastActivityDate(t) {
-        // Sap xep theo bai dang moi nhat trong thread (bao gom ca reply),
-        // khong chi theo ngay tao thread
-        let latest = new Date(t.timestamp).getTime();
+        let latest = new Date(t.timestamp || t.createdAt || Date.now()).getTime();
         if (t.replies && t.replies.length) {
             t.replies.forEach(function (r) {
-                const replyTime = new Date(r.timestamp).getTime();
+                const replyTime = new Date(r.timestamp || Date.now()).getTime();
                 if (replyTime > latest) latest = replyTime;
             });
         }
@@ -224,7 +221,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 if (q) {
                     result = result.filter(function (t) {
-                        return t.title.toLowerCase().includes(q) || t.content.toLowerCase().includes(q);
+                        return (t.title && t.title.toLowerCase().includes(q)) || 
+                               (t.content && t.content.toLowerCase().includes(q));
                     });
                 }
 
@@ -250,7 +248,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 const currentUser = getCurrentUser();
                 threadListEl.innerHTML = result.map(function (t) { return buildThreadCardHtml(t, currentUser); }).join('');
-                bindDeleteHandlers(); // cac the .delete_item/.admin_delete_item vua duoc tao moi, can gan lai listener
+                bindDeleteHandlers();
             })
             .catch(function (err) {
                 console.error('Error loading threads:', err);
@@ -271,30 +269,31 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    //A thread page details
+    // Thread detail
     const threadDetailContainer = document.getElementById('thread_detail_container');
 
     function renderThreadDetail(thread) {
         const currentUser = getCurrentUser();
         const isOwner = currentUser.username && thread.author &&
             currentUser.username.trim().toLowerCase() === String(thread.author).trim().toLowerCase();
+        const threadId = thread._id;
 
         const optionsMenuHtml = (!thread.pinned && isOwner) ? `
             <div class="options_menu">
-                <input type="checkbox" id="menu_post_${thread.id}" class="options_toggle_checkbox" hidden>
-                <label for="menu_post_${thread.id}" class="options_trigger">
+                <input type="checkbox" id="menu_post_${threadId}" class="options_toggle_checkbox" hidden>
+                <label for="menu_post_${threadId}" class="options_trigger">
                     <i class="ri-more-2-fill"></i>
                 </label>
                 <div class="options_dropdown">
-                    <a href="/forum/${thread.id}/edit" class="options_item"><i class="ri-edit-line"></i>Edit</a>
-                    <a href="#" class="options_item delete_item" data-id="${thread.id}"><i class="ri-delete-bin-line"></i>Delete</a>
+                    <a href="/forum/${threadId}/edit" class="options_item"><i class="ri-edit-line"></i>Edit</a>
+                    <a href="#" class="options_item delete_item" data-id="${threadId}"><i class="ri-delete-bin-line"></i>Delete</a>
                 </div>
             </div>
         ` : '';
 
         threadDetailContainer.innerHTML = `
             <article class="thread_card thread_detail_post ${thread.pinned ? 'pinned' : ''}">
-                ${thread.pinned ? '<span class="pinned_badged"><i class="ri-pushpin-fill"></i>Pinned</span>' : ''}
+                ${thread.pinned ? '<span class="pinned_badge"><i class="ri-pushpin-fill"></i>Pinned</span>' : ''}
                 <div class="card_header">
                     <img src="/assets/Product Images/avatar.jpg" alt="${escapeHtml(thread.author)} avatar" class="avatar">
                     <span class="author_name">${escapeHtml(thread.author)}</span>
@@ -310,8 +309,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
 
                 <div class="card_footer">
-                    <input type="checkbox" id="like_thread_${thread.id}" class="reaction_toggle_checkbox">
-                    <label for="like_thread_${thread.id}" class="reaction_btn">
+                    <input type="checkbox" id="like_thread_${threadId}" class="reaction_toggle_checkbox">
+                    <label for="like_thread_${threadId}" class="reaction_btn">
                         <i class="ri-heart-line icon_outline"></i>
                         <i class="ri-heart-fill icon_filled"></i>
                     </label>
@@ -343,16 +342,21 @@ document.addEventListener("DOMContentLoaded", function() {
 
         repliesSection.innerHTML = `
             <h2 class="replies_heading">${heading}</h2>
-            ${replies.map(function (r, i) { return buildReplyHtml(thread.id, r, i); }).join('')}
+            ${replies.map(function (r, i) { return buildReplyHtml(thread._id, r, i); }).join('')}
         `;
     }
 
     function loadThreadDetail(id) {
+        if (!id) {
+            threadDetailContainer.innerHTML = '<p class="status-msg error">Invalid Thread ID.</p>';
+            return;
+        }
+
         threadDetailContainer.innerHTML = '<p class="status-msg">Loading thread...</p>';
 
         fetch('/api/forum/threads/' + id)
             .then(function (res) {
-                if (res.status === 404) throw new Error('Thread not found');
+                if (!res.ok) throw new Error('Thread not found');
                 return res.json();
             })
             .then(function (thread) {
@@ -401,7 +405,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Create a new thread 
-    const newThreadForm = document.getElementById('new_thread_form');
+    const newThreadForm = document.getElementById('new_thread_forum') || document.getElementById('new_thread_form');
     if (newThreadForm) {
         newThreadForm.addEventListener('submit', function (e) {
             e.preventDefault();
@@ -418,7 +422,9 @@ document.addEventListener("DOMContentLoaded", function() {
                         return;
                     }
                     showToast('Thread created successfully.');
-                    setTimeout(function () { window.location.href = '/forum/' + result.data.thread.id; }, 800);
+                    setTimeout(function () { 
+                        window.location.href = '/forum/' + result.data.thread._id; 
+                    }, 800);
                 })
                 .catch(function (err) {
                     console.error(err);
@@ -427,7 +433,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
     
-    //Edit thread (forum/:id/edit)
+    // Edit thread (forum/:id/edit)
     const editThreadForm = document.getElementById('edit_thread_form');
     if (editThreadForm) {
         const threadId = getThreadIdFromPath();
@@ -472,8 +478,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-
-    // Confirmation of delete thread + admin delete 
+    // Delete handlers
     const modal = document.getElementById('delete_modal');
     let pendingDeleteId = null;
 
@@ -521,7 +526,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const cancelDeleteBtn = document.getElementById('cancel_delete_btn');
     if (cancelDeleteBtn) {
         cancelDeleteBtn.addEventListener('click', function () {
-            modal.classList.remove('active');
+            if (modal) modal.classList.remove('active');
             pendingDeleteId = null;
         });
     }
@@ -560,5 +565,4 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     bindDeleteHandlers();
-
 });
