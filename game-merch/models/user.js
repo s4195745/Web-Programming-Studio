@@ -30,9 +30,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: null
     },
+    
     isLocked: {
         type: Boolean,
         default: false
+    },
+    token: {
+        type: String,
+        default: null
     }
 }, {
     timestamps: true
