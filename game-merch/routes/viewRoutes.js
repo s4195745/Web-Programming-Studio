@@ -8,7 +8,7 @@ const { isAuthenticated, requireAdmin } = require('../middleware/auth');
 router.get('/', (req, res) => { res.render('index'); });
 
 // Shopping Cart Module Pages
-router.get('/shop', (req, res) => { res.render('modules/shopping_cart/index'); });
+router.get('/shop', (req, res) => { res.render('modules/shopping_cart/shop'); });
 router.get('/cart', (req, res) => { res.render('modules/shopping_cart/cart'); });
 router.get('/product_detail', (req, res) => { res.render('modules/shopping_cart/product_detail'); });
 router.get('/checkout', (req, res) => { res.render('modules/shopping_cart/checkout'); });
@@ -31,6 +31,9 @@ router.get('/UserBlog', (req, res) => { res.render('modules/blog/UserBlog'); });
 
 // Wishlist Module Pages
 router.get('/wishlist', (req, res) => { res.render('modules/wishlist/wishlist'); });
+
+// Product Review Module Pages
+router.get('/review', (req, res) => { res.render('modules/review/productreview'); });
 
 // admin page (SECURED)
 router.get('/admin', isAuthenticated, requireAdmin, (req, res) => { 

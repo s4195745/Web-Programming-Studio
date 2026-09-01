@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Reviews | LootBox.</title>
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/productreview.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
+    <script>
+        window.__isLoggedIn = <%- currentUser ? 'true' : 'false' %>;
+        window.__currentUsername = "<%- currentUser ? currentUser.username : '' %>";
+    </script>
+</head>
+
+<body>
+
+<%- include('../../partials/navbar') %>
+
+    <main id="main-content" class="review-page">
+        <section class="page-hero">
+            <div class="container">
+                <p class="breadcrumb"><a href="/">Home</a> / Reviews</p>
+                <h1>Product Reviews</h1>
+                <p>Read what other fans think before you buy, or share your own experience with a product you own.</p>
+            </div>
+        </section>
+
+        <div class="container">
+            <form class="toolbar" aria-label="Search and filter reviews" id="review-toolbar">
+                <div class="toolbar__filters">
+                    <div class="field">
+                        <label for="review-search">Search reviews</label>
+                        <input type="text" id="review-search" name="search" placeholder="Search by title, product or reviewer">
+                    </div>
+                    <div class="field">
+                        <label for="review-rating-filter">Rating</label>
+                        <select id="review-rating-filter" name="rating">
+                            <option value="">All ratings</option>
+                            <option value="5">5 stars</option>
+                            <option value="4">4 stars &amp; up</option>
+                            <option value="3">3 stars &amp; up</option>
+                            <option value="2">2 stars &amp; up</option>
+                            <option value="1">1 star &amp; up</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="review-sort">Sort by</label>
+                        <select id="review-sort" name="sort">
+                            <option value="newest">Newest first</option>
+                            <option value="oldest">Oldest first</option>
+                            <option value="highest">Highest rated</option>
+                            <option value="lowest">Lowest rated</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Shown only when the visitor is not logged in -->
+            <div class="login-prompt" id="review-login-prompt" hidden>
+                <p>Log in to write a review for a product you own.</p>
+                <a href="/login" class="btn btn-primary btn-sm">Log in</a>
+            </div>
+
+            <section class="review-form-section" aria-labelledby="write-review-heading" id="review-form-section" hidden>
+                <h2 id="write-review-heading">Write a Review</h2>
+                <form id="review-form" novalidate>
+                    <input type="hidden" id="review-edit-id" value="">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="review-product">Product</label>
+                            <select id="review-product" name="productId" required>
+                                <option value="">Select a product you purchased</option>
+                            </select>
+                            <span class="error-msg" id="review-product-error"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="review-title">Review title</label>
+                            <input type="text" id="review-title" name="title" placeholder="Summarise your experience" required maxlength="80">
+                            <span class="error-msg" id="review-title-error"></span>
+                        </div>
+                        <div class="form-group full-width">
+                            <span class="hint">Star rating</span>
+                            <div class="rating-input" role="radiogroup" aria-label="Star rating" id="review-rating-input">
+                                <input type="radio" id="rate-1" name="rating" value="1"><label for="rate-1" aria-label="1 star">&#9733;</label>
+                                <input type="radio" id="rate-2" name="rating" value="2"><label for="rate-2" aria-label="2 stars">&#9733;</label>
+                                <input type="radio" id="rate-3" name="rating" value="3"><label for="rate-3" aria-label="3 stars">&#9733;</label>
+                                <input type="radio" id="rate-4" name="rating" value="4"><label for="rate-4" aria-label="4 stars">&#9733;</label>
+                                <input type="radio" id="rate-5" name="rating" value="5" checked><label for="rate-5" aria-label="5 stars">&#9733;</label>
+                            </div>
+                            <span class="error-msg" id="review-rating-error"></span>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="review-description">Your review</label>
+                            <textarea id="review-description" name="description" placeholder="What did you like or dislike about this product?" required></textarea>
+                            <span class="error-msg" id="review-description-error"></span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="review-submit-btn">Submit Review</button>
+                    <button type="button" class="btn btn-outline" id="review-cancel-edit-btn" hidden>Cancel edit</button>
+                </form>
+            </section>
+
+            <div class="section-title">
+                <h2>All reviews</h2>
+                <p class="result-count" id="review-result-count">0 reviews</p>
+            </div>
+
+            <ul class="review-list" id="review-list"></ul>
+
+            <div class="empty-state" id="review-empty" hidden>
+                <div class="empty-state__icon" aria-hidden="true">&#9733;</div>
+                <h2 id="review-empty-heading">No reviews yet</h2>
+                <p id="review-empty-text">Be the first to share what you think of this product.</p>
+            </div>
+
+            <section aria-labelledby="detail-view-heading" id="review-detail-section" style="padding-bottom: 56px;" hidden>
+                <div class="section-title">
+                    <h2 id="detail-view-heading">Review detail</h2>
+                </div>
+                <div class="review-detail" id="review-detail"></div>
+            </section>
+        </div>
+    </main>
+
+<%- include('../../partials/footer') %>
+
+    <script src="/assets/js/auth-validation.js"></script>
+    <script src="/assets/js/cartscript.js"></script>
+    <script src="/assets/js/reviewscript.js"></script>
+</body>
+</html>

@@ -120,8 +120,8 @@ router.post('/api/forum/threads/:id', upload.array('thread_image', 5), (req, res
     res.status(200).json({ message: 'Thread updated successfully', thread });
 });
 
-// Soft delete a thread (confirm author)
-router.post('/api/forum/threads/:id/delete', (req, res) => {
+// SOFT-DELETE (confirm author)
+router.post('/api/forum/:id/delete', (req, res) => {
     if (!req.session || !req.session.user) {
         return res.status(401).json({ error: 'Please log in first.' });
     }
@@ -129,11 +129,14 @@ router.post('/api/forum/threads/:id/delete', (req, res) => {
     const thread = threads.find(t => t.id === Number(req.params.id));
     if (!thread) return res.status(404).json({ error: 'Thread not found' });
 
+    // Fetch the  user data from  database
     const freshUser = users.find(u => u.id === Number(req.session.user.id));
+
     if (!freshUser) {
         return res.status(401).json({ error: 'User account not found.' });
     }
 
+    // case-insensitive comparison
     const threadAuthor = String(thread.author || '').trim().toLowerCase();
     const currentUsername = String(freshUser.username || '').trim().toLowerCase();
 
@@ -156,6 +159,7 @@ router.post('/api/forum/threads/:id/admin-delete', (req, res) => {
         return res.status(401).json({ error: 'User account not found.' });
     }
 
+    const currentUser = res.locals.currentUser || req.session.user || null;
     const isAdmin =
         String(freshUser.role || '')
             .trim()
@@ -164,6 +168,43 @@ router.post('/api/forum/threads/:id/admin-delete', (req, res) => {
     if (!isAdmin) {
         return res.status(403).json({ error: 'Admin access required.' });
     }
+
+    const thread = threads.find(t => t.id === Number(req.params.id));
+    if (!thread) return res.status(404).json({ error: 'Thread not found' });
+
+    if (thread.pinned) {
+        return res.status(403).json({ error: 'Pinned posts cannot be deleted.' });
+    }
+
+    thread.hidden = true;
+
+    res.json({ message: 'Thread deleted successfully by admin.' });
+});
+
+// CREATE NEW THREAD
+router.post('/forum', upload.array('thread_image', 5), (req, res) => {
+    // 1. Check if the user is authenticated
+    if (!req.session || !req.session.user) {
+        return res.status(401).send("You must be logged in to post.");
+    }
+    
+    
+    const { thread_title, thread_content } = req.body;
+
+    const newId = threads.length > 0 ? Math.max(...threads.map(t => t.id)) + 1 : 1;
+    const images = req.files ? req.files.map(f => '/assets/uploads/' + f.filename) : [];
+
+    threads.push({
+        id: newId,
+        pinned: false,
+        title: thread_title,
+        content: thread_content,
+        images: images,
+        // 2. Force the author to be the securely logged-in session username
+        author: req.session.user.username,
+        timestamp: new Date().toISOString().slice(0, 16),
+        replies: []
+    });
 
     const thread = threads.find(t => t.id === Number(req.params.id));
     if (!thread) return res.status(404).json({ error: 'Thread not found' });

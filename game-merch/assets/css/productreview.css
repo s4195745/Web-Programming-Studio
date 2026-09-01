@@ -511,3 +511,60 @@ a {
         grid-template-columns: 1fr;
     }
 }
+
+/* Login prompt (shown when a visitor who isn't logged in opens the review form) */
+.login-prompt {
+    text-align: center;
+    padding: 40px 16px;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-lg);
+    color: var(--text-muted);
+    background: #fff;
+    margin-bottom: 32px;
+}
+
+.login-prompt p {
+    margin-bottom: 16px;
+}
+
+/* Toast notification (same look as the Shopping Cart / Wishlist modules) */
+.toast-message {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #333;
+    color: #fff;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.toast-message.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Empty state (reused from the Wishlist module's pattern) */
+.empty-state {
+    text-align: center;
+    padding: 64px 16px;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-lg);
+    color: var(--text-muted);
+    background: #fff;
+}
+
+.empty-state__icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+}
+
+.empty-state h2 {
+    color: var(--text);
+    margin-bottom: 8px;
+}
