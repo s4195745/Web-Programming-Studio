@@ -22,7 +22,7 @@
                 <p class="new_thread_subheading">Share your question with the Lootbox community — other collectors and
                     buyers can help.</p>
 
-                <form class="new_thread_form" action="/forum" method="post" enctype="multipart/form-data">
+                <form class="new_thread_form" id="new_thread_forum" enctype="multipart/form-data">
 
                     <!-- Author -->
                     <div class="form_group">
@@ -64,7 +64,10 @@
             </div>
         </main>
     </div>
+    
     <script src="/assets/js/script.js"></script>
+    <script src="/assets/js/forumscript.js"></script>
+    <script src="/assets/js/auth-validation.js"></script>
 
     <%- include('../../partials/footer.ejs') %>
 </body>

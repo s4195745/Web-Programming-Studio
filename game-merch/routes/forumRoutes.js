@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { threads, products } = require('../data/mockDB');
+const { threads, products, users } = require('../data/mockDB');
 const multer = require('multer');
 
 //Set up multer for upload image (optional)
@@ -15,71 +15,100 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage: storage});
 
+//Page shell routes (csr)
+
 router.get('/forum', (req, res) => {
-    const { q, sort } = req.query;
-    let result = threads.filter(t => !t.hidden);
-
-    if (q) {
-        const keyword = q.toLowerCase();
-        result = result.filter(t =>
-            t.title.toLowerCase().includes(keyword) ||
-            t.content.toLowerCase().includes(keyword)
-        );
-    }
-
-    result.sort((a, b) => {
-        if (a.pinned !== b.pinned) {
-            return a.pinned ? -1 : 1;
-        }
-        return sort === "oldest"
-        ? new Date(a.timestamp) - new Date(b.timestamp)
-        : new Date(b.timestamp) - new Date(a.timestamp);
-    });
-
-    res.render('modules/discussion_forum/forum', { threads: result, q: q || '', sort: sort || 'newest', products: products });
+    res.render('modules/discussion_forum/forum');
 });
 
 router.get('/forum/new', (req, res) => {
     res.render('modules/discussion_forum/new_thread');
 });
 
-router.get('/forum/:id', (req, res) => {
-    const thread = threads.find(t => t.id === Number(req.params.id) && !t.hidden);
-    if (!thread) return res.status(404).send('Thread not found');
-    res.render('modules/discussion_forum/thread_detail', { thread, products });
+router.get('/forum/:id/edit', (req, res) => {
+    res.render('modules/discussion_forum/edit_thread');
 });
 
-//REPLY FROM THREAD POST
-router.post('/forum/:id/reply', (req, res) => {
+router.get('/forum/:id', (req, res) => {
+    res.render('modules/discussion_forum/thread_detail');
+});
+
+//JSON API routes
+router.get('/api/forum/threads', (req, res) => {
+    const result = threads.filter(t => !t.hidden);
+    res.status(200).json(result);
+});
+
+//Get thread based on ID
+router.get('/api/forum/threads/:id', (req, res) => {
+    const thread = threads.find(t => t.id === Number(req.params.id) && !t.hidden);
+    if (!thread) return res.status(404).json({ error: 'Thread not found' });
+    res.status(200).json(thread);
+});
+
+//Get product list for sidebar
+router.get('/api/forum/related-products', (req, res) => {
+    res.status(200).json(products);
+});
+
+//Create new thread
+router.post('/api/forum/threads', upload.array('thread_image', 5), (req, res) => {
+    if (!req.session || !req.session.user) {
+        return res.status(401).json({ error: 'You must be logged in to post.' });
+    }
+
+    const { thread_title, thread_content } = req.body;
+    if (!thread_title || !thread_content) {
+        return res.status(400).json({ error: 'Title and content are required.' });
+    }
+
+    const newId = threads.length > 0 ? Math.max(...threads.map(t => t.id)) + 1 : 1;
+    const images = req.files ? req.files.map(f => '/assets/uploads/' + f.filename) : [];
+
+    const newThread = {
+        id: newId,
+        pinned: false,
+        title: thread_title,
+        content: thread_content,
+        images: images,
+        // Ep author lay tu session da dang nhap, khong tin input client gui len
+        author: req.session.user.username,
+        timestamp: new Date().toISOString().slice(0, 16),
+        replies: []
+    };
+
+    threads.push(newThread);
+    res.status(201).json({ message: 'Thread created successfully', thread: newThread });
+});
+
+
+//Reply to a thread
+router.post('/api/forum/threads/:id/reply', (req, res) => {
     const thread = threads.find(t => t.id === Number(req.params.id));
-    if (!thread) return res.status(404).send('Thread not found');
+    if (!thread) return res.status(404).json({ error: 'Thread not found' });
 
     const { reply_author, reply_content } = req.body;
+    if (!reply_author || !reply_content) {
+        return res.status(400).json({ error: 'Name and reply content are required.' });
+    }
 
     if (!thread.replies) thread.replies = [];
-    thread.replies.push({
+    const newReply = {
         author: reply_author,
         content: reply_content,
         timestamp: new Date().toISOString().slice(0, 16)
-    });
+    };
+    thread.replies.push(newReply);
 
-    res.redirect('/forum/' + thread.id);
+    res.status(201).json({ message: 'Reply posted successfully', reply: newReply, thread });
 });
 
-// EDIT (change data based on the previous)
-router.get('/forum/:id/edit', (req, res) => {
+// Edit - save changed
+router.post('/api/forum/threads/:id', upload.array('thread_image', 5), (req, res) => {
     const thread = threads.find(t => t.id === Number(req.params.id));
-    if (!thread) return res.status(404).send('Thread not found');
-    res.render('modules/discussion_forum/edit_thread', { thread });
-});
-
-// EDIT — (save changed)
-router.post('/forum/:id/edit', upload.array('thread_image', 5), (req, res) => {
-    const thread = threads.find(t => t.id === Number(req.params.id));
-    if (!thread) return res.status(404).send('Thread not found');
+    if (!thread) return res.status(404).json({ error: 'Thread not found' });
 
     const { thread_title, thread_content } = req.body;
-
     thread.title = thread_title;
     thread.content = thread_content;
 
@@ -88,46 +117,63 @@ router.post('/forum/:id/edit', upload.array('thread_image', 5), (req, res) => {
         thread.images = thread.images.concat(newImages);
     }
 
-    res.redirect('/forum/' + thread.id);
+    res.status(200).json({ message: 'Thread updated successfully', thread });
 });
 
-// SOFT-DELETE — chỉ chủ bài đã đăng nhập mới xoá được
-router.post('/forum/:id/delete', (req, res) => {
-    if (!req.session.user) {
+// Soft delete a thread (confirm author)
+router.post('/api/forum/threads/:id/delete', (req, res) => {
+    if (!req.session || !req.session.user) {
         return res.status(401).json({ error: 'Please log in first.' });
     }
 
     const thread = threads.find(t => t.id === Number(req.params.id));
     if (!thread) return res.status(404).json({ error: 'Thread not found' });
 
-    if (thread.author !== req.session.user.username) {
+    const freshUser = users.find(u => u.id === Number(req.session.user.id));
+    if (!freshUser) {
+        return res.status(401).json({ error: 'User account not found.' });
+    }
+
+    const threadAuthor = String(thread.author || '').trim().toLowerCase();
+    const currentUsername = String(freshUser.username || '').trim().toLowerCase();
+
+    if (threadAuthor !== currentUsername) {
         return res.status(403).json({ error: 'You can only delete your own posts.' });
     }
 
     thread.hidden = true;
-
     res.json({ message: 'Thread hidden successfully' });
 });
 
-router.post('/forum', upload.array('thread_image', 5), (req, res) => {
-    const { author_name, thread_title, thread_content } = req.body;
+// Admin delete any forum post 
+router.post('/api/forum/threads/:id/admin-delete', (req, res) => {
+    if (!req.session || !req.session.user) {
+        return res.status(401).json({ error: 'Please log in first.' });
+    }
+    const freshUser = users.find(u => u.id === Number(req.session.user.id));
 
-    const newId = threads.length > 0 ? Math.max(...threads.map(t => t.id)) + 1 : 1;
+    if (!freshUser) {
+        return res.status(401).json({ error: 'User account not found.' });
+    }
 
-    const images = req.files ? req.files.map(f => '/assets/uploads/' + f.filename) : [];
+    const isAdmin =
+        String(freshUser.role || '')
+            .trim()
+            .toLowerCase() === 'admin';
 
-    threads.push({
-        id: newId,
-        pinned: false,
-        title: thread_title,
-        content: thread_content,
-        images: images,
-        author: author_name,
-        timestamp: new Date().toISOString().slice(0, 16),
-        replies: []
-    });
+    if (!isAdmin) {
+        return res.status(403).json({ error: 'Admin access required.' });
+    }
 
-    res.redirect('/forum');
+    const thread = threads.find(t => t.id === Number(req.params.id));
+    if (!thread) return res.status(404).json({ error: 'Thread not found' });
+
+    if (thread.pinned) {
+        return res.status(403).json({ error: 'Pinned posts cannot be deleted.' });
+    }
+
+    thread.hidden = true;
+    res.json({ message: 'Thread deleted successfully by admin.' });
 });
 
 module.exports = router;
