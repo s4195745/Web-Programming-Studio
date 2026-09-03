@@ -1,76 +1,71 @@
 const mongoose = require('mongoose');
 
-// post schema
-const postSchema = new mongoose.Schema({
+// comment schema
+const commentSchema = new mongoose.Schema(
+  {
     id: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    title: {
-        type: String,
-        required: true,
-        trim: true
+      type: String,
+      required: true
     },
     author: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    dateAdded: {
-        type: String,
-        required: true
-    },
-    category: {
-        type: String,
-        required: true
-    },
-    categoryIcon: {
-        type: String,
-        default: ''
-    },
-    summary: {
-        type: String,
-        default: ''
-    },
-    content: {
-        type: String,
-        required: true
-    },
-    imageUrl: {
-        type: String,
-        default: ''
-    },
-    secondaryImage: {
-        type: String,
-        default: ''
-    },
-    comments: [commentSchema]
-}, {
-    timestamps: true
-});
-
-
-// comments schema
-const commentSchema = new mongoose.Schema({
-    id: {
-        type: String,
-        required: true
-    },
-    author: {
-        type: String,
-        required: true,
-        trim: true
+      type: String,
+      required: true
     },
     date: {
-        type: String,
-        required: true
+      type: String,
+      required: true
     },
     text: {
-        type: String,
-        required: true,
-        trim: true
+      type: String,
+      required: true
     }
-});
+  },
+  { _id: false }
+);
 
-module.exports = mongoose.model('Post', postSchema);
+// post schema
+const blogSchema = new mongoose.Schema(
+  {
+    id: {
+      type: String,
+      required: true,
+      unique: true
+    },
+    title: {
+      type: String,
+      required: true
+    },
+    author: {
+      type: String,
+      required: true
+    },
+    dateAdded: {
+      type: String,
+      required: true
+    },
+    category: {
+      type: String,
+      required: true
+    },
+    categoryIcon: String,
+    summary: String,
+    content: {
+      type: String,
+      required: true
+    },
+    imageUrl: String,
+    secondaryImage: {
+      type: String,
+      default: ''
+    },
+    comments: {
+      type: [commentSchema],
+      default: []
+    }
+  },
+  {
+    timestamps: true
+  }
+);
+
+module.exports = mongoose.model('Blog', blogSchema);

@@ -1,26 +1,8 @@
 const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const { users } = require('../data/mockDB');
 const router = express.Router();
 
-const BLOG_DIR = __dirname;
-const DATA_FILE = path.join(BLOG_DIR, '../data/posts.json');
-
-const initialPosts = [];
-
-function loadPosts() {
-  if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(initialPosts, null, 2), 'utf8');
-    return initialPosts;
-  }
-  const fileData = fs.readFileSync(DATA_FILE, 'utf8');
-  return JSON.parse(fileData);
-}
-
-function savePosts(posts) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(posts, null, 2), 'utf8');
-}
+const User = require('../models/user');
+const Post = require('../models/blog');
 
 function getCategoryIcon(cat) {
   const icons = { 'Merch': '📱', 'Fan-art': '🎨', 'Discussion': '💬', 'Review': '⭐' };
@@ -28,56 +10,95 @@ function getCategoryIcon(cat) {
 }
 
 // get logged in account name
-function getAccountName(req) {
+async function getAccountName(req) {
   const user = req.user || (req.session && req.session.user);
-  if (user) return user.username || user.name || user.email;
+
+  if (user) {
+    return user.username || user.name || user.email;
+  }
 
   const authHeader = req.headers.authorization;
+
   if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.split(' ')[1];
-    const foundUser = users.find(u => u.token === token);
-    if (foundUser) return foundUser.username || foundUser.email;
+
+    const foundUser = await User.findOne({ token });
+
+    if (foundUser) {
+      return foundUser.username || foundUser.name || foundUser.email;
+    }
   }
 
   const headerEmail = req.headers['x-user-email'];
+
   if (headerEmail) {
-    const foundUser = users.find(u => u.email === headerEmail);
-    if (foundUser) return foundUser.username || foundUser.email;
+    const foundUser = await User.findOne({
+      email: headerEmail
+    });
+
+    if (foundUser) {
+      return foundUser.username || foundUser.name || foundUser.email;
+    }
   }
 
   return null;
 }
 
 // GET posts
-router.get('/api/posts', (req, res) => {
-  let posts = loadPosts();
-  const { query, searchType, category, userOnly } = req.query;
+router.get('/api/posts', async (req, res) => {
+  try {
+    let posts = await Post.find().sort({ createdAt: -1 });
 
-  if (userOnly === 'true') {
-    const currentAccount = getAccountName(req);
-    if (!currentAccount) return res.json([]);
-    posts = posts.filter(p => p.author && p.author.toLowerCase() === currentAccount.toLowerCase());
-  }
+    const { query, searchType, category, userOnly } = req.query;
 
-  if (category) {
-    posts = posts.filter(p => p.category.toLowerCase() === category.toLowerCase());
-  }
+    if (userOnly === 'true') {
+      const currentAccount = await getAccountName(req);
 
-  if (query) {
-    const q = query.toLowerCase();
-    posts = posts.filter(p => {
-      if (searchType === 'author') return p.author.toLowerCase().includes(q);
-      if (searchType === 'title') return p.title.toLowerCase().includes(q);
-      return (
-        p.title.toLowerCase().includes(q) ||
-        p.author.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q) ||
-        p.content.toLowerCase().includes(q)
+      if (!currentAccount) {
+        return res.json([]);
+      }
+
+      posts = posts.filter(
+        post =>
+          post.author &&
+          post.author.toLowerCase() === currentAccount.toLowerCase()
       );
-    });
-  }
+    }
 
-  res.json(posts);
+    if (category) {
+      posts = posts.filter(
+        post =>
+          post.category &&
+          post.category.toLowerCase() === category.toLowerCase()
+      );
+    }
+
+    if (query) {
+      const q = query.toLowerCase();
+
+      posts = posts.filter(post => {
+        if (searchType === 'author') {
+          return post.author?.toLowerCase().includes(q);
+        }
+
+        if (searchType === 'title') {
+          return post.title?.toLowerCase().includes(q);
+        }
+
+        return (
+          post.title?.toLowerCase().includes(q) ||
+          post.author?.toLowerCase().includes(q) ||
+          post.category?.toLowerCase().includes(q) ||
+          post.content?.toLowerCase().includes(q)
+        );
+      });
+    }
+
+    res.json(posts);
+  } catch (error) {
+    console.error('Error loading posts:', error);
+    res.status(500).json({ error: 'Failed to load posts' });
+  }
 });
 
 // GET current account endpoint
@@ -87,142 +108,226 @@ router.get('/api/current-user', (req, res) => {
 });
 
 // POST(create) post
-router.post('/api/posts', (req, res) => {
-  const accountName = getAccountName(req);
+router.post('/api/posts', async (req, res) => {
+  try {
+    const accountName = await getAccountName(req);
 
-  if (!accountName) {
-    return res.status(401).json({ error: "Please sign in to create a post." });
+    if (!accountName) {
+      return res.status(401).json({
+        error: 'Please sign in to create a post.'
+      });
+    }
+
+    const {
+      title,
+      category,
+      imageUrl,
+      secondaryImage,
+      content,
+      summary
+    } = req.body;
+
+    const newPost = await Post.create({
+      id: `post-${Date.now()}`,
+      title,
+      author: accountName,
+      dateAdded: new Date().toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      }),
+      category,
+      categoryIcon: getCategoryIcon(category),
+      summary:
+        summary ||
+        (content.length > 80
+          ? content.substring(0, 80) + '...'
+          : content),
+      content,
+      imageUrl:
+        imageUrl || 'https://via.placeholder.com/600x338',
+      secondaryImage: secondaryImage || '',
+      comments: []
+    });
+
+    res.status(201).json(newPost);
+  } catch (error) {
+    console.error('Error creating post:', error);
+
+    res.status(500).json({
+      error: 'Failed to create post'
+    });
   }
-
-  const posts = loadPosts();
-  const { title, category, imageUrl, secondaryImage, content, summary } = req.body;
-
-  const newPost = {
-    id: `post-${Date.now()}`,
-    title,
-    author: accountName,
-    dateAdded: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-    category,
-    categoryIcon: getCategoryIcon(category),
-    summary: summary || (content.length > 80 ? content.substring(0, 80) + '...' : content),
-    content,
-    imageUrl: imageUrl || "https://via.placeholder.com/600x338",
-    secondaryImage: secondaryImage || "",
-    comments: []
-  };
-
-  posts.unshift(newPost);
-  savePosts(posts);
-  res.status(201).json(newPost);
 });
 
 // PUT(edit) post
-router.put('/api/posts/:id', (req, res) => {
-  const accountName = getAccountName(req);
-  const posts = loadPosts();
-  const idx = posts.findIndex(p => p.id === req.params.id);
+router.put('/api/posts/:id', async (req, res) => {
+  try {
+    const accountName = await getAccountName(req);
 
-  if (idx === -1) return res.status(404).json({ error: "Post not found" });
+    if (!accountName) {
+      return res.status(401).json({
+        error: 'Please sign in to edit a post.'
+      });
+    }
 
-  if (posts[idx].author.toLowerCase() !== accountName.toLowerCase()) {
-    return res.status(403).json({ error: "You can only edit your own posts." });
+    const post = await Post.findOne({
+      id: req.params.id
+    });
+
+    if (!post) {
+      return res.status(404).json({
+        error: 'Post not found'
+      });
+    }
+
+    if (
+      !post.author ||
+      post.author.toLowerCase() !== accountName.toLowerCase()
+    ) {
+      return res.status(403).json({
+        error: 'You can only edit your own posts.'
+      });
+    }
+
+    const {
+      title,
+      category,
+      imageUrl,
+      secondaryImage,
+      content,
+      summary
+    } = req.body;
+
+    post.title = title || post.title;
+    post.category = category || post.category;
+
+    if (category) {
+      post.categoryIcon = getCategoryIcon(category);
+    }
+
+    post.imageUrl = imageUrl || post.imageUrl;
+
+    if (secondaryImage !== undefined) {
+      post.secondaryImage = secondaryImage;
+    }
+
+    post.content = content || post.content;
+
+    if (summary !== undefined) {
+      post.summary = summary;
+    }
+
+    await post.save();
+
+    res.json(post);
+  } catch (error) {
+    console.error('Error editing post:', error);
+
+    res.status(500).json({
+      error: 'Failed to edit post'
+    });
   }
-
-  const { title, category, imageUrl, secondaryImage, content, summary } = req.body;
-
-  posts[idx] = {
-    ...posts[idx],
-    title: title || posts[idx].title,
-    category: category || posts[idx].category,
-    categoryIcon: category ? getCategoryIcon(category) : posts[idx].categoryIcon,
-    imageUrl: imageUrl || posts[idx].imageUrl,
-    secondaryImage: secondaryImage !== undefined ? secondaryImage : posts[idx].secondaryImage,
-    content: content || posts[idx].content,
-    summary: summary !== undefined ? summary : posts[idx].summary
-  };
-
-  savePosts(posts);
-  res.json(posts[idx]);
 });
 
 // DELETE post
-router.delete('/api/posts/:id', (req, res) => {
-  const accountName = getAccountName(req);
+router.delete('/api/posts/:id', async (req, res) => {
+  try {
+    const accountName = await getAccountName(req);
 
-  if (!accountName) {
-    return res.status(401).json({
-      error: "Please sign in to delete a post."
+    if (!accountName) {
+      return res.status(401).json({
+        error: 'Please sign in to delete a post.'
+      });
+    }
+
+    const post = await Post.findOne({
+      id: req.params.id
+    });
+
+    if (!post) {
+      return res.status(404).json({
+        error: 'Post not found'
+      });
+    }
+
+    const currentUser = await User.findOne({
+      $or: [
+        { username: accountName },
+        { name: accountName },
+        { email: accountName }
+      ]
+    });
+
+    const isAdmin =
+      currentUser &&
+      String(currentUser.role).toLowerCase() === 'admin';
+
+    const isOwner =
+      post.author &&
+      post.author.toLowerCase() === accountName.toLowerCase();
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({
+        error: 'You can only delete your own posts.'
+      });
+    }
+
+    await Post.deleteOne({
+      id: req.params.id
+    });
+
+    res.json({
+      success: true,
+      message: 'Post deleted'
+    });
+  } catch (error) {
+    console.error('Error deleting post:', error);
+
+    res.status(500).json({
+      error: 'Failed to delete post'
     });
   }
-
-  let posts = loadPosts();
-  const post = posts.find(
-    p => p.id === req.params.id
-  );
-
-  if (!post) {
-    return res.status(404).json({
-      error: "Post not found"
-    });
-  }
-
-  /* check user role */
-  const currentUser = users.find(user => {
-    const username =
-      user.username ||
-      user.name ||
-      user.email;
-
-    return (
-      username &&
-      username.toLowerCase() ===
-      accountName.toLowerCase()
-    );
-  });
-
-  /* admin can delete anyone post  */
-  const isAdmin =
-    currentUser &&
-    String(currentUser.role).toLowerCase() === 'admin';
-
-  const filteredPosts =
-    posts.filter(
-      p => p.id !== req.params.id
-    );
-
-  savePosts(filteredPosts);
-  return res.json({
-    success: true,
-    message: "Post deleted"
-  });
 });
 
 // POST comment
-router.post('/api/posts/:id/comments', (req, res) => {
-  const accountName = getAccountName(req) || "Guest";
-  const posts = loadPosts();
-  const post = posts.find(p => p.id === req.params.id);
+router.post('/api/posts/:id/comments', async (req, res) => {
+  try {
+    const accountName = (await getAccountName(req)) || 'Guest';
 
-  if (!post) return res.status(404).json({ error: "Post not found" });
+    const post = await Post.findOne({
+      id: req.params.id
+    });
 
-  const newComment = {
-    id: `c-${Date.now()}`,
-    author: accountName,
-    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-    text: req.body.text
-  };
+    if (!post) {
+      return res.status(404).json({
+        error: 'Post not found'
+      });
+    }
 
-  post.comments.push(newComment);
-  savePosts(posts);
-  res.status(201).json(newComment);
+    const newComment = {
+      id: `c-${Date.now()}`,
+      author: accountName,
+      date: new Date().toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      }),
+      text: req.body.text
+    };
+
+    post.comments.push(newComment);
+
+    await post.save();
+
+    res.status(201).json(newComment);
+  } catch (error) {
+    console.error('Error adding comment:', error);
+
+    res.status(500).json({
+      error: 'Failed to add comment'
+    });
+  }
 });
 
-router.get('/api/posts/:id', (req, res) => {
-  const posts = loadPosts();
-  const post = posts.find(p => p.id === req.params.id);
-  if (!post) return res.status(404).json({ error: "Post not found" });
-  res.json(post);
-});
-
-loadPosts();
 module.exports = router;
