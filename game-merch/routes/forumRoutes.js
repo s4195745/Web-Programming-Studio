@@ -83,6 +83,7 @@ router.post('/api/forum/threads', upload.array('thread_image', 5), async (req, r
             content: thread_content,
             images: images,
             author: req.session.user.username,
+            authorId: req.session.user.id,
             pinned: false,
             hidden: false,
             replies: []
@@ -99,13 +100,18 @@ router.post('/api/forum/threads', upload.array('thread_image', 5), async (req, r
 //Reply to a thread
 router.post('/api/forum/threads/:id/reply', async (req, res) => {
     try {
-        const { reply_author, reply_content } = req.body;
-        if (!reply_author || !reply_content) {
-            return res.status(400).json({ error: 'Name and reply content are required.' });
+        if (!req.session || !req.session.user) {
+            return res.status(401).json({ error: 'You must be logged in to reply.' });
+        }
+
+        const { reply_content } = req.body;
+        if (!reply_content || reply_content.trim()) {
+            return res.status(400).json({ error: 'Reply content is required.' });
         }
 
         const newReply = {
-            author: reply_author,
+            author: req.session.user.username,
+            authorId: req.session.user.id,
             content: reply_content,
             timestamp: new Date().toISOString().slice(0, 16)
         };
@@ -129,9 +135,17 @@ router.post('/api/forum/threads/:id/reply', async (req, res) => {
 // Edit - save changed
 router.post('/api/forum/threads/:id', upload.array('thread_image', 5), async (req, res) => {
     try {
+        if (!req.session || !req.session.user) {
+            return res.status(401).json({ error: 'Please log in first.' });
+        }
+
         const thread = await Thread.findById(req.params.id);
         if (!thread) {
             return res.status(404).json({ error: 'Thread not found' });
+        }
+
+        if (thread.authorId !== Number(req.session.user.id)) {
+            return res.status(403).json({ error: 'You can only edit your own posts.' });
         }
 
         const { thread_title, thread_content } = req.body;
@@ -167,10 +181,7 @@ router.post('/api/forum/thread/:id/delete', async (req, res) => {
             return res.status(401).json({ error: 'User account not found.' });
         }
 
-        const threadAuthor = String(thread.author || '').trim().toLowerCase();
-        const currentUsername = String(freshUser.username || '').trim().toLowerCase();
-
-        if (threadAuthor !== currentUsername) {
+        if (thread.authorId !== freshUser.id) {
             return res.status(403).json({ error: 'You can only delete your own posts.' });
         }
 

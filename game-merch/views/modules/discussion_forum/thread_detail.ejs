@@ -27,12 +27,11 @@
 
             <section class="reply_form_section">
                 <h3 class="reply_from_heading">Leave a Reply</h3>
+                <p class="status-msg" id="reply_login_notice" style="display: none;">
+                    Please <a href="/login">log in</a> to post a reply.
+                </p>
                 <form class="reply_form" id="reply_form">
-                     <div class="form_group">
-                        <label for="reply_author_input">Your name</label>
-                        <input type="text" id="reply_author_input" name="reply_author" placeholder="e.g. Minh Tran" required>
-                     </div>
-                     <div class="form_group">
+                    <div class="form_group">
                         <label for="reply_content_input">Your reply</label>
                         <textarea id="reply_content_input" name="reply_content" rows="4" placeholder="Write your reply here..." required></textarea>
                      </div>

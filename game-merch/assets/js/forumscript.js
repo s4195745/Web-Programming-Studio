@@ -11,7 +11,9 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function getCurrentUser() {
+        const idRaw = sessionStorage.getItem('userId');
         return {
+            userId: idRaw !== null ? Number(idRaw) : null,
             username: sessionStorage.getItem('username') || null,
             role: (sessionStorage.getItem('userRole') || '').toLowerCase()
         };
@@ -119,8 +121,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function buildThreadCardHtml(t, currentUser) {
-        const isOwner = currentUser.username &&
-            currentUser.username.trim().toLowerCase() === String(t.author || '').trim().toLowerCase();
+        const isOwner = currentUser.userId !== null && currentUser.userId === t.authorId;
         const isAdmin = currentUser.role === 'admin';
         const threadId = t._id;
 
@@ -274,8 +275,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function renderThreadDetail(thread) {
         const currentUser = getCurrentUser();
-        const isOwner = currentUser.username && thread.author &&
-            currentUser.username.trim().toLowerCase() === String(thread.author).trim().toLowerCase();
+        const isOwner = currentUser.userId !== null && currentUser.userId === thread.authorId;
         const threadId = thread._id;
 
         const optionsMenuHtml = (!thread.pinned && isOwner) ? `
@@ -374,6 +374,14 @@ document.addEventListener("DOMContentLoaded", function() {
         renderRelatedProducts();
 
         const replyForm = document.getElementById('reply_form');
+        const replyLoginNotice = document.getElementById('reply_login_notice');
+        const currentUserForReply = getCurrentUser();
+
+         if (!currentUserForReply.userId) {
+            if (replyForm) replyForm.style.display = 'none';
+            if (replyLoginNotice) replyLoginNotice.style.display = 'block';
+        }
+
         if (replyForm) {
             replyForm.addEventListener('submit', function (e) {
                 e.preventDefault();

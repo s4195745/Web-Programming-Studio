@@ -6,6 +6,19 @@ const Thread = require('./models/thread.js');
 const mockData = require('./data/mockDB.js'); 
 const threadsData = mockData.threads || []; 
 
+const KNOWN_USERS = [
+  { userId: 1, username: 'Nguyen The Chinh' },
+  { userId: 2, username: 'Admin' },
+  { userId: 3, username: 'ThanhHo' },
+];
+
+function resolveAuthorId(authorName) {
+  const match = KNOWN_USERS.find(
+    u => String(u.username || '').trim().toLocaleLowerCase() === String(authorName || '').trim().toLocaleLowerCase()
+  );
+  return match ? match.userId : 0;
+}
+
 async function seedDatabase() {
   try {
     console.log('Connecting to MongoDB Atlas...');
@@ -21,7 +34,14 @@ async function seedDatabase() {
     // Push the data into the database
     if (threadsData.length > 0) {
       // Format the threads data to exclude the 'id' field before inserting into MongoDB
-      const formattedThreads = threadsData.map(({ id, ...rest }) => rest);
+      const formattedThreads = threadsData.map(({ id, replies, ...rest }) => ({
+        ...rest,
+        authorId: resolveAuthorId(rest.author),
+        replies: (replies || []).map(r => ({
+          ...r,
+          authorId: resolveAuthorId(r.author),
+        })),
+      }));
       await Thread.insertMany(formattedThreads);
       console.log(`Successfully seeded ${formattedThreads.length} threads!`);
     } else {
