@@ -88,6 +88,8 @@ router.post('/api/forum/threads', upload.array('thread_image', 5), async (req, r
             replies: []
         });
 
+        await newThread.save();
+
         res.status(201).json({ message: 'Thread created successfully', thread: newThread });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -108,7 +110,7 @@ router.post('/api/forum/threads/:id/reply', async (req, res) => {
             timestamp: new Date().toISOString().slice(0, 16)
         };
 
-        const updatedThread = await Thread.findOneAndUpdate(
+        const updatedThread = await Thread.findByIdAndUpdate(
             req.params.id,
             { $push: { replies: newReply } },
             { new: true }
@@ -149,7 +151,7 @@ router.post('/api/forum/threads/:id', upload.array('thread_image', 5), async (re
 });
 
 // SOFT-DELETE (confirm author)
-router.post('/api/forum/:id/delete', async (req, res) => {
+router.post('/api/forum/thread/:id/delete', async (req, res) => {
     try {
         if (!req.session || !req.session.user) {
             return res.status(401).json({ error: 'Please log in first.' });

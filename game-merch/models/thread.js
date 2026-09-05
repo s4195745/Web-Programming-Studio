@@ -8,7 +8,7 @@ const replySchema = new mongoose.Schema({
 
 const threadSchema = new mongoose.Schema({
   title: { type: String, required: true },
-  content: { type: String, required: true },
+  content: { type: String, default: '' },
   author: { type: String, required: true },
   images: [{ type: String }],
   pinned: { type: Boolean, default: false },

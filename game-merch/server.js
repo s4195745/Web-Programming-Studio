@@ -1,4 +1,6 @@
 const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+const mongoose = require('mongoose');
 const express = require('express');
 const app = express();
 const PORT = 3000;
@@ -62,9 +64,17 @@ app.use('/api', reviewRoutes);
 app.set('views', path.join(__dirname, 'views'));
 
 // --- START SERVER ---
-app.listen(PORT, () => { 
-    console.log(`Server is running at http://localhost:${PORT}`); 
-});
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => {
+        console.log('MongoDB connected successfully!');
+        app.listen(PORT, () => {
+            console.log(`Server is running on http://localhost:${PORT}`);
+        });
+    })
+    .catch((error) => {
+        console.error('Error connecting to MongoDB:', error);
+        process.exit(1);
+    });
 
 // Reply button 
 app.use(express.urlencoded({ extended: true }));

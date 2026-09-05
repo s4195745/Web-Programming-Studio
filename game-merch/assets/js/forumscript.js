@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <p>${escapeHtml(reply.content)}</p>
                 </div>
                 <div class="reply_footer">
-                    <input type="checkbox" id="reply-like-${threadId}-${index}" class="reply_toggle_checkbox" hidden>
+                    <input type="checkbox" id="reply-like-${threadId}-${index}" class="reaction_toggle_checkbox" hidden>
                     <label for="reply-like-${threadId}-${index}" class="reaction_btn">
                         <i class="ri-heart-line icon_outline"></i>
                         <i class="ri-heart-fill icon_filled"></i>
@@ -179,10 +179,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
 
                 <div class="card_footer">
-                    <input type="checkbox" id="like_thread_${threadId}" class="thread_toggle_checkbox" hidden>
+                    <input type="checkbox" id="like_thread_${threadId}" class="reaction_toggle_checkbox" hidden>
                     <label for="like_thread_${threadId}" class="reaction_btn">
                         <i class="ri-heart-line icon_outline"></i>
-                        <i class="ri-heart-fill icon-filled"></i>
+                        <i class="ri-heart-fill icon_filled"></i>
                     </label>
                     <a href="/forum/${threadId}" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
                 </div>

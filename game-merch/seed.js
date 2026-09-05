@@ -1,7 +1,7 @@
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 const mongoose = require('mongoose');
-const Thread = require('../models/thread.js');
+const Thread = require('./models/thread.js');
 
 const mockData = require('./data/mockDB.js'); 
 const threadsData = mockData.threads || []; 
