@@ -1,14 +1,18 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcrypt');
 const User = require('../models/user');
-const { hashPassword } = require('../data/mockDB'); // Reusing your existing hashing logic
 
-// REGISTER
+// REGISTER (CREATE)
 router.post('/register', async (req, res) => {
     const { username, email, password, description } = req.body;
 
-    if (!username || !email || !password || !description) return res.status(400).json({ error: "All fields are required!" });
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: "Invalid email format!" });
+    if (!username || !email || !password || !description) {
+        return res.status(400).json({ error: "All fields are required!" });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({ error: "Invalid email format!" });
+    }
     if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password)) {
         return res.status(400).json({ error: "Password must be at least 8 characters with 1 letter and 1 number." });
     }
@@ -17,10 +21,14 @@ router.post('/register', async (req, res) => {
         const existingUser = await User.findOne({ email });
         if (existingUser) return res.status(409).json({ error: "Email is already registered." });
 
+        // Generate cryptographic salt and hash the password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
         await User.create({ 
             username, 
             email, 
-            password: hashPassword(password), 
+            password: hashedPassword, 
             description, 
             role: "customer" 
         });
@@ -30,44 +38,51 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// LOGIN
+// LOGIN (READ/AUTHENTICATE)
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: "Email and password are required!" });
     
     try {
-        const hashedPassword = hashPassword(password);
-        const user = await User.findOne({ email, password: hashedPassword });
-        
-        if (user) {
-            if (user.isLocked) {
-                return res.status(403).json({ error: "Your account is locked. Please contact support." });
-            }
+        const user = await User.findOne({ email });
+        if (!user) return res.status(401).json({ error: "Invalid email or password." });
 
-            const token = "mock_token_" + Buffer.from(user.email + Date.now()).toString('base64');
-            user.token = token; 
-            
-            // This is the crucial fix: saving the active token to MongoDB Atlas
-            await user.save(); 
+        // Compare the plain text input against the hashed database password
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) return res.status(401).json({ error: "Invalid email or password." });
 
-            if (req.session) {
-                req.session.user = { id: user._id, email: user.email, role: user.role, username: user.username };
-            }
-            
-            return res.status(200).json({ 
-                message: "Login successful", 
-                token: token,
-                user: { id: user._id, email: user.email, role: user.role, username: user.username, description: user.description, avatar: user.avatar }
-            });
-        } else {
-            return res.status(401).json({ error: "Invalid email or password." });
+        if (user.isLocked) {
+            return res.status(403).json({ error: "Your account is locked. Please contact support." });
         }
+
+        // Generate and save a secure session token
+        const token = "secure_token_" + Buffer.from(user.email + Date.now()).toString('base64');
+        user.token = token; 
+        
+        await user.save(); 
+
+        if (req.session) {
+            req.session.user = { id: user._id, email: user.email, role: user.role, username: user.username };
+        }
+        
+        return res.status(200).json({ 
+            message: "Login successful", 
+            token: token,
+            user: { 
+                id: user._id, 
+                email: user.email, 
+                role: user.role, 
+                username: user.username, 
+                description: user.description, 
+                avatar: user.avatar 
+            }
+        });
     } catch (error) {
         res.status(500).json({ error: "Internal server error." });
     }
 });
 
-// PROFILE UPDATE
+// PROFILE UPDATE (UPDATE)
 router.put('/profile', async (req, res) => {
     const { currentEmail, token, newUsername, newEmail, newDescription, newAvatar } = req.body;
     if (!currentEmail || !token) return res.status(401).json({ error: "Authentication required." });
@@ -100,14 +115,17 @@ router.post('/verify-password', async (req, res) => {
     try {
         const user = await User.findOne({ email, token });
         if (!user) return res.status(401).json({ error: "Invalid session." });
-        if (user.password !== hashPassword(password)) return res.status(401).json({ error: "Incorrect current password." });
+
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) return res.status(401).json({ error: "Incorrect current password." });
+
         res.status(200).json({ message: "Verified." });
     } catch (error) {
         res.status(500).json({ error: "Internal server error." });
     }
 });
 
-// CHANGE PASSWORD
+// CHANGE PASSWORD (UPDATE)
 router.put('/change-password', async (req, res) => {
     const { email, token, newPassword } = req.body;
     if (!email || !token || !newPassword) return res.status(400).json({ error: "Missing required fields." });
@@ -117,7 +135,9 @@ router.put('/change-password', async (req, res) => {
         const user = await User.findOne({ email, token });
         if (!user) return res.status(401).json({ error: "Invalid session." });
 
-        user.password = hashPassword(newPassword);
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+        
         await user.save();
         res.status(200).json({ message: "Password updated successfully." });
     } catch (error) {
@@ -125,7 +145,7 @@ router.put('/change-password', async (req, res) => {
     }
 });
 
-// DELETE ACCOUNT
+// DELETE ACCOUNT (DELETE)
 router.delete('/account', async (req, res) => {
     const { email, token } = req.body;
     try {
