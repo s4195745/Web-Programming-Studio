@@ -6,14 +6,14 @@ const User = require('./models/user');
 async function fixAdmin() {
     await mongoose.connect(process.env.MONGODB_URI);
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash("Test123", salt);
+    const hashedPassword = await bcrypt.hash("AdminPassword1!", salt);
     
     await User.findOneAndUpdate(
-        { email: "Hothanh@gmail.com" },
-        { password: hashedPassword, role: "customer", isLocked: false }
+        { email: "admin@lootbox.comHothanh@gmail.com" },
+        { password: hashedPassword, role: "admin", isLocked: false }
     );
     
-    console.log("Admin password successfully reset to: Admin123!");
+    console.log("Admin password successfully reset to: AdminPassword1!");
     process.exit(0);
 }
 fixAdmin();
