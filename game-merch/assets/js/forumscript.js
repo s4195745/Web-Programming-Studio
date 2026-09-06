@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function getCurrentUser() {
         const idRaw = sessionStorage.getItem('userId');
         return {
-            userId: idRaw !== null ? Number(idRaw) : null,
+            userId: idRaw || null,
             username: sessionStorage.getItem('username') || null,
             role: (sessionStorage.getItem('userRole') || '').toLowerCase()
         };

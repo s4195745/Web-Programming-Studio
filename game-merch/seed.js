@@ -3,20 +3,20 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 const mongoose = require('mongoose');
 const Thread = require('./models/thread.js');
 
+
+const User = mongoose.model('User', new mongoose.Schema({
+  name: String,
+  username: String,
+}), 'users');
+
+// Load mock data from local file
 const mockData = require('./data/mockDB.js'); 
 const threadsData = mockData.threads || []; 
 
-const KNOWN_USERS = [
-  { userId: 1, username: 'Nguyen The Chinh' },
-  { userId: 2, username: 'Admin' },
-  { userId: 3, username: 'ThanhHo' },
-];
-
-function resolveAuthorId(authorName) {
-  const match = KNOWN_USERS.find(
-    u => String(u.username || '').trim().toLocaleLowerCase() === String(authorName || '').trim().toLocaleLowerCase()
-  );
-  return match ? match.userId : 0;
+// helper function to resolve author's ObjectId by matching name/username 
+function resolveAuthorId(authorName, userMap) {
+  const match = userMap.get(String(authorName || '').trim().toLocaleLowerCase());
+  return match ? match._id : null;
 }
 
 async function seedDatabase() {
@@ -27,21 +27,29 @@ async function seedDatabase() {
 
     // ======== FORUM MODULE =========
 
+    // Fetch existing users to build an in-memory lookup map 
+    const users = await User.find({}, '_id name username').lean();
+    const userMap = new Map();
+    users.forEach(user => {
+      if (user.name) userMap.set(user.name.trim().toLowerCase(), user);
+      if (user.username) userMap.set(user.username.trim().toLowerCase(), user);
+    });
+
     //Delete all forum data on DB to avoid duplicates when seeding
     await Thread.deleteMany({});
     console.log('Cleared existing threads in DB.');
 
-    // Push the data into the database
+    // Format threads: remove legacy 'id' and link actual author ObjectId
     if (threadsData.length > 0) {
-      // Format the threads data to exclude the 'id' field before inserting into MongoDB
       const formattedThreads = threadsData.map(({ id, replies, ...rest }) => ({
         ...rest,
-        authorId: resolveAuthorId(rest.author),
-        replies: (replies || []).map(r => ({
+        authorId: resolveAuthorId(rest.author, userMap),
+        replies: (replies || []).map(({ id: replyId, ...r }) => ({
           ...r,
-          authorId: resolveAuthorId(r.author),
+          authorId: resolveAuthorId(r.author, userMap),
         })),
       }));
+
       await Thread.insertMany(formattedThreads);
       console.log(`Successfully seeded ${formattedThreads.length} threads!`);
     } else {

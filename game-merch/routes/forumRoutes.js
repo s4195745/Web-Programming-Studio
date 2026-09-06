@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const {products, threads, users} = require('../data/mockDB.js');
 
 // Import models 
 const Thread = require('../models/thread.js');
+const User = require('../models/user.js');
+const Product = require('../models/product.js');
 
 //Set up multer for upload image (optional)
 const storage = multer.diskStorage({
@@ -60,7 +61,8 @@ router.get('/api/forum/threads/:id', async (req, res) => {
 //Get product list for sidebar
 router.get('/api/forum/related-products', async (req, res) => {
     try {
-        res.status(200).json(products);
+        const result = await Product.find({}).limit(3);
+        res.status(200).json(result);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -83,8 +85,7 @@ router.post('/api/forum/threads', upload.array('thread_image', 5), async (req, r
             content: thread_content,
             images: images,
             author: req.session.user.username,
-            authorId: req.session.user.id,
-            pinned: false,
+            authorId: String(req.session.user.id),
             hidden: false,
             replies: []
         });
@@ -105,28 +106,34 @@ router.post('/api/forum/threads/:id/reply', async (req, res) => {
         }
 
         const { reply_content } = req.body;
-        if (!reply_content || reply_content.trim()) {
+        if (!reply_content || !reply_content.trim()) {
             return res.status(400).json({ error: 'Reply content is required.' });
         }
 
         const newReply = {
             author: req.session.user.username,
-            authorId: req.session.user.id,
+            authorId: String(req.session.user.id),
             content: reply_content,
             timestamp: new Date().toISOString().slice(0, 16)
         };
 
-        const updatedThread = await Thread.findByIdAndUpdate(
-            req.params.id,
-            { $push: { replies: newReply } },
-            { new: true }
-        );
+        const thread = await Thread.findOne({
+            _id: req.params.id,
+            hidden: { $ne: true }
+        })
 
-        if (!updatedThread) {
+        if (!thread) {
             return res.status(404).json({ error: 'Thread not found' });
         }
 
-        res.status(201).json({ message: 'Reply posted successfully', reply: newReply, thread: updatedThread });
+        thread.replies.push(newReply);
+        await thread.save();
+        
+        res.status(201).json({
+            message: 'Reply posted successfully',
+            reply: newReply,
+            thread: thread
+        });
     } catch (error) {
         res.status(500).json({ error: 'Failed to post reply' + error.message });
     }
@@ -144,7 +151,7 @@ router.post('/api/forum/threads/:id', upload.array('thread_image', 5), async (re
             return res.status(404).json({ error: 'Thread not found' });
         }
 
-        if (thread.authorId !== Number(req.session.user.id)) {
+        if (String(thread.authorId) !== String(req.session.user.id)) {
             return res.status(403).json({ error: 'You can only edit your own posts.' });
         }
 
@@ -165,7 +172,7 @@ router.post('/api/forum/threads/:id', upload.array('thread_image', 5), async (re
 });
 
 // SOFT-DELETE (confirm author)
-router.post('/api/forum/thread/:id/delete', async (req, res) => {
+router.post('/api/forum/threads/:id/delete', async (req, res) => {
     try {
         if (!req.session || !req.session.user) {
             return res.status(401).json({ error: 'Please log in first.' });
@@ -176,12 +183,15 @@ router.post('/api/forum/thread/:id/delete', async (req, res) => {
             return res.status(404).json({ error: 'Thread not found' });
         }
 
-        const freshUser = users.find(u => u.id === Number(req.session.user.id));
+        const freshUser = await User.findById(req.session.user.id);
         if (!freshUser) {
             return res.status(401).json({ error: 'User account not found.' });
         }
+        if (freshUser.isLocked) {
+            return res.status(403).json({ error: 'Your account is locked. You cannot perform this action.' });
+        }
 
-        if (thread.authorId !== freshUser.id) {
+        if (String(thread.authorId) !== String(freshUser._id)) {
             return res.status(403).json({ error: 'You can only delete your own posts.' });
         }
 
@@ -201,9 +211,12 @@ router.post('/api/forum/threads/:id/admin-delete', async (req, res) => {
             return res.status(401).json({ error: 'Please log in first.' });
         }
 
-        const freshUser = users.find(u => u.id === Number(req.session.user.id));
+        const freshUser = await User.findById(req.session.user.id);
         if (!freshUser) {
             return res.status(401).json({ error: 'User account not found.' });
+        }
+        if (freshUser.isLocked) {
+            return res.status(403).json({ error: 'Your account is locked. You cannot perform this action.' });
         }
 
         const isAdmin = String(freshUser.role || '').trim().toLowerCase() === 'admin';
