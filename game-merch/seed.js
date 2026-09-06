@@ -1,21 +1,20 @@
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 const mongoose = require('mongoose');
-const Thread = require('./models/thread.js');
+const bcrypt = require('bcryptjs');
 
+const Product = require('./models/product');
+const User = require('./models/user');
+const Thread = require('./models/thread');
 
-const User = mongoose.model('User', new mongoose.Schema({
-  name: String,
-  username: String,
-}), 'users');
+const mockData = require('./data/mockDB.js');
+const products = mockData.products || [];
+const users = mockData.users || [];
+const threadsData = mockData.threads || [];
 
-// Load mock data from local file
-const mockData = require('./data/mockDB.js'); 
-const threadsData = mockData.threads || []; 
-
-// helper function to resolve author's ObjectId by matching name/username 
+// Helper function to resolve author's ObjectId by matching name/username
 function resolveAuthorId(authorName, userMap) {
-  const match = userMap.get(String(authorName || '').trim().toLocaleLowerCase());
+  const match = userMap.get(String(authorName || '').trim().toLowerCase());
   return match ? match._id : null;
 }
 
@@ -25,17 +24,39 @@ async function seedDatabase() {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('Connected successfully!');
 
-    // ======== FORUM MODULE =========
+    // ======== 1. USERS & PRODUCTS MODULE ========
+    await Product.deleteMany({});
+    await User.deleteMany({});
 
-    // Fetch existing users to build an in-memory lookup map 
-    const users = await User.find({}, '_id name username').lean();
+    const cleanProducts = products.map(({ id, ...rest }) => rest);
+
+    // Asynchronously hash all mock user passwords before insertion
+    const cleanUsers = await Promise.all(
+      users.map(async ({ id, password, ...rest }) => {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password || '123456', salt);
+        return { ...rest, password: hashedPassword };
+      })
+    );
+
+    if (cleanProducts.length > 0) {
+      await Product.insertMany(cleanProducts);
+    }
+
+    let insertedUsers = [];
+    if (cleanUsers.length > 0) {
+      insertedUsers = await User.insertMany(cleanUsers);
+    }
+    console.log('Users and Products seeded successfully with hashed passwords!');
+
+    // ======== 2. FORUM MODULE ========
+    // Build an in-memory lookup map directly from the newly seeded users
     const userMap = new Map();
-    users.forEach(user => {
+    insertedUsers.forEach((user) => {
       if (user.name) userMap.set(user.name.trim().toLowerCase(), user);
       if (user.username) userMap.set(user.username.trim().toLowerCase(), user);
     });
 
-    //Delete all forum data on DB to avoid duplicates when seeding
     await Thread.deleteMany({});
     console.log('Cleared existing threads in DB.');
 
@@ -56,13 +77,13 @@ async function seedDatabase() {
       console.log('No thread data found to seed.');
     }
 
-    // ========== END OF FORUM MODULE =========
-
-    mongoose.connection.close();
+    // ======== FINISH ========
+    await mongoose.connection.close();
+    console.log('All modules seeded successfully!');
     process.exit(0);
   } catch (error) {
     console.error('Error while seeding database:', error);
-    mongoose.connection.close();
+    await mongoose.connection.close();
     process.exit(1);
   }
 }

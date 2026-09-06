@@ -1,51 +1,47 @@
-// views/modules/admin/auth.js
+const User = require('../models/user');
 
-const { users } = require('../data/mockDB');
+// Get authenticated user from session or token
+async function getAuthenticatedUser(req) {
+    try {
+        if (req.session && req.session.user) {
+            return await User.findById(req.session.user.id);
+        }
 
-// user check
-function getAuthenticatedUser(req) {
-    if (req.session && req.session.user) {
-        return users.find(u => u.id === req.session.user.id);
+        const authHeader = req.headers.authorization;
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            const token = authHeader.split(' ')[1];
+            return await User.findOne({ token: token });
+        }
+        return null;
+    } catch (error) {
+        console.error("Auth Middleware Error:", error);
+        return null;
     }
-
-    const authHeader = req.headers.authorization;
-
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-        const token = authHeader.split(' ')[1];
-        return users.find(u => u.token === token);
-    }
-
-    return null;
 }
 
-// check if admin
-function isAuthenticated(req, res, next) {
-    const currentUser = getAuthenticatedUser(req);
+// Check if user is logged in and active
+async function isAuthenticated(req, res, next) {
+    const currentUser = await getAuthenticatedUser(req);
 
     if (!currentUser) {
-        return res.status(401).json({
-            error: "Unauthorized access"
-        });
+        return res.status(401).json({ error: "Unauthorized access" });
     }
 
-    // prevent locked accounts from accessing  
+    // Prevent locked accounts from accessing the application
     if (currentUser.isLocked === true) {
         if (req.session) {
             req.session.destroy(() => {});
         }
-
-        return res.status(403).json({
-            error: "Account is locked"
-        });
+        return res.status(403).json({ error: "Account is locked" });
     }
 
     req.currentUser = currentUser;
     return next();
 }
 
-// force only admin access
-function requireAdmin(req, res, next) {
-    const currentUser = req.currentUser || getAuthenticatedUser(req);
+// Force only admin access
+async function requireAdmin(req, res, next) {
+    const currentUser = req.currentUser || await getAuthenticatedUser(req);
 
     if (
         currentUser &&
@@ -56,9 +52,7 @@ function requireAdmin(req, res, next) {
         return next();
     }
 
-    return res.status(403).json({
-        error: "Forbidden: Admin privileges required"
-    });
+    return res.status(403).json({ error: "Forbidden: Admin privileges required" });
 }
 
 module.exports = {
