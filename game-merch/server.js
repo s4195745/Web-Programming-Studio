@@ -23,17 +23,16 @@ app.use(session({
 }));
 
 // ejs views current user 
-app.use((req, res, next) => {
+const User = require('./models/user');
+app.use(async (req, res, next) => {
     res.locals.currentUser = null;
-
     if (req.session && req.session.user) {
-        const { users } = require('./data/mockDB');
-
-        res.locals.currentUser = users.find(
-            user => user.id === req.session.user.id
-        ) || null;
+        try {
+            res.locals.currentUser = await User.findById(req.session.user.id);
+        } catch (err) {
+            console.error("Session lookup error:", err);
+        }
     }
-
     next();
 });
 

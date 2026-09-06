@@ -1,9 +1,8 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs'); 
 const Product = require('./models/product');
 const User = require('./models/user');
-const Blog = require('./models/blog');
-const blogs = require('./data/posts.json');
 const { products, users } = require('./data/mockDB');
 
 async function seedDatabase() {
@@ -13,17 +12,20 @@ async function seedDatabase() {
 
         await Product.deleteMany({});
         await User.deleteMany({});
-        await Blog.deleteMany({});
 
         const cleanProducts = products.map(({ id, ...rest }) => rest);
-        const cleanUsers = users.map(({ id, ...rest }) => rest);
-        const cleanBlogs = blogs.map(blog => ({...blog, comments: blog.comments || [] }));
+        
+        // Asynchronously hash all mock user passwords before insertion
+        const cleanUsers = await Promise.all(users.map(async ({ id, password, ...rest }) => {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
+            return { ...rest, password: hashedPassword };
+        }));
 
         await Product.insertMany(cleanProducts);
         await User.insertMany(cleanUsers);
-        await Blog.insertMany(cleanBlogs);
 
-        console.log('Database seeded successfully!');
+        console.log('Database seeded successfully with hashed passwords!');
         process.exit(0);
     } catch (error) {
         console.error('Seeding error:', error);
