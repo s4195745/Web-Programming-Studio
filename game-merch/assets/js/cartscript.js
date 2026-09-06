@@ -7,97 +7,84 @@ document.addEventListener('DOMContentLoaded', () => {
     const isConfirmationPage = document.querySelector(".confirmation-page");
 
     function setupDynamicAdminPanel() {
-  const user = JSON.parse(sessionStorage.getItem('user'));
-  const adminToggleBtn = document.getElementById('admin-panel-toggle-btn');
-  const adminSidePanel = document.getElementById('admin-side-panel');
-  const userTableBody = document.querySelector('#admin-users-table tbody');
+        const user = JSON.parse(sessionStorage.getItem('user'));
+        const adminToggleBtn = document.getElementById('admin-panel-toggle-btn');
+        const adminSidePanel = document.getElementById('admin-side-panel');
+        const userTableBody = document.querySelector('#admin-users-table tbody');
 
-  // Hide admin panel elements by default if user is not an admin
-  if (!user || user.role !== 'admin') {
-    if (adminToggleBtn) adminToggleBtn.style.display = 'none';
-    if (adminSidePanel) adminSidePanel.style.display = 'none';
-    return;
-  }
-
-  // User is Admin: Show the toggle button
-  if (adminToggleBtn) {
-    adminToggleBtn.style.display = 'block';
-  }
-
-  // Toggle drawer open/close
-  window.toggleAdminPanel = function () {
-    if (adminSidePanel) {
-      adminSidePanel.classList.toggle('active');
-      if (adminSidePanel.classList.contains('active')) {
-        loadAdminUsers();
-      }
-    }
-  };
-
-  // Fetch users dynamically from admin API
-  async function loadAdminUsers() {
-    if (!userTableBody) return;
-    userTableBody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
-
-    try {
-      const response = await fetch('/api/admin/users', {
-        headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+        if (!user || user.role !== 'admin') {
+            if (adminToggleBtn) adminToggleBtn.style.display = 'none';
+            if (adminSidePanel) adminSidePanel.style.display = 'none';
+            return;
         }
-      });
 
-      if (!response.ok) throw new Error('Failed to load users');
+        if (adminToggleBtn) adminToggleBtn.style.display = 'block';
 
-      const users = await response.json();
-      userTableBody.innerHTML = '';
+        window.toggleAdminPanel = function () {
+            if (adminSidePanel) {
+                adminSidePanel.classList.toggle('active');
+                if (adminSidePanel.classList.contains('active')) loadAdminUsers();
+            }
+        };
 
-      users.forEach(u => {
-        const tr = document.createElement('tr');
-        const isLocked = u.isLocked;
+        async function loadAdminUsers() {
+            if (!userTableBody) return;
+            userTableBody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
 
-        tr.innerHTML = `
-          <td>${u.id}</td>
-          <td>${u.username} (${u.email})</td>
-          <td><span class="status-badge ${isLocked ? 'locked' : 'active'}">${isLocked ? 'Locked' : 'Active'}</span></td>
-          <td>
-            <button class="btn-action ${isLocked ? 'unlock' : 'lock'}" onclick="toggleUserLock(${u.id}, ${isLocked})">
-              ${isLocked ? 'Unlock' : 'Lock'}
-            </button>
-          </td>
-        `;
-        userTableBody.appendChild(tr);
-      });
-    } catch (err) {
-      console.error(err);
-      userTableBody.innerHTML = '<tr><td colspan="4" class="error">Failed to load user list.</td></tr>';
-    }
-  }
+            try {
+                const response = await fetch('/api/admin/users', {
+                    headers: { 'Authorization': `Bearer ${sessionStorage.getItem('token')}` }
+                });
+                if (!response.ok) throw new Error('Failed to load users');
 
-  // Lock/Unlock API call handler
-  window.toggleUserLock = async function (userId, currentlyLocked) {
-    const action = currentlyLocked ? 'unlock' : 'lock';
-    try {
-      const response = await fetch(`/api/admin/users/${userId}/${action}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                const users = await response.json();
+                userTableBody.innerHTML = '';
+
+                users.forEach(u => {
+                    const tr = document.createElement('tr');
+                    const isLocked = u.isLocked;
+
+                    tr.innerHTML = `
+                        <td>${u.id}</td>
+                        <td>${u.username} (${u.email})</td>
+                        <td><span class="status-badge ${isLocked ? 'locked' : 'active'}">${isLocked ? 'Locked' : 'Active'}</span></td>
+                        <td>
+                            <button class="btn-action ${isLocked ? 'unlock' : 'lock'}" onclick="toggleUserLock('${u.id}', ${isLocked})">
+                                ${isLocked ? 'Unlock' : 'Lock'}
+                            </button>
+                        </td>
+                    `;
+                    userTableBody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error(err);
+                userTableBody.innerHTML = '<tr><td colspan="4" class="error">Failed to load user list.</td></tr>';
+            }
         }
-      });
 
-      if (response.ok) {
-        loadAdminUsers(); // Refresh dynamic list
-      } else {
-        alert(`Failed to ${action} user.`);
-      }
-    } catch (err) {
-      console.error(err);
+        window.toggleUserLock = async function (userId, currentlyLocked) {
+            const action = currentlyLocked ? 'unlock' : 'lock';
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/${action}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                    }
+                });
+
+                if (response.ok) {
+                    loadAdminUsers();
+                } else {
+                    alert(`Failed to ${action} user.`);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        };
     }
-  };
-}
 
-// Call on startup
-setupDynamicAdminPanel();
+    setupDynamicAdminPanel();
 
     // --- GLOBAL SEARCH & FILTER STATE ---
     let currentCategoryFilter = "all";
@@ -106,9 +93,7 @@ setupDynamicAdminPanel();
     // --- TOAST NOTIFICATION ---
     function showToast(message) {
         const existingToast = document.querySelector(".toast-message");
-        if (existingToast) {
-            existingToast.remove();
-        }
+        if (existingToast) existingToast.remove();
 
         const toast = document.createElement("div");
         toast.className = "toast-message";
@@ -116,7 +101,6 @@ setupDynamicAdminPanel();
         document.body.appendChild(toast);
 
         setTimeout(() => toast.classList.add("show"), 10);
-
         setTimeout(() => {
             toast.classList.remove("show");
             setTimeout(() => toast.remove(), 300);
@@ -155,7 +139,6 @@ setupDynamicAdminPanel();
             displayProducts();
         } else {
             sessionStorage.setItem("pendingSearch", currentSearchQuery);
-            // FIX: Removed redundant if/else pathing
             window.location.href = "/shop";
         }
     }
@@ -186,12 +169,26 @@ setupDynamicAdminPanel();
         return parseFloat(priceVal.toString().replace(/[^0-9.-]+/g, ""));
     }
 
-    // --- CART COUNTER IN NAVBAR ---
-    function updateCartCount() {
-        const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
-        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-        const cartIcons = document.querySelectorAll(".cart-icon");
+    // --- CART COUNTER (PERSISTENT CRUD READ) ---
+    async function updateCartCount() {
+        const token = sessionStorage.getItem("token");
+        let totalItems = 0;
         
+        if (token) {
+            try {
+                const res = await fetch('/api/cart', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const cart = await res.json();
+                    totalItems = (cart.items || []).reduce((sum, item) => sum + item.quantity, 0);
+                }
+            } catch (e) {
+                console.error("Failed to fetch cart count:", e);
+            }
+        }
+
+        const cartIcons = document.querySelectorAll(".cart-icon");
         cartIcons.forEach(cartIcon => {
             let countSpan = cartIcon.querySelector(".cart-item-count");
             if (!countSpan) {
@@ -199,7 +196,6 @@ setupDynamicAdminPanel();
                 countSpan.classList.add("cart-item-count");
                 cartIcon.appendChild(countSpan);
             }
-            // FIX: Removed inline CSS, utilizing the existing 'active' class
             if (totalItems > 0) {
                 countSpan.textContent = totalItems;
                 countSpan.classList.add("active");
@@ -234,7 +230,7 @@ setupDynamicAdminPanel();
         displayConfirmation();
     }
 
-    // --- PRODUCT LIST & FILTERING (INDEX PAGE) ---
+    // --- PRODUCT LIST (INDEX PAGE) ---
     async function displayProducts() {
         productContainer.innerHTML = "<p class='status-msg'>Loading products...</p>";
         
@@ -298,7 +294,7 @@ setupDynamicAdminPanel();
         }
     }
 
-    // --- PRODUCT DETAIL PAGE ---
+    // --- PRODUCT DETAIL PAGE (CREATE CRUD) ---
     function displayProductDetail() {
         const productData = JSON.parse(sessionStorage.getItem("selectedProduct"));
         if (!productData) {
@@ -341,7 +337,6 @@ setupDynamicAdminPanel();
                 const img = document.createElement("img");
                 img.src = color.mainImage;
                 img.alt = `Color ${color.name}`;
-                img.setAttribute("aria-label", `Select color ${color.name}`);
                 if (color.name === colorData.name) img.classList.add("selected");
                 img.addEventListener("click", () => {
                     selectedColor = color;
@@ -354,20 +349,11 @@ setupDynamicAdminPanel();
             colorData.sizes.forEach(size => {
                 const btn = document.createElement("button");
                 btn.textContent = size;
-                btn.setAttribute("aria-label", `Select size ${size}`);
-                if (size === selectedSize) {
-                    btn.classList.add("selected");
-                    btn.setAttribute("aria-pressed", "true");
-                } else {
-                    btn.setAttribute("aria-pressed", "false");
-                }
+                if (size === selectedSize) btn.classList.add("selected");
+                
                 btn.addEventListener("click", () => {
-                    document.querySelectorAll(".size-options button").forEach(b => {
-                        b.classList.remove("selected");
-                        b.setAttribute("aria-pressed", "false");
-                    });
+                    document.querySelectorAll(".size-options button").forEach(b => b.classList.remove("selected"));
                     btn.classList.add("selected");
-                    btn.setAttribute("aria-pressed", "true");
                     selectedSize = size;
                 });
                 sizeContainer.appendChild(btn);
@@ -376,161 +362,227 @@ setupDynamicAdminPanel();
 
         updateProductDisplay(selectedColor);
 
-        // ADD TO CART 
-        addToCartBtn.addEventListener("click", () => {
-            let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
-            const existingItem = cart.find(item => item.id === productData.id && item.color === selectedColor.name && item.size === selectedSize);
-
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                cart.push({
-                    id: productData.id,
-                    title: productData.title,
-                    price: safePrice,
-                    color: selectedColor.name,
-                    size: selectedSize,
-                    quantity: 1,
-                    image: selectedColor.mainImage
-                });
+        // ADD TO CART (Sends POST to MongoDB)
+        addToCartBtn.addEventListener("click", async () => {
+            const token = sessionStorage.getItem("token");
+            if (!token) {
+                showToast("Please log in to add items to your cart.");
+                setTimeout(() => window.location.href = "/login", 1500);
+                return;
             }
-            
-            sessionStorage.setItem("cart", JSON.stringify(cart));
-            updateCartCount(); 
-            showToast(`${productData.title} added to cart!`); 
-            
-            addToCartBtn.classList.add("p-relative"); 
-            const plusOne = document.createElement("span");
-            plusOne.textContent = "+1";
-            plusOne.classList.add("plus-one-anim");
-            addToCartBtn.appendChild(plusOne);
-            
-            setTimeout(() => {
-                plusOne.remove();
-                addToCartBtn.classList.remove("p-relative");
-            }, 800);
+
+            const payload = {
+                productId: productData.id || productData._id,
+                color: selectedColor.name,
+                size: selectedSize,
+                quantity: 1,
+                price: safePrice
+            };
+
+            try {
+                const response = await fetch('/api/cart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    await updateCartCount(); 
+                    showToast(`${productData.title} added to cart!`); 
+                    
+                    addToCartBtn.classList.add("p-relative"); 
+                    const plusOne = document.createElement("span");
+                    plusOne.textContent = "+1";
+                    plusOne.classList.add("plus-one-anim");
+                    addToCartBtn.appendChild(plusOne);
+                    
+                    setTimeout(() => {
+                        plusOne.remove();
+                        addToCartBtn.classList.remove("p-relative");
+                    }, 800);
+                } else {
+                    const data = await response.json();
+                    showToast(data.error || "Failed to add item to cart.");
+                }
+            } catch (error) {
+                console.error("Cart Error:", error);
+                showToast("Network error occurred.");
+            }
         });
     }
 
-    // --- CART PAGE ---
-    function displayCart() {
-        let cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+    // --- CART PAGE (READ, UPDATE, DELETE CRUD) ---
+    async function displayCart() {
         const cartItemsContainer = document.querySelector(".cart-items");
         const subtotalEl = document.querySelector(".Subtotal");
         const grandTotalEl = document.querySelector(".grand-total");
-
-        if (!cartItemsContainer || !subtotalEl || !grandTotalEl) return;
-        cartItemsContainer.innerHTML = "";
-
         const proceedBtn = document.querySelector(".cart-total .btn");
 
-        // FILTER LOGIC
-        const filterInput = document.querySelector("#cart-filter");
-        if (filterInput && filterInput.value.trim() !== "") {
-            const searchTerm = filterInput.value.toLowerCase().trim();
-            cart = cart.filter(item => item.title.toLowerCase().includes(searchTerm));
-        }
+        if (!cartItemsContainer || !subtotalEl || !grandTotalEl) return;
 
-        if (cart.length === 0) {
-            cartItemsContainer.innerHTML = "<p>No items found.</p>";
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+            cartItemsContainer.innerHTML = "<p>Please log in to view your cart.</p>";
             subtotalEl.textContent = "$0.00";
             grandTotalEl.textContent = "$0.00";
-            updateCartCount();
             if (proceedBtn) proceedBtn.classList.add("d-none");
             return;
-        } else {
-            if (proceedBtn) proceedBtn.classList.remove("d-none");
         }
 
-        const sortSelect = document.querySelector("#cart-sort");
-        if (sortSelect) {
-            const sortValue = sortSelect.value;
-            cart.sort((a, b) => {
-                const priceA = getSafePrice(a.price);
-                const priceB = getSafePrice(b.price);
+        cartItemsContainer.innerHTML = "<p>Loading cart...</p>";
 
-                if (sortValue === "title-asc") return a.title.localeCompare(b.title);
-                if (sortValue === "title-desc") return b.title.localeCompare(a.title);
-                if (sortValue === "price-asc") return priceA - priceB;
-                if (sortValue === "price-desc") return priceB - priceA;
-                if (sortValue === "qty-asc") return a.quantity - b.quantity;
-                if (sortValue === "qty-desc") return b.quantity - a.quantity;
-                return 0;
+        try {
+            const response = await fetch('/api/cart', {
+                headers: { 'Authorization': `Bearer ${token}` }
             });
-        }
 
-        const fragment = document.createDocumentFragment();
-        let subtotal = 0;
-        
-        cart.forEach((item) => {
-            const itemPrice = getSafePrice(item.price);
-            const itemTotal = itemPrice * item.quantity;
-            subtotal += itemTotal;
+            if (!response.ok) throw new Error("Failed to load cart");
+            const cartData = await response.json();
+            let items = cartData.items || [];
 
-            const cartItem = document.createElement("div");
-            cartItem.classList.add("cart-item");
-            cartItem.innerHTML = `
-                <div class="product">
-                    <img src="${item.image}" alt="${item.title}">
-                    <div class="item-detail">
-                        <p>${item.title}</p>
-                        <div class="item-variants">
-                            <span class="size">${item.size}</span>
-                            <span class="color">${item.color}</span>
+            // IN-MEMORY FILTERING
+            const filterInput = document.querySelector("#cart-filter");
+            if (filterInput && filterInput.value.trim() !== "") {
+                const searchTerm = filterInput.value.toLowerCase().trim();
+                items = items.filter(item => item.productId.title.toLowerCase().includes(searchTerm));
+            }
+
+            if (items.length === 0) {
+                cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
+                subtotalEl.textContent = "$0.00";
+                grandTotalEl.textContent = "$0.00";
+                updateCartCount();
+                if (proceedBtn) proceedBtn.classList.add("d-none");
+                return;
+            } else {
+                if (proceedBtn) proceedBtn.classList.remove("d-none");
+            }
+
+            // IN-MEMORY SORTING
+            const sortSelect = document.querySelector("#cart-sort");
+            if (sortSelect) {
+                const sortValue = sortSelect.value;
+                items.sort((a, b) => {
+                    const priceA = getSafePrice(a.price);
+                    const priceB = getSafePrice(b.price);
+                    const titleA = a.productId.title;
+                    const titleB = b.productId.title;
+
+                    if (sortValue === "title-asc") return titleA.localeCompare(titleB);
+                    if (sortValue === "title-desc") return titleB.localeCompare(titleA);
+                    if (sortValue === "price-asc") return priceA - priceB;
+                    if (sortValue === "price-desc") return priceB - priceA;
+                    if (sortValue === "qty-asc") return a.quantity - b.quantity;
+                    if (sortValue === "qty-desc") return b.quantity - a.quantity;
+                    return 0;
+                });
+            }
+
+            cartItemsContainer.innerHTML = "";
+            const fragment = document.createDocumentFragment();
+            let subtotal = 0;
+            
+            items.forEach((item) => {
+                const itemPrice = getSafePrice(item.price);
+                const itemTotal = itemPrice * item.quantity;
+                subtotal += itemTotal;
+
+                // Extract correct mainImage from the populated product reference
+                const colorData = item.productId.colors.find(c => c.name === item.color);
+                const itemImage = colorData ? colorData.mainImage : '';
+
+                const cartItem = document.createElement("div");
+                cartItem.classList.add("cart-item");
+                cartItem.innerHTML = `
+                    <div class="product">
+                        <img src="${itemImage}" alt="${item.productId.title}">
+                        <div class="item-detail">
+                            <p>${item.productId.title}</p>
+                            <div class="item-variants">
+                                <span class="size">${item.size}</span>
+                                <span class="color">${item.color}</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <span class="price">$${itemPrice.toFixed(2)}</span>
-                <div class="quantity">
-                    <input type="number" value="${item.quantity}" min="1" aria-label="Quantity">
-                </div>
-                <span class="total-price">$${itemTotal.toFixed(2)}</span>
-                <button class="remove" aria-label="Remove item"><i class="ri-close-line"></i></button>
-            `;
+                    <span class="price">$${itemPrice.toFixed(2)}</span>
+                    <div class="quantity">
+                        <input type="number" value="${item.quantity}" min="1" aria-label="Quantity">
+                    </div>
+                    <span class="total-price">$${itemTotal.toFixed(2)}</span>
+                    <button class="remove" aria-label="Remove item"><i class="ri-close-line"></i></button>
+                `;
 
-            fragment.appendChild(cartItem);
+                fragment.appendChild(cartItem);
 
-            cartItem.querySelector('input[type="number"]').addEventListener("change", (e) => {
-                let newQuantity = Math.floor(Number(e.target.value));
-                if (isNaN(newQuantity) || newQuantity < 1) {
-                    newQuantity = 1;
-                    e.target.value = 1; 
-                }
-                
-                let freshCart = JSON.parse(sessionStorage.getItem("cart")) || [];
-                let itemIndex = freshCart.findIndex(c => c.id === item.id && c.color === item.color && c.size === item.size);
-                
-                if (itemIndex !== -1) {
-                    freshCart[itemIndex].quantity = newQuantity;
-                    sessionStorage.setItem("cart", JSON.stringify(freshCart));
-                    displayCart();
-                }
+                // UPDATE QUANTITY (Sends PUT to MongoDB)
+                cartItem.querySelector('input[type="number"]').addEventListener("change", async (e) => {
+                    let newQuantity = Math.floor(Number(e.target.value));
+                    if (isNaN(newQuantity) || newQuantity < 1) newQuantity = 1;
+                    
+                    try {
+                        await fetch('/api/cart', {
+                            method: 'PUT',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}` 
+                            },
+                            body: JSON.stringify({
+                                productId: item.productId._id || item.productId.id,
+                                color: item.color,
+                                size: item.size,
+                                quantity: newQuantity
+                            })
+                        });
+                        displayCart(); // Re-render from updated database state
+                    } catch (err) {
+                        console.error("Failed to update quantity");
+                    }
+                });
+
+                // REMOVE ITEM (Sends DELETE to MongoDB)
+                cartItem.querySelector(".remove").addEventListener("click", async () => {
+                    try {
+                        await fetch('/api/cart', {
+                            method: 'DELETE',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}` 
+                            },
+                            body: JSON.stringify({
+                                productId: item.productId._id || item.productId.id,
+                                color: item.color,
+                                size: item.size
+                            })
+                        });
+                        showToast("Item removed from cart"); 
+                        displayCart(); // Re-render from updated database state
+                    } catch (err) {
+                        console.error("Failed to delete item");
+                    }
+                });
             });
 
-            cartItem.querySelector(".remove").addEventListener("click", () => {
-                showToast("Item removed from cart"); 
-                
-                let freshCart = JSON.parse(sessionStorage.getItem("cart")) || [];
-                let itemIndex = freshCart.findIndex(c => c.id === item.id && c.color === item.color && c.size === item.size);
-                
-                if (itemIndex !== -1) {
-                    freshCart.splice(itemIndex, 1);
-                    sessionStorage.setItem("cart", JSON.stringify(freshCart));
-                    displayCart();
-                }
-            });
-        });
+            cartItemsContainer.appendChild(fragment);
 
-        cartItemsContainer.appendChild(fragment);
+            subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
+            grandTotalEl.textContent = `$${subtotal.toFixed(2)}`;
+            updateCartCount();
 
-        subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
-        grandTotalEl.textContent = `$${subtotal.toFixed(2)}`;
-        updateCartCount();
+            if (proceedBtn) {
+                // Prevent duplicate listeners on re-render by replacing the button clone
+                const newBtn = proceedBtn.cloneNode(true);
+                proceedBtn.parentNode.replaceChild(newBtn, proceedBtn);
+                newBtn.addEventListener("click", () => {
+                    window.location.href = "/checkout";
+                });
+            }
 
-        if (proceedBtn) {
-            proceedBtn.addEventListener("click", () => {
-                window.location.href = "/checkout";
-            });
+        } catch (error) {
+            console.error("Error loading cart:", error);
+            cartItemsContainer.innerHTML = "<p class='error-msg show-error'>Error loading cart from server.</p>";
         }
     }
 
@@ -563,10 +615,7 @@ setupDynamicAdminPanel();
             if (field.el) {
                 const savedData = sessionStorage.getItem(field.key);
                 if (savedData) field.el.value = savedData;
-                
-                field.el.addEventListener('input', (e) => {
-                    sessionStorage.setItem(field.key, e.target.value);
-                });
+                field.el.addEventListener('input', (e) => sessionStorage.setItem(field.key, e.target.value));
             }
         });
 
@@ -604,10 +653,10 @@ setupDynamicAdminPanel();
         checkoutForm.addEventListener("submit", async (e) => {
             e.preventDefault(); 
             
-            const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
-            if (cart.length === 0) {
-                displayMessage(checkoutForm, "Your cart is empty!", true);
-                setTimeout(() => window.location.href = "/cart", 2000);
+            const token = sessionStorage.getItem("token"); 
+            if (!token) {
+                displayMessage(checkoutForm, "Session expired. Please log in to complete checkout.", true);
+                setTimeout(() => window.location.href = "/login", 2000);
                 return;
             }
 
@@ -618,15 +667,11 @@ setupDynamicAdminPanel();
                 return;
             }
 
-            const userEmail = sessionStorage.getItem("userEmail");
-            const token = sessionStorage.getItem("token") || sessionStorage.getItem("userPass"); 
-
+            // Note: The backend pulls it directly from the Cart model.
             const orderPayload = {
-                userEmail: userEmail,
                 token: token,
                 customerName: nameInput.value,
                 customerAddress: addressInput.value,
-                items: cart,
                 paymentDetails: {
                     card: cardInput.value,
                     expiry: expiryInput.value,
@@ -637,7 +682,10 @@ setupDynamicAdminPanel();
             try {
                 const response = await fetch('/api/checkout', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
                     body: JSON.stringify(orderPayload)
                 });
 
@@ -645,9 +693,9 @@ setupDynamicAdminPanel();
 
                 if (response.ok) {
                     sessionStorage.setItem("latestOrder", JSON.stringify(data.order));
-                    sessionStorage.removeItem("cart"); 
                     sessionStorage.removeItem("checkout-name");
                     sessionStorage.removeItem("checkout-address");
+                    updateCartCount(); // Count drops to 0 since cart is cleared on backend
                     
                     displayMessage(checkoutForm, "Payment Successful! Redirecting to receipt...", false);
                     setTimeout(() => window.location.href = "/confirmation", 1500);
