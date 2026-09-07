@@ -128,7 +128,7 @@ const users = [
     {
         id: 1,
         email: "nguyenthechinh2807@gmail.com",
-        password: hashPassword("Password123!"),
+        password: "Password123!",
         role: "customer",
         username: "Nguyen The Chinh",
         description: "Information Technology student.",
@@ -139,7 +139,7 @@ const users = [
     {
         id: 2,
         email: "admin@lootbox.com",
-        password: hashPassword("AdminPassword1!"),
+        password: "AdminPassword1!",
         role: "admin",
         username: "Admin",
         description: "Site Administrator",
@@ -150,7 +150,7 @@ const users = [
     {
         id: 3,
         email: "Hothanh@gmail.com",
-        password: hashPassword("Test123"),
+        password: "Test123",
         role: "customer",
         username: "ThanhHo",
         description: "customer",

@@ -5,17 +5,7 @@ const User = require('../models/user');
 const Order = require('../models/order');
 const Cart = require('../models/cart');
 
-// --- HELPER: Authenticate User ---
-async function authenticate(req, res, next) {
-    const token = req.headers.authorization?.split(' ')[1] || req.body.token;
-    if (!token) return res.status(401).json({ error: "Unauthorized" });
-    
-    const user = await User.findOne({ token: token });
-    if (!user) return res.status(401).json({ error: "Session expired." });
-    
-    req.user = user;
-    next();
-}
+const { isAuthenticated } = require('../middleware/auth');
 
 // GET ALL PRODUCTS
 router.get('/products', async (req, res) => {
