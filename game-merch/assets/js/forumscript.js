@@ -35,6 +35,22 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 3000);
     }
 
+    const DEFAULT_AVATAR = '/assets/Product Images/avatar.jpg';
+    function getAvatarSrc(entity) {
+        return (entity && entity.authorAvatar) ? entity.authorAvatar : DEFAULT_AVATAR;
+    }
+
+    function formatVNTime(dateVal) {
+        if (!dateVal) return '';
+        const d = new Date(dateVal);
+        if (isNaN(d.getTime())) return '';
+        return d.toLocaleString('vi-VN', {
+            timeZone: 'Asia/Ho_Chi_Minh',
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+    }
+
     function getThreadIdFromPath() {
         const match = window.location.pathname.match(/\/forum\/([a-fA-F0-9]{24})/);
         return match ? match[1] : null;
@@ -88,9 +104,9 @@ document.addEventListener("DOMContentLoaded", function() {
         return `
             <div class="reply_item">
                 <div class="reply_header">
-                    <img src="/assets/Product Images/avatar.jpg" alt="${escapeHtml(reply.author)} avatar" class="avatar">
+                    <img src="${escapeHtml(getAvatarSrc(reply))}" alt="${escapeHtml(reply.author)} avatar" class="avatar">
                     <span class="author_name">${escapeHtml(reply.author)}</span>
-                    <time class="post_time" datetime="${escapeHtml(reply.timestamp)}">${escapeHtml(reply.timestamp)}</time>
+                    <time class="post_time" datetime="${escapeHtml(reply.createdAt)}">${escapeHtml(formatVNTime(reply.createdAt))}</time>
                 </div>
                 <div class="reply_content">
                     <p>${escapeHtml(reply.content)}</p>
@@ -165,9 +181,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 ${t.pinned ? '<span class="pinned_badge"><i class="ri-pushpin-fill"></i>Pinned</span>' : ''}
 
                 <div class="card_header">
-                    <img src="/assets/Product Images/avatar.jpg" alt="${escapeHtml(t.author)} avatar" class="avatar">
+                    <img src="${escapeHtml(getAvatarSrc(t))}" alt="${escapeHtml(t.author)} avatar" class="avatar">
                     <span class="author_name">${escapeHtml(t.author)}</span>
-                    <time class="post_time" datetime="${escapeHtml(t.timestamp)}">${escapeHtml(t.timestamp)}</time>
+                    <time class="post_time" datetime="${escapeHtml(t.createdAt)}">${escapeHtml(formatVNTime(t.createdAt))}</time>
                     ${optionsMenuHtml}
                     ${adminMenuHtml}
                 </div>
@@ -196,10 +212,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const threadListEl = document.getElementById('forum_thread_list');
 
     function getLastActivityDate(t) {
-        let latest = new Date(t.timestamp || t.createdAt || Date.now()).getTime();
+        let latest = t.createdAt ? new Date(t.createdAt).getTime() : 0;
         if (t.replies && t.replies.length) {
             t.replies.forEach(function (r) {
-                const replyTime = new Date(r.timestamp || Date.now()).getTime();
+                const replyTime = r.createdAt ? new Date(r.createdAt).getTime() : 0;
                 if (replyTime > latest) latest = replyTime;
             });
         }
@@ -295,9 +311,9 @@ document.addEventListener("DOMContentLoaded", function() {
             <article class="thread_card thread_detail_post ${thread.pinned ? 'pinned' : ''}">
                 ${thread.pinned ? '<span class="pinned_badge"><i class="ri-pushpin-fill"></i>Pinned</span>' : ''}
                 <div class="card_header">
-                    <img src="/assets/Product Images/avatar.jpg" alt="${escapeHtml(thread.author)} avatar" class="avatar">
+                    <img src="${escapeHtml(getAvatarSrc(thread))}" alt="${escapeHtml(thread.author)} avatar" class="avatar">
                     <span class="author_name">${escapeHtml(thread.author)}</span>
-                    <time class="post_time" datetime="${escapeHtml(thread.timestamp)}">${escapeHtml(thread.timestamp)}</time>
+                    <time class="post_time" datetime="${escapeHtml(thread.createdAt)}">${escapeHtml(formatVNTime(thread.createdAt))}</time>
                     ${optionsMenuHtml}
                 </div>
 
@@ -544,7 +560,13 @@ document.addEventListener("DOMContentLoaded", function() {
         confirmDeleteBtn.addEventListener('click', function () {
             if (!pendingDeleteId) return;
 
-            fetch('/api/forum/threads/' + pendingDeleteId + '/delete', { method: 'POST' })
+            fetch('/api/forum/threads/' + pendingDeleteId + '/delete', { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'  // Send cookies session from Express to backend 
+            })
                 .then(function (res) { return res.json(); })
                 .then(function (data) {
                     if (modal) modal.classList.remove('active');

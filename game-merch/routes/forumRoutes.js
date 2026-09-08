@@ -38,10 +38,31 @@ router.get('/forum/:id', (req, res) => {
 });
 
 //JSON API routes
+function withAuthorAvatar(t) {
+    const author = t.authorId;
+    return {
+        ...t,
+        authorId: author && author._id ? String(author._id) : (author ? String(author) : null),
+        authorAvatar: author && author.avatar ? author.avatar : null,
+        replies: (t.replies || []).map((r) => {
+            const rAuthor = r.authorId;
+            return {
+                ...r,
+                authorId: rAuthor && rAuthor._id ? String(r.Author._id) : (rAuthor ? String(r.Author) : null),
+                authorAvatar: rAuthor && rAuthor.avatar ? avatar : null
+            }; 
+         })
+    };
+}
+
 router.get('/api/forum/threads', async (req, res) => {
     try {
-        const result = await Thread.find({ hidden: { $ne: true } }).sort({ pinned: -1, createdAt: -1 });
-        res.status(200).json(result);
+        const result = await Thread.find({ hidden: { $ne: true } })
+        .sort({ pinned: -1, createdAt: -1 })
+        .populate('authorId', 'avatar')
+        .populate('replies.authorId', 'avatar')
+        .lean();
+        res.status(200).json(result.map(withAuthorAvatar));
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -50,9 +71,12 @@ router.get('/api/forum/threads', async (req, res) => {
 //Get thread based on ID
 router.get('/api/forum/threads/:id', async (req, res) => {
     try {
-        const thread = await Thread.findOne({ _id: req.params.id, hidden: { $ne: true } });
+        const thread = await Thread.findOne({ _id: req.params.id, hidden: { $ne: true } })
+        .populate('authorId', 'avatar')
+        .populate('replies.authorId', 'avatar')
+        .lean();
         if (!thread) return res.status(404).json({ error: 'Thread not found' });
-        res.status(200).json(thread);
+        res.status(200).json(withAuthorAvatar(thread));
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -167,6 +191,7 @@ router.post('/api/forum/threads/:id', upload.array('thread_image', 5), async (re
         await thread.save();
         res.status(200).json({ message: 'Thread updated successfully', thread });
     } catch (err) {
+        console.error('[PUT /api/forum/threads/:id]', err);
         res.status(500).json({ error: 'Failed to update thread: ' + err.message });
     }
 });
@@ -178,12 +203,15 @@ router.post('/api/forum/threads/:id/delete', async (req, res) => {
             return res.status(401).json({ error: 'Please log in first.' });
         }
 
+        console.log("Session user data:", req.session.user);
+
         const thread = await Thread.findById(req.params.id);
         if (!thread) {
             return res.status(404).json({ error: 'Thread not found' });
         }
 
-        const freshUser = await User.findById(req.session.user.id);
+        const userId = req.session.user.id || req.session.user.id;
+        const freshUser = await User.findById(userId);
         if (!freshUser) {
             return res.status(401).json({ error: 'User account not found.' });
         }
@@ -200,6 +228,7 @@ router.post('/api/forum/threads/:id/delete', async (req, res) => {
 
         res.json({ message: 'Thread hidden successfully' });
     } catch (err) {
+        console.error('[POST /api/forum/threads/:id/delete]', err);
         res.status(500).json({ error: 'Failed to delete thread: ' + err.message });
     }
 });
@@ -238,6 +267,7 @@ router.post('/api/forum/threads/:id/admin-delete', async (req, res) => {
 
         res.json({ message: 'Thread deleted successfully by admin.' });
     } catch (err) {
+        console.error('[POST /api/forum/threads/:id/admin-delete]', err);
         res.status(500).json({ error: 'Failed to delete thread by admin: ' + err.message });
     }
 });

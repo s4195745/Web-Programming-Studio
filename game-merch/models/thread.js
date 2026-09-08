@@ -4,8 +4,7 @@ const replySchema = new mongoose.Schema({
   author: { type: String, required: true },
   authorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   content: { type: String, required: true },
-  timestamp: { type: String, default: () => new Date().toISOString().slice(0, 16) }
-});
+}, {timestamps: true});
 
 const threadSchema = new mongoose.Schema({
   title: { type: String, required: true },
@@ -15,7 +14,6 @@ const threadSchema = new mongoose.Schema({
   images: [{ type: String }],
   pinned: { type: Boolean, default: false },
   hidden: { type: Boolean, default: false },
-  timestamp: { type: String, default: () => new Date().toISOString().slice(0, 16) },
   replies: [replySchema]
 }, { timestamps: true });
 

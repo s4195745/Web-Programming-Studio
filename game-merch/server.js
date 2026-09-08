@@ -46,9 +46,6 @@ const adminRoutes = require('./routes/adminRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
 const forumRoutes = require('./routes/forumRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('Successfully connected to MongoDB Atlas!'))
-    .catch(err => console.error('MongoDB connection error:', err));
 
 // --- MOUNT ROUTES ---
 // UI View Routes
