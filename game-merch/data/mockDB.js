@@ -186,11 +186,9 @@ async function getUserById(id) {
     return safeUser;
 }
 
-const wishlist = [
-    // Sample data: Nguyen The Chinh (user id 1) already has 2 saved items
-    { id: 1, userId: 1, productId: 1, purchased: false, addedAt: "2026-08-01T10:00:00.000Z" },
-    { id: 2, userId: 1, productId: 3, purchased: true, addedAt: "2026-07-20T10:00:00.000Z" }
-];
+// NOTE: the Wishlist collection now lives in MongoDB Atlas (see models/wishlist.js
+// and routes/wishlistRoutes.js) - the in-memory array that used to live here has
+// been removed so there is only one source of truth for wishlist data.
 
 const orders = [];
 
@@ -285,7 +283,6 @@ module.exports = {
     products,
     users,
     orders,
-    wishlist,
     threads,
     reviews,
     getAllUsers,
