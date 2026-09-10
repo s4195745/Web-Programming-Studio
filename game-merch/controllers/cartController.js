@@ -1,0 +1,149 @@
+const Product = require('../models/product');
+const Cart = require('../models/cart');
+const Order = require('../models/order');
+
+exports.getProducts = async (req, res) => {
+    try {
+        const products = await Product.find({});
+        const formattedProducts = products.map(p => ({ ...p.toObject(), id: p._id.toString() }));
+        res.status(200).json(formattedProducts);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to load products.' });
+    }
+};
+
+exports.getSingleProduct = async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        if (!product) return res.status(404).json({ error: 'Product not found' });
+        res.status(200).json({ ...product.toObject(), id: product._id.toString() });
+    } catch (error) {
+        res.status(500).json({ error: 'Invalid ID.' });
+    }
+};
+
+exports.getCart = async (req, res) => {
+    try {
+        let cart = await Cart.findOne({ userId: req.currentUser._id }).populate('items.productId');
+        if (!cart) {
+            cart = await Cart.create({ userId: req.currentUser._id, items: [] });
+        }
+        res.status(200).json(cart);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch cart.' });
+    }
+};
+
+exports.addToCart = async (req, res) => {
+    console.log('addToCart called!', req.body);
+    const { productId, color, size, quantity, price } = req.body;
+    try {
+        let cart = await Cart.findOne({ userId: req.currentUser._id });
+        if (!cart) cart = new Cart({ userId: req.currentUser._id, items: [] });
+
+        const existingItemIndex = cart.items.findIndex(item => 
+            item.productId.toString() === productId && 
+            item.color === color && 
+            item.size === size
+        );
+
+        if (existingItemIndex > -1) {
+            cart.items[existingItemIndex].quantity += quantity;
+        } else {
+            cart.items.push({ productId, color, size, quantity, price });
+        }
+
+        await cart.save();
+        res.status(200).json({ message: 'Added to cart', cart });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update cart.' });
+    }
+};
+
+exports.updateQuantity = async (req, res) => {
+    const { productId, color, size, quantity } = req.body;
+    try {
+        const cart = await Cart.findOne({ userId: req.currentUser._id });
+        if (!cart) return res.status(404).json({ error: 'Cart not found.' });
+
+        const item = cart.items.find(i => 
+            i.productId.toString() === productId && i.color === color && i.size === size
+        );
+
+        if (item) {
+            item.quantity = quantity;
+            await cart.save();
+            res.status(200).json(cart);
+        } else {
+            res.status(404).json({ error: 'Item not found in cart.' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update quantity.' });
+    }
+};
+
+exports.removeFromCart = async (req, res) => {
+    const { productId, color, size } = req.body;
+    try {
+        const cart = await Cart.findOne({ userId: req.currentUser._id });
+        if (!cart) return res.status(404).json({ error: 'Cart not found.' });
+
+        cart.items = cart.items.filter(i => 
+            !(i.productId.toString() === productId && i.color === color && i.size === size)
+        );
+
+        await cart.save();
+        res.status(200).json(cart);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to remove item.' });
+    }
+};
+
+exports.checkout = async (req, res) => {
+    const { customerName, customerAddress, paymentDetails } = req.body;
+
+    try {
+        const cart = await Cart.findOne({ userId: req.currentUser._id });
+        if (!cart || cart.items.length === 0) return res.status(400).json({ error: 'Cart is empty.' });
+
+        if (!customerName || !customerAddress || !paymentDetails) {
+            return res.status(400).json({ error: 'Missing checkout information.' });
+        }
+
+        let secureTotalPaid = 0;
+        const verifiedItems = [];
+
+        for (const cartItem of cart.items) {
+            const dbProduct = await Product.findById(cartItem.productId);
+            if (!dbProduct) continue; 
+            
+            secureTotalPaid += (dbProduct.price * cartItem.quantity);
+            
+            verifiedItems.push({
+                productId: dbProduct._id,
+                title: dbProduct.title,
+                price: dbProduct.price,
+                color: cartItem.color,
+                size: cartItem.size,
+                quantity: cartItem.quantity,
+                image: dbProduct.colors.find(c => c.name === cartItem.color)?.mainImage
+            });
+        }
+
+        const newOrder = await Order.create({
+            userId: req.currentUser._id,
+            customerName,
+            customerAddress,
+            items: verifiedItems,
+            totalPaid: secureTotalPaid,
+            paymentDetails: { cardLast4: paymentDetails.card.slice(-4) }
+        });
+        
+        cart.items = [];
+        await cart.save();
+        
+        res.status(200).json({ message: 'Order placed successfully', order: newOrder });
+    } catch (error) {
+        res.status(500).json({ error: 'Checkout failed.' });
+    }
+};
