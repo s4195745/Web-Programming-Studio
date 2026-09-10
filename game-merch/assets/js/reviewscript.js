@@ -135,7 +135,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function isOwnReview(review) {
-        return window.__isLoggedIn && review.reviewerUsername === window.__currentUsername;
+        // Compared by user id, not username - usernames aren't required to be
+        // unique (models/user.js only enforces uniqueness on email), so two
+        // different accounts could otherwise be shown as "owning" each other's reviews.
+        return window.__isLoggedIn && review.reviewerId === window.__currentUserId;
     }
 
     function renderReviews() {
@@ -348,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleAction(event) {
         const target = event.target.closest('[data-action]');
         if (!target) return;
-        const reviewId = parseInt(target.dataset.id, 10);
+        const reviewId = target.dataset.id; // Mongo _id is a string, not a number
         const review = allReviews.find(r => r.id === reviewId);
         if (!review) return;
 

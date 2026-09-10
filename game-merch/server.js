@@ -15,12 +15,18 @@ app.use('/assets/uploads', express.static(path.join(__dirname, 'assets/uploads')
 app.use(express.json({ limit: '10mb' })); 
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.set('views', path.join(__dirname, 'views'));
+const { MongoStore } = require('connect-mongo');
 app.use(session({
     secret: 'your-secret-key',
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_URI,
+        collectionName: 'sessions'
+    }),
     cookie: {
-        secure: false
+        secure: false, // Set to true if using HTTPS
+        maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
     }
 }));
 

@@ -10,6 +10,7 @@
     <script>
         window.__isLoggedIn = <%- currentUser ? 'true' : 'false' %>;
         window.__currentUsername = "<%- currentUser ? currentUser.username : '' %>";
+        window.__currentUserId = "<%- currentUser ? currentUser._id.toString() : '' %>";
     </script>
 </head>
 

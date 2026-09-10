@@ -63,9 +63,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- CART COUNT BADGE (reads the same sessionStorage cart the Shopping Cart module uses) ---
-    function updateCartCount() {
-        const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
-        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    // Reads the logged-in user's persisted Cart (MongoDB) the same way
+    // assets/js/cartscript.js does, so the navbar badge stays in sync
+    // with the real Shopping Cart module rather than a local copy.
+    async function updateCartCount() {
+        const token = sessionStorage.getItem('token');
+        let totalItems = 0;
+
+        if (token) {
+            try {
+                const res = await fetch('/api/cart', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const cart = await res.json();
+                    totalItems = (cart.items || []).reduce((sum, item) => sum + item.quantity, 0);
+                }
+            } catch (err) {
+                console.error('Failed to fetch cart count:', err);
+            }
+        }
+
         document.querySelectorAll('.cart-icon .cart-item-count').forEach(countSpan => {
             if (totalItems > 0) {
                 countSpan.textContent = totalItems;
@@ -249,27 +267,39 @@ document.addEventListener('DOMContentLoaded', () => {
         const item = allItems.find(i => i.id === itemId);
         if (!item) return;
 
-        // Add to the same sessionStorage cart the Shopping Cart module reads from
-        const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
-        const existing = cart.find(c => c.id === item.product.id);
-        if (existing) {
-            existing.quantity += 1;
-        } else {
-            cart.push({
-                id: item.product.id,
-                title: item.product.title,
-                price: item.product.price,
-                color: 'Default',
-                size: 'M',
-                quantity: 1,
-                image: item.product.image
-            });
+        const token = sessionStorage.getItem('token');
+        if (!token) {
+            showToast('Please log in again to move this item to your cart.');
+            return;
         }
-        sessionStorage.setItem('cart', JSON.stringify(cart));
-        updateCartCount();
 
-        // Remove it from the wishlist once it's in the cart
+        // Add the product to the real, MongoDB-backed cart (POST /api/cart -
+        // same endpoint and shape the Shopping Cart module itself uses), then
+        // only remove it from the wishlist once that succeeds.
         try {
+            const cartResponse = await fetch('/api/cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    productId: item.product.id,
+                    color: 'Default',
+                    size: 'M',
+                    quantity: 1,
+                    price: item.product.price
+                })
+            });
+
+            if (!cartResponse.ok) {
+                const data = await cartResponse.json();
+                showToast(data.error || 'Could not add item to cart.');
+                return;
+            }
+
+            await updateCartCount();
+
             const response = await fetch(`/api/wishlist/${itemId}`, {
                 method: 'DELETE',
                 credentials: 'same-origin'
@@ -283,14 +313,14 @@ document.addEventListener('DOMContentLoaded', () => {
             await loadWishlist();
         } catch (err) {
             console.error(err);
-            showToast('Added to cart, but something went wrong updating your wishlist.');
+            showToast('Something went wrong moving this item to your cart.');
         }
     }
 
     grid.addEventListener('click', (event) => {
         const btn = event.target.closest('button[data-action]');
         if (!btn) return;
-        const itemId = parseInt(btn.dataset.id, 10);
+        const itemId = btn.dataset.id; // Mongo _id is a string, not a number
         const action = btn.dataset.action;
 
         if (action === 'move-to-cart') moveToCart(itemId);
