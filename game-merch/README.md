@@ -23,7 +23,6 @@ LootBox is a website prototype for a gaming merchandise marketplace.The platform
 ## Tech Stack
 * **Backend:** Node.js, Express.js
 * **Frontend:** EJS (Embedded JavaScript templating), HTML5, CSS3, Vanilla JS
-* **Database:** Simulated Mock Database (`mockDB.js`)
 * **Database:** MongoDB Atlas (Mongoose)
 * **Authentication:** Express-Session
 
@@ -45,7 +44,7 @@ Handles Shopping Cart, User authenticater.
 
 **routes:** `authRoutes.js`, `cartRoutes.js`
 
-**Others:**  `index.ejs` `data/mockDB.js` 
+**Others:**  `index.ejs` 
 
 
 ### 2. Discussion Forum  and Administrator (Dang Viet Hoang)
@@ -73,7 +72,8 @@ Allows users to read and leave reviews for merchandise.
 * **CSS:** `assests/css/main`, `assets/css/productreview.css`, `assets/css/auth.css` 
 ---
 
-* Global/Shared file: `server.js`, `main.css.`, `viewroute.js`, `mockDB.js`. 
+* Global/Shared file: `server.js`, `main.css.`, `viewroute.js`, `mockDB.js`, `seed.js`,
+                      `view/partials`. 
 
 ## Installation setup Instructions & How to Run the Project
 To run this application locally on your machine, follow these exact steps:
