@@ -53,9 +53,6 @@ const adminRoutes = require('./routes/adminRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
 const forumRoutes = require('./routes/forumRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('Successfully connected to MongoDB Atlas!'))
-    .catch(err => console.error('MongoDB connection error:', err));
 
 // --- MOUNT ROUTES ---
 // UI View Routes
@@ -75,7 +72,7 @@ app.use('/api', reviewRoutes);
 app.set('views', path.join(__dirname, 'views'));
 
 // --- START SERVER ---
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/game-merch')
     .then(() => {
         console.log('MongoDB connected successfully!');
         app.listen(PORT, () => {

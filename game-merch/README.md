@@ -24,6 +24,7 @@ LootBox is a website prototype for a gaming merchandise marketplace.The platform
 * **Backend:** Node.js, Express.js
 * **Frontend:** EJS (Embedded JavaScript templating), HTML5, CSS3, Vanilla JS
 * **Database:** Simulated Mock Database (`mockDB.js`)
+* **Database:** MongoDB Atlas (Mongoose)
 * **Authentication:** Express-Session
 
 ---
