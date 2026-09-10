@@ -2,6 +2,7 @@ require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const mongoose = require('mongoose');
 
 const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 const express = require('express');
 const app = express();
 const PORT = 3000;
@@ -10,6 +11,7 @@ const session = require('express-session');
 // --- MIDDLEWARE ---
 app.set('view engine', 'ejs');
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
+app.use('/assets/uploads', express.static(path.join(__dirname, 'assets/uploads')));
 app.use(express.json({ limit: '10mb' })); 
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.set('views', path.join(__dirname, 'views'));
@@ -51,7 +53,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
 const forumRoutes = require('./routes/forumRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/game-merch')
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Successfully connected to MongoDB Atlas!'))
     .catch(err => console.error('MongoDB connection error:', err));
 
@@ -73,9 +75,17 @@ app.use('/api', reviewRoutes);
 app.set('views', path.join(__dirname, 'views'));
 
 // --- START SERVER ---
-app.listen(PORT, () => { 
-    console.log(`Server is running at http://localhost:${PORT}`); 
-});
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => {
+        console.log('MongoDB connected successfully!');
+        app.listen(PORT, () => {
+            console.log(`Server is running on http://localhost:${PORT}`);
+        });
+    })
+    .catch((error) => {
+        console.error('Error connecting to MongoDB:', error);
+        process.exit(1);
+    });
 
 // Reply button 
 app.use(express.urlencoded({ extended: true }));

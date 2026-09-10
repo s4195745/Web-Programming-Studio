@@ -49,9 +49,13 @@ Handles Shopping Cart, User authenticater.
 
 ### 2. Discussion Forum  and Administrator (Dang Viet Hoang)
 Community area for users to discuss gaming and related topics.
+* **Views**
 * Disscussion Forum (modules/discussion_forum): `forum.ejs`, `new_thread.ejs`,`thread_detail.ejs`, `edit_thread.ejs`
 * Sitemap (views/modules/sitemap):  `sitemap.ejs`
-* **CSS:** `assets/css/forum.css` 
+* Admin (views/modules/admin): `admin.js`
+* **assets/css:**  `assets/css/forum.css`
+* **assets/js:** `adminscript.js`
+* **routes:** `forumRoutes.js`, `adminRoutes.js`
 
 ### 3. Wistlist (Hoang Xuan Quynh)
 Handles User's wishlist and profile. 

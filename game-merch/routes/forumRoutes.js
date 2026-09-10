@@ -1,191 +1,314 @@
 const express = require('express');
 const router = express.Router();
-const { threads, products, users } = require('../data/mockDB');
 const multer = require('multer');
 
+// Import models 
+const Thread = require('../models/thread.js');
+const User = require('../models/user.js');
+const Product = require('../models/product.js');
+
 //Set up multer for upload image (optional)
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, 'assets/uploads/');
-    },
-    filename: function(req, file, cb){
-        cb(null, Date.now() + '-' + file.originalname);
-    }
+const storage = multer.memoryStorage();
+const upload = multer({
+    storage: storage,
+    limits: {fileSize: 3 * 1024 * 1024} // Limit size of image (3mb/img)
 });
 
-const upload = multer({storage: storage});
+//Page shell routes (csr)
 
 router.get('/forum', (req, res) => {
-    const { q, sort } = req.query;
-    let result = threads.filter(t => !t.hidden);
-
-    if (q) {
-        const keyword = q.toLowerCase();
-        result = result.filter(t =>
-            t.title.toLowerCase().includes(keyword) ||
-            t.content.toLowerCase().includes(keyword)
-        );
-    }
-
-    result.sort((a, b) => {
-        if (a.pinned !== b.pinned) {
-            return a.pinned ? -1 : 1;
-        }
-        return sort === "oldest"
-        ? new Date(a.timestamp) - new Date(b.timestamp)
-        : new Date(b.timestamp) - new Date(a.timestamp);
-    });
-
-    const currentUser = res.locals.currentUser || req.session.user || null;
-    const IS_ADMIN =
-    currentUser &&
-    String(currentUser.role || '')
-        .trim()
-        .toLowerCase() === 'admin';
-
-    res.render('modules/discussion_forum/forum', { threads: result, q: q || '', sort: sort || 'newest', products: products,  currentUser: currentUser, IS_ADMIN: IS_ADMIN});
+    res.render('modules/discussion_forum/forum');
 });
 
 router.get('/forum/new', (req, res) => {
     res.render('modules/discussion_forum/new_thread');
 });
 
-router.get('/forum/:id', (req, res) => {
-    const thread = threads.find(t => t.id === Number(req.params.id) && !t.hidden);
-    if (!thread) return res.status(404).send('Thread not found');
-    res.render('modules/discussion_forum/thread_detail', { thread, products });
-});
-
-//REPLY FROM THREAD POST
-router.post('/forum/:id/reply', (req, res) => {
-    const thread = threads.find(t => t.id === Number(req.params.id));
-    if (!thread) return res.status(404).send('Thread not found');
-
-    const { reply_author, reply_content } = req.body;
-
-    if (!thread.replies) thread.replies = [];
-    thread.replies.push({
-        author: reply_author,
-        content: reply_content,
-        timestamp: new Date().toISOString().slice(0, 16)
-    });
-
-    res.redirect('/forum/' + thread.id);
-});
-
-// EDIT (change data based on the previous)
 router.get('/forum/:id/edit', (req, res) => {
-    const thread = threads.find(t => t.id === Number(req.params.id));
-    if (!thread) return res.status(404).send('Thread not found');
-    res.render('modules/discussion_forum/edit_thread', { thread });
+    res.render('modules/discussion_forum/edit_thread');
 });
 
-// EDIT — (save changed)
-router.post('/forum/:id/edit', upload.array('thread_image', 5), (req, res) => {
-    const thread = threads.find(t => t.id === Number(req.params.id));
-    if (!thread) return res.status(404).send('Thread not found');
+router.get('/forum/:id', (req, res) => {
+    res.render('modules/discussion_forum/thread_detail');
+});
 
-    const { thread_title, thread_content } = req.body;
+//JSON API routes
+function withAuthorAvatar(t, viewerId = null) {
+    const author = t.authorId;
+    const heartedBy = t.heartedBy || [];
+    return {
+        ...t,
+        authorId: author && author._id ? String(author._id) : (author ? String(author) : null),
+        authorAvatar: author && author.avatar ? author.avatar : null,
+        heartedBy: undefined,
+        heartCount: heartedBy.length,
+        heartedByMe: viewerId ? heartedBy.some((id) => String(id) === String(viewerId)) : false,
+        replies: (t.replies || []).map((r) => {
+            const rAuthor = r.authorId;
+            return {
+                ...r,
+                authorId: rAuthor && rAuthor._id ? String(rAuthor._id) : (rAuthor ? String(rAuthor) : null),
+                authorAvatar: rAuthor && rAuthor.avatar ? rAuthor.avatar : null
+            }; 
+        })
+    };
+}
 
-    thread.title = thread_title;
-    thread.content = thread_content;
-
-    if (req.files && req.files.length > 0) {
-        const newImages = req.files.map(f => '/assets/uploads/' + f.filename);
-        thread.images = thread.images.concat(newImages);
+router.get('/api/forum/threads', async (req, res) => {
+    try {
+        const viewerId = req.session?.user?.id || null;
+        const result = await Thread.find({ hidden: { $ne: true } })
+            .sort({ pinned: -1, createdAt: -1 })
+            .populate('authorId', 'avatar')
+            .populate('replies.authorId', 'avatar')
+            .lean();
+        res.status(200).json(result.map(t => withAuthorAvatar(t, viewerId)));
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
+});
 
-    res.redirect('/forum/' + thread.id);
+//Get thread based on ID
+router.get('/api/forum/threads/:id', async (req, res) => {
+    try {
+        const viewerId = req.session?.user?.id || null;
+        const thread = await Thread.findOne({ _id: req.params.id, hidden: { $ne: true } })
+            .populate('authorId', 'avatar')
+            .populate('replies.authorId', 'avatar')
+            .lean();
+        if (!thread) return res.status(404).json({ error: 'Thread not found' });
+        res.status(200).json(withAuthorAvatar(thread, viewerId));
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Toggle Tym (heart) on thread  (AI was used to assist with code generation, debugging, and optimization.)
+router.post('/api/forum/threads/:id/like', async (req, res) => {
+    try {
+        if (!req.session || !req.session.user) {
+            return res.status(401).json({ error: 'You must be logged in to tym a post.' });
+        }
+        const thread = await Thread.findOne({ _id: req.params.id, hidden: { $ne: true } });
+        if (!thread) {
+            return res.status(404).json({ error: 'Thread not found' });
+        }
+
+        if (!thread.heartedBy) thread.heartedBy = [];
+
+        const userId = req.session.user.id;
+        const alreadyHearted = thread.heartedBy.some((id) => String(id) === String(userId));
+        
+        if (alreadyHearted) {
+            thread.heartedBy = thread.heartedBy.filter((id) => String(id) !== String(userId));
+        } else {
+            thread.heartedBy.push(userId);
+        }
+        await thread.save();
+        res.status(200).json({
+            heartCount: thread.heartedBy.length,
+            heartedByMe: !alreadyHearted
+        });
+    } catch (err) {
+        console.error('[POST /api/forum/threads/:id/like]', err);
+        res.status(500).json({ error: 'Failed to update tym: ' + err.message });
+    }
+});
+
+
+//Get product list for sidebar
+router.get('/api/forum/related-products', async (req, res) => {
+    try {
+        const result = await Product.find({}).limit(3);
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+//Create new thread
+router.post('/api/forum/threads', upload.array('thread_image', 5), async (req, res) => {
+    try {
+        if (!req.session || !req.session.user) {
+            return res.status(401).json({ error: 'You must be logged in to post.' });
+        }
+        const { thread_title, thread_content } = req.body;
+        if (!thread_title || !thread_content) {
+            return res.status(400).json({ error: 'Title and content are required.' });
+        }
+
+        // Convert image file to Base64 
+        const images = req.files ? req.files.map(f => {
+            const base64Data = f.buffer.toString('base64');
+            return  `data:${f.mimetype};base64,${base64Data}`;
+        }) : [];
+
+        const newThread = new Thread({
+            title: thread_title,
+            content: thread_content,
+            images: images,
+            author: req.session.user.username,
+            authorId: String(req.session.user.id),
+            hidden: false,
+            replies: []
+        });
+
+        await newThread.save();
+
+        res.status(201).json({ message: 'Thread created successfully', thread: newThread });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+//Reply to a thread
+router.post('/api/forum/threads/:id/reply', async (req, res) => {
+    try {
+        if (!req.session || !req.session.user) {
+            return res.status(401).json({ error: 'You must be logged in to reply.' });
+        }
+
+        const { reply_content } = req.body;
+        if (!reply_content || !reply_content.trim()) {
+            return res.status(400).json({ error: 'Reply content is required.' });
+        }
+
+        const newReply = {
+            author: req.session.user.username,
+            authorId: String(req.session.user.id),
+            content: reply_content,
+            timestamp: new Date().toISOString().slice(0, 16)
+        };
+
+        const thread = await Thread.findOne({
+            _id: req.params.id,
+            hidden: { $ne: true }
+        })
+
+        if (!thread) {
+            return res.status(404).json({ error: 'Thread not found' });
+        }
+
+        thread.replies.push(newReply);
+        await thread.save();
+        
+        res.status(201).json({
+            message: 'Reply posted successfully',
+            reply: newReply,
+            thread: thread
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to post reply' + error.message });
+    }
+});
+
+// Edit - save changed
+router.post('/api/forum/threads/:id', upload.array('thread_image', 5), async (req, res) => {
+    try {
+        if (!req.session || !req.session.user) {
+            return res.status(401).json({ error: 'Please log in first.' });
+        }
+
+        const thread = await Thread.findById(req.params.id);
+        if (!thread) {
+            return res.status(404).json({ error: 'Thread not found' });
+        }
+
+        if (String(thread.authorId) !== String(req.session.user.id)) {
+            return res.status(403).json({ error: 'You can only edit your own posts.' });
+        }
+
+        const { thread_title, thread_content } = req.body;
+        thread.title = thread_title || thread.title;
+        thread.content = thread_content || thread.content;
+
+        if (req.files && req.files.length > 0) {
+            const newImages = req.files.map(f => '/assets/uploads/' + f.filename);
+            thread.images = thread.images.concat(newImages);
+        }
+
+        await thread.save();
+        res.status(200).json({ message: 'Thread updated successfully', thread });
+    } catch (err) {
+        console.error('[PUT /api/forum/threads/:id]', err);
+        res.status(500).json({ error: 'Failed to update thread: ' + err.message });
+    }
 });
 
 // SOFT-DELETE (confirm author)
-router.post('/forum/:id/delete', (req, res) => {
-    if (!req.session || !req.session.user) {
-        return res.status(401).json({ error: 'Please log in first.' });
+router.post('/api/forum/threads/:id/delete', async (req, res) => {
+    try {
+        if (!req.session || !req.session.user) {
+            return res.status(401).json({ error: 'Please log in first.' });
+        }
+
+        console.log("Session user data:", req.session.user);
+
+        const thread = await Thread.findById(req.params.id);
+        if (!thread) {
+            return res.status(404).json({ error: 'Thread not found' });
+        }
+
+        const userId = req.session.user.id || req.session.user.id;
+        const freshUser = await User.findById(userId);
+        if (!freshUser) {
+            return res.status(401).json({ error: 'User account not found.' });
+        }
+        if (freshUser.isLocked) {
+            return res.status(403).json({ error: 'Your account is locked. You cannot perform this action.' });
+        }
+
+        if (String(thread.authorId) !== String(freshUser._id)) {
+            return res.status(403).json({ error: 'You can only delete your own posts.' });
+        }
+
+        thread.hidden = true;
+        await thread.save();
+
+        res.json({ message: 'Thread hidden successfully' });
+    } catch (err) {
+        console.error('[POST /api/forum/threads/:id/delete]', err);
+        res.status(500).json({ error: 'Failed to delete thread: ' + err.message });
     }
-
-    const thread = threads.find(t => t.id === Number(req.params.id));
-    if (!thread) return res.status(404).json({ error: 'Thread not found' });
-
-    // Fetch the  user data from  database
-    const freshUser = users.find(u => u.id === Number(req.session.user.id));
-
-    if (!freshUser) {
-        return res.status(401).json({ error: 'User account not found.' });
-    }
-
-    // case-insensitive comparison
-    const threadAuthor = String(thread.author || '').trim().toLowerCase();
-    const currentUsername = String(freshUser.username || '').trim().toLowerCase();
-
-    if (threadAuthor !== currentUsername) {
-        return res.status(403).json({ error: 'You can only delete your own posts.' });
-    }
-
-    thread.hidden = true;
-
-    res.json({ message: 'Thread hidden successfully' });
 });
 
-//   admins  delete any forum post
-router.post('/forum/:id/admin-delete', (req, res) => {
-    if (!req.session || !req.session.user) {
-        return res.status(401).json({ error: 'Please log in first.' });
+// Admin delete any forum post 
+router.post('/api/forum/threads/:id/admin-delete', async (req, res) => {
+    try {
+        if (!req.session || !req.session.user) {
+            return res.status(401).json({ error: 'Please log in first.' });
+        }
+
+        const freshUser = await User.findById(req.session.user.id);
+        if (!freshUser) {
+            return res.status(401).json({ error: 'User account not found.' });
+        }
+        if (freshUser.isLocked) {
+            return res.status(403).json({ error: 'Your account is locked. You cannot perform this action.' });
+        }
+
+        const isAdmin = String(freshUser.role || '').trim().toLowerCase() === 'admin';
+        if (!isAdmin) {
+            return res.status(403).json({ error: 'Admin access required.' });
+        }
+
+        const thread = await Thread.findById(req.params.id);
+        if (!thread) {
+            return res.status(404).json({ error: 'Thread not found' });
+        }
+
+        if (thread.pinned) {
+            return res.status(403).json({ error: 'Pinned posts cannot be deleted.' });
+        }
+
+        thread.hidden = true;
+        await thread.save();
+
+        res.json({ message: 'Thread deleted successfully by admin.' });
+    } catch (err) {
+        console.error('[POST /api/forum/threads/:id/admin-delete]', err);
+        res.status(500).json({ error: 'Failed to delete thread by admin: ' + err.message });
     }
-    const freshUser = users.find(u => u.id === Number(req.session.user.id));
-
-    if (!freshUser) {
-        return res.status(401).json({ error: 'User account not found.' });
-    }
-
-    const currentUser = res.locals.currentUser || req.session.user || null;
-    const isAdmin =
-        String(freshUser.role || '')
-            .trim()
-            .toLowerCase() === 'admin';
-
-    if (!isAdmin) {
-        return res.status(403).json({ error: 'Admin access required.' });
-    }
-
-    const thread = threads.find(t => t.id === Number(req.params.id));
-    if (!thread) return res.status(404).json({ error: 'Thread not found' });
-
-    if (thread.pinned) {
-        return res.status(403).json({ error: 'Pinned posts cannot be deleted.' });
-    }
-
-    thread.hidden = true;
-
-    res.json({ message: 'Thread deleted successfully by admin.' });
-});
-
-// CREATE NEW THREAD
-router.post('/forum', upload.array('thread_image', 5), (req, res) => {
-    // 1. Check if the user is authenticated
-    if (!req.session || !req.session.user) {
-        return res.status(401).send("You must be logged in to post.");
-    }
-    
-    
-    const { thread_title, thread_content } = req.body;
-
-    const newId = threads.length > 0 ? Math.max(...threads.map(t => t.id)) + 1 : 1;
-    const images = req.files ? req.files.map(f => '/assets/uploads/' + f.filename) : [];
-
-    threads.push({
-        id: newId,
-        pinned: false,
-        title: thread_title,
-        content: thread_content,
-        images: images,
-        // 2. Force the author to be the securely logged-in session username
-        author: req.session.user.username,
-        timestamp: new Date().toISOString().slice(0, 16),
-        replies: []
-    });
-
-    res.redirect('/forum');
 });
 
 module.exports = router;

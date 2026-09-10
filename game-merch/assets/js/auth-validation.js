@@ -149,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 sessionStorage.setItem("isLoggedIn", "true");
+                sessionStorage.setItem("userId", data.user.id);
                 sessionStorage.setItem("userRole", data.user.role);
                 sessionStorage.setItem("username", data.user.username);
                 sessionStorage.setItem("userEmail", data.user.email);
