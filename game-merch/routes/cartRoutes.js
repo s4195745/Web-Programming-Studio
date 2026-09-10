@@ -5,17 +5,7 @@ const User = require('../models/user');
 const Order = require('../models/order');
 const Cart = require('../models/cart');
 
-// --- HELPER: Authenticate User ---
-async function authenticate(req, res, next) {
-    const token = req.headers.authorization?.split(' ')[1] || req.body.token;
-    if (!token) return res.status(401).json({ error: "Unauthorized" });
-    
-    const user = await User.findOne({ token: token });
-    if (!user) return res.status(401).json({ error: "Session expired." });
-    
-    req.user = user;
-    next();
-}
+const { isAuthenticated } = require('../middleware/auth');
 
 // GET ALL PRODUCTS
 router.get('/products', async (req, res) => {
@@ -40,11 +30,11 @@ router.get('/products/:id', async (req, res) => {
 });
 
 // GET USER CART (READ)
-router.get('/cart', authenticate, async (req, res) => {
+router.get('/cart', isAuthenticated, async (req, res) => {
     try {
-        let cart = await Cart.findOne({ userId: req.user._id }).populate('items.productId');
+        let cart = await Cart.findOne({ userId: req.currentUser._id }).populate('items.productId');
         if (!cart) {
-            cart = await Cart.create({ userId: req.user._id, items: [] });
+            cart = await Cart.create({ userId: req.currentUser._id, items: [] });
         }
         res.status(200).json(cart);
     } catch (error) {
@@ -53,12 +43,12 @@ router.get('/cart', authenticate, async (req, res) => {
 });
 
 // ADD TO CART (CREATE)
-router.post('/cart', authenticate, async (req, res) => {
+router.post('/cart', isAuthenticated, async (req, res) => {
     const { productId, color, size, quantity, price } = req.body;
     
     try {
-        let cart = await Cart.findOne({ userId: req.user._id });
-        if (!cart) cart = new Cart({ userId: req.user._id, items: [] });
+        let cart = await Cart.findOne({ userId: req.currentUser._id });
+        if (!cart) cart = new Cart({ userId: req.currentUser._id, items: [] });
 
         const existingItemIndex = cart.items.findIndex(item => 
             item.productId.toString() === productId && 
@@ -80,10 +70,10 @@ router.post('/cart', authenticate, async (req, res) => {
 });
 
 // UPDATE CART QUANTITY (UPDATE)
-router.put('/cart', authenticate, async (req, res) => {
+router.put('/cart', isAuthenticated, async (req, res) => {
     const { productId, color, size, quantity } = req.body;
     try {
-        const cart = await Cart.findOne({ userId: req.user._id });
+        const cart = await Cart.findOne({ userId: req.currentUser._id });
         if (!cart) return res.status(404).json({ error: "Cart not found." });
 
         const item = cart.items.find(i => 
@@ -103,10 +93,10 @@ router.put('/cart', authenticate, async (req, res) => {
 });
 
 // REMOVE FROM CART (DELETE)
-router.delete('/cart', authenticate, async (req, res) => {
+router.delete('/cart', isAuthenticated, async (req, res) => {
     const { productId, color, size } = req.body;
     try {
-        const cart = await Cart.findOne({ userId: req.user._id });
+        const cart = await Cart.findOne({ userId: req.currentUser._id });
         if (!cart) return res.status(404).json({ error: "Cart not found." });
 
         cart.items = cart.items.filter(i => 
@@ -121,11 +111,11 @@ router.delete('/cart', authenticate, async (req, res) => {
 });
 
 // CHECKOUT (CREATE)
-router.post('/checkout', authenticate, async (req, res) => {
+router.post('/checkout', isAuthenticated, async (req, res) => {
     const { customerName, customerAddress, paymentDetails } = req.body;
 
     try {
-        const cart = await Cart.findOne({ userId: req.user._id });
+        const cart = await Cart.findOne({ userId: req.currentUser._id });
         if (!cart || cart.items.length === 0) return res.status(400).json({ error: "Cart is empty." });
 
         if (!customerName || !customerAddress || !paymentDetails) {
@@ -153,7 +143,7 @@ router.post('/checkout', authenticate, async (req, res) => {
         }
 
         const newOrder = await Order.create({
-            userId: req.user._id,
+            userId: req.currentUser._id,
             customerName,
             customerAddress,
             items: verifiedItems,

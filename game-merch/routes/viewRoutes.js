@@ -41,8 +41,7 @@ router.get('/admin', isAuthenticated, requireAdmin, (req, res) => {
 });
 
 //SITEMAP
-router.get('/sitemap', (req, res) => {
-    res.render('modules/sitemap/sitemap', { threads, products });
+    router.get('/sitemap', (req, res) => {
     res.render('modules/sitemap/sitemap');
 });
 
