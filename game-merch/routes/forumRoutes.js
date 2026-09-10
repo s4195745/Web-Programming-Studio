@@ -8,16 +8,11 @@ const User = require('../models/user.js');
 const Product = require('../models/product.js');
 
 //Set up multer for upload image (optional)
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, 'assets/uploads/');
-    },
-    filename: function(req, file, cb){
-        cb(null, Date.now() + '-' + file.originalname);
-    }
+const storage = multer.memoryStorage();
+const upload = multer({
+    storage: storage,
+    limits: {fileSize: 3 * 1024 * 1024} // Limit size of image (3mb/img)
 });
-
-const upload = multer({storage: storage});
 
 //Page shell routes (csr)
 
@@ -38,31 +33,36 @@ router.get('/forum/:id', (req, res) => {
 });
 
 //JSON API routes
-function withAuthorAvatar(t) {
+function withAuthorAvatar(t, viewerId = null) {
     const author = t.authorId;
+    const heartedBy = t.heartedBy || [];
     return {
         ...t,
         authorId: author && author._id ? String(author._id) : (author ? String(author) : null),
         authorAvatar: author && author.avatar ? author.avatar : null,
+        heartedBy: undefined,
+        heartCount: heartedBy.length,
+        heartedByMe: viewerId ? heartedBy.some((id) => String(id) === String(viewerId)) : false,
         replies: (t.replies || []).map((r) => {
             const rAuthor = r.authorId;
             return {
                 ...r,
-                authorId: rAuthor && rAuthor._id ? String(r.Author._id) : (rAuthor ? String(r.Author) : null),
-                authorAvatar: rAuthor && rAuthor.avatar ? avatar : null
+                authorId: rAuthor && rAuthor._id ? String(rAuthor._id) : (rAuthor ? String(rAuthor) : null),
+                authorAvatar: rAuthor && rAuthor.avatar ? rAuthor.avatar : null
             }; 
-         })
+        })
     };
 }
 
 router.get('/api/forum/threads', async (req, res) => {
     try {
+        const viewerId = req.session?.user?.id || null;
         const result = await Thread.find({ hidden: { $ne: true } })
-        .sort({ pinned: -1, createdAt: -1 })
-        .populate('authorId', 'avatar')
-        .populate('replies.authorId', 'avatar')
-        .lean();
-        res.status(200).json(result.map(withAuthorAvatar));
+            .sort({ pinned: -1, createdAt: -1 })
+            .populate('authorId', 'avatar')
+            .populate('replies.authorId', 'avatar')
+            .lean();
+        res.status(200).json(result.map(t => withAuthorAvatar(t, viewerId)));
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -71,16 +71,50 @@ router.get('/api/forum/threads', async (req, res) => {
 //Get thread based on ID
 router.get('/api/forum/threads/:id', async (req, res) => {
     try {
+        const viewerId = req.session?.user?.id || null;
         const thread = await Thread.findOne({ _id: req.params.id, hidden: { $ne: true } })
-        .populate('authorId', 'avatar')
-        .populate('replies.authorId', 'avatar')
-        .lean();
+            .populate('authorId', 'avatar')
+            .populate('replies.authorId', 'avatar')
+            .lean();
         if (!thread) return res.status(404).json({ error: 'Thread not found' });
-        res.status(200).json(withAuthorAvatar(thread));
+        res.status(200).json(withAuthorAvatar(thread, viewerId));
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
+
+// Toggle Tym (heart) on thread  (AI was used to assist with code generation, debugging, and optimization.)
+router.post('/api/forum/threads/:id/like', async (req, res) => {
+    try {
+        if (!req.session || !req.session.user) {
+            return res.status(401).json({ error: 'You must be logged in to tym a post.' });
+        }
+        const thread = await Thread.findOne({ _id: req.params.id, hidden: { $ne: true } });
+        if (!thread) {
+            return res.status(404).json({ error: 'Thread not found' });
+        }
+
+        if (!thread.heartedBy) thread.heartedBy = [];
+
+        const userId = req.session.user.id;
+        const alreadyHearted = thread.heartedBy.some((id) => String(id) === String(userId));
+        
+        if (alreadyHearted) {
+            thread.heartedBy = thread.heartedBy.filter((id) => String(id) !== String(userId));
+        } else {
+            thread.heartedBy.push(userId);
+        }
+        await thread.save();
+        res.status(200).json({
+            heartCount: thread.heartedBy.length,
+            heartedByMe: !alreadyHearted
+        });
+    } catch (err) {
+        console.error('[POST /api/forum/threads/:id/like]', err);
+        res.status(500).json({ error: 'Failed to update tym: ' + err.message });
+    }
+});
+
 
 //Get product list for sidebar
 router.get('/api/forum/related-products', async (req, res) => {
@@ -102,7 +136,12 @@ router.post('/api/forum/threads', upload.array('thread_image', 5), async (req, r
         if (!thread_title || !thread_content) {
             return res.status(400).json({ error: 'Title and content are required.' });
         }
-        const images = req.files ? req.files.map(f => '/assets/uploads/' + f.filename) : [];
+
+        // Convert image file to Base64 
+        const images = req.files ? req.files.map(f => {
+            const base64Data = f.buffer.toString('base64');
+            return  `data:${f.mimetype};base64,${base64Data}`;
+        }) : [];
 
         const newThread = new Thread({
             title: thread_title,

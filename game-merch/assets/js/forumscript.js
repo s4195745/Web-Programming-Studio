@@ -35,11 +35,57 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 3000);
     }
 
+
+
+    function bindLikeHandlers(container) {
+        if (!container || container.dataset.likeBound === 'true') return;
+        container.dataset.likeBound = 'true';
+ 
+        container.addEventListener('change', function (e) {
+            const checkbox = e.target;
+            if (!checkbox.classList || !checkbox.classList.contains('reaction_toggle_checkbox')) return;
+ 
+            const currentUser = getCurrentUser();
+            const wasChecked = !checkbox.checked; // State BEFORE the user clicks 
+ 
+            if (!currentUser.userId) {
+                checkbox.checked = wasChecked; // Revert if the user is not logged in; unauthenticated users cannot react.
+                showToast('Please log in to tym this post.');
+                return;
+            }
+ 
+            const threadId = checkbox.dataset.threadId;
+            const countEl = checkbox.parentElement.querySelector('.like_count');
+ 
+            fetch('/api/forum/threads/' + threadId + '/like', { 
+                method: 'POST',
+                credentials: 'include',
+                headers: {'Content-Type' : 'application/json'}
+            })
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    if (data.error) {
+                        checkbox.checked = wasChecked;
+                        showToast(data.error);
+                        return;
+                    }
+                    checkbox.checked = data.heartedByMe;
+                    if (countEl) countEl.textContent = data.heartCount;
+                })
+                .catch(function () {
+                    checkbox.checked = wasChecked;
+                    showToast('Something went wrong.');
+                });
+        });
+    }
+
     const DEFAULT_AVATAR = '/assets/Product Images/avatar.jpg';
+
     function getAvatarSrc(entity) {
         return (entity && entity.authorAvatar) ? entity.authorAvatar : DEFAULT_AVATAR;
     }
 
+    // Store timestamps in UTC on the server; convert to Vietnam time for display.
     function formatVNTime(dateVal) {
         if (!dateVal) return '';
         const d = new Date(dateVal);
@@ -196,10 +242,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
 
                 <div class="card_footer">
-                    <input type="checkbox" id="like_thread_${threadId}" class="reaction_toggle_checkbox" hidden>
+                    <input type="checkbox" id="like_thread_${threadId}" class="reaction_toggle_checkbox" data-thread-id="${threadId}" ${t.heartedByMe ? 'checked' : ''} hidden>
                     <label for="like_thread_${threadId}" class="reaction_btn">
                         <i class="ri-heart-line icon_outline"></i>
                         <i class="ri-heart-fill icon_filled"></i>
+                        <span class="like_count">${t.heartCount || 0}</span>
                     </label>
                     <a href="/forum/${threadId}" class="comment_btn"><i class="ri-chat-3-line"></i>Comment</a>
                 </div>
@@ -266,6 +313,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 const currentUser = getCurrentUser();
                 threadListEl.innerHTML = result.map(function (t) { return buildThreadCardHtml(t, currentUser); }).join('');
                 bindDeleteHandlers();
+                bindLikeHandlers(threadListEl);
             })
             .catch(function (err) {
                 console.error('Error loading threads:', err);
@@ -325,10 +373,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
 
                 <div class="card_footer">
-                    <input type="checkbox" id="like_thread_${threadId}" class="reaction_toggle_checkbox">
+                    <input type="checkbox" id="like_thread_${threadId}" class="reaction_toggle_checkbox" data-thread-id="${threadId}" ${thread.heartedByMe ? 'checked' : ''}>
                     <label for="like_thread_${threadId}" class="reaction_btn">
                         <i class="ri-heart-line icon_outline"></i>
                         <i class="ri-heart-fill icon_filled"></i>
+                        <span class="like_count">${thread.heartCount || 0}</span>
                     </label>
                 </div>
             </article>
@@ -336,6 +385,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         renderReplies(thread);
         bindDeleteHandlers();
+        bindLikeHandlers(threadDetailContainer);
     }
 
     function renderReplies(thread) {

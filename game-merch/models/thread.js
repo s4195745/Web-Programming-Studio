@@ -14,6 +14,7 @@ const threadSchema = new mongoose.Schema({
   images: [{ type: String }],
   pinned: { type: Boolean, default: false },
   hidden: { type: Boolean, default: false },
+  heartedBy: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
   replies: [replySchema]
 }, { timestamps: true });
 
