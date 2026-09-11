@@ -25,6 +25,12 @@ router.get('/forgot_password', (req, res) => { res.render('modules/user_account_
 router.get('/forgot_password_confirm', (req, res) => { res.render('modules/user_account_manage/forgot_password_confirm'); });
 router.get('/delete_account', (req, res) => { res.render('modules/user_account_manage/delete_account'); });
 
+// Discussion Forum Module Pages
+router.get('/forum', (req, res) => { res.render('modules/discussion_forum/forum'); });
+router.get('/forum/new', (req, res) => { res.render('modules/discussion_forum/new_thread'); });
+router.get('/forum/:id/edit', (req, res) => { res.render('modules/discussion_forum/edit_thread'); });
+router.get('/forum/:id', (req, res) => { res.render('modules/discussion_forum/thread_detail'); });
+
 // blog pages
 router.get('/blog', (req, res) => { res.render('modules/blog/blog'); });
 router.get('/UserBlog', (req, res) => { res.render('modules/blog/UserBlog'); });
