@@ -1,5 +1,6 @@
+// ============================================================================================================
 // THIS IS THE MOCK DATA INCASE THE DATA IS LOST, THIS FILE DOES NOT CONTRIBUTE ANYTHING TO THE APPLOCATION. 
-
+// ============================================================================================================
 const crypto = require('crypto');
 
 function hashPassword(password) {
