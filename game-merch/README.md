@@ -12,10 +12,10 @@ This project was collaboratively built by a team of 5 members. Each member was r
 
 | Student ID | Full Name | Role / Module |
 | s4195745 | Nguyen The Chinh | Shopping Cart, User Account Management |
-| s4077090 | Hoang Xuan Quynh | Wishlist |
+| s4077090 | Hoang Xuan Quynh | Wishlist, User Account Management |
 | s4197975 | Dang Viet Hoang | Discussion Forum, Administrator |
 | s4200917 | Ho Nguyen Thanh | Blog, Administrator |
-| s4199811 | Pham Khanh An | Product Review |
+| s4199811 | Pham Khanh An | Product Review, User Account Management |
 
 ---
 
@@ -45,13 +45,13 @@ Handles Shopping Cart, User authenticater.
 **assets/css:**
 `assets/css/auth.css`, `assets/css/cart.css`, `assets/css/main.css`, `assets/css/landing_page.css`
 
-**assets/js:**
-`auth-validation.js`, `cartscript.js`
+**assets/js:** `auth-validation.js`, `cartscript.js`, 
 
 **routes:** `authRoutes.js`, `cartRoutes.js`
 
-**model**
-`user.js`, `cart.js`, `order.js`
+**middleware/controllers:** `authController.js`, `cartController.js`, `validation.js`, `auth.js`
+
+**model:** `user.js`, `cart.js`, `order.js`
 
 **Others:** `index.ejs`
 
@@ -189,6 +189,21 @@ node server.js
   Click Remove on an item — it should disappear immediately.
   Try adding the same product to the wishlist twice (e.g. from a product page) — second attempt should be blocked with a "already in your wishlist" message.
   Log out and visit /wishlist directly — should show the login prompt instead of the item grid.
+
+- Blog: 
+ create an account/log in.
+go to blog page, click on “Read More” to open up the content of a blog post. Press “Read Aloud” to have TTS read out the content of the blog post. Click “Close” or “Show less” to stop the TTS.
+Use the search bar to search for specific blog post
+Title: “Lea” - Should show 2 posts.
+Author - “GamerUser” Should show 1 post.
+Slider panel on the right to cusomize the site to your liking. Text size and blog width update dynamically whilst TTS should restart when volume is changed. 
+Go to “Your Blog” to bring up a personal blog page. Write a post and submit then return to the main feed to see the newly uploaded post.
+Return to “Your Blog” and scroll down to Your Posts and click on the 3 dots to edit a post, save changes then return to the main feed to see the updated blog.
+Return to “Your Blog” and scroll down to Your Posts and click on the 3 dots to delete a post, return to the main feed to see the blog post has been removed.
+Log in as Admin, open the Blog page and delete any post. It should be removed
+
+
+
 
 ## 📌 References
 
