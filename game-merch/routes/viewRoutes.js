@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { threads, products, } = require('../data/mockDB');
+
 
 // IMPORT ADMIN MIDDLEWARE
 const { isAuthenticated, requireAdmin } = require('../middleware/auth');
@@ -41,8 +41,8 @@ router.get('/admin', isAuthenticated, requireAdmin, (req, res) => {
 });
 
 //SITEMAP
-router.get('/sitemap', (req, res) => {
-    res.render('modules/sitemap/sitemap', { threads, products });
+    router.get('/sitemap', (req, res) => {
+    res.render('modules/sitemap/sitemap');
 });
 
 module.exports = router;

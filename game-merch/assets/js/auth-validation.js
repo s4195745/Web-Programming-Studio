@@ -345,8 +345,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 7. SIGN OUT LOGIC ---
     const signOutLinks = document.querySelectorAll('.sign-out-link');
     signOutLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
+        link.addEventListener('click', async (e) => {
             e.preventDefault();
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+            } catch (err) {
+                console.error("Logout error:", err);
+            }
             sessionStorage.clear();
             window.location.href = "/login";
         });

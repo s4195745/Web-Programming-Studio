@@ -223,7 +223,10 @@ router.post('/api/forum/threads/:id', upload.array('thread_image', 5), async (re
         thread.content = thread_content || thread.content;
 
         if (req.files && req.files.length > 0) {
-            const newImages = req.files.map(f => '/assets/uploads/' + f.filename);
+            const newImages = req.files.map(f => {
+                const base64Data = f.buffer.toString('base64');
+                    return `data:${f.mimetype};base64,${base64Data};`
+                    });
             thread.images = thread.images.concat(newImages);
         }
 
@@ -271,5 +274,7 @@ router.post('/api/forum/threads/:id/delete', async (req, res) => {
         res.status(500).json({ error: 'Failed to delete thread: ' + err.message });
     }
 });
+
+
 
 module.exports = router;

@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const mongoose = require('mongoose');
 
 const path = require('path');
@@ -21,7 +21,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-        mongoUrl: process.env.MONGODB_URI,
+        mongoUrl: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/game-merch',
         collectionName: 'sessions'
     }),
     cookie: {
@@ -72,7 +72,7 @@ app.use('/api', reviewRoutes);
 app.set('views', path.join(__dirname, 'views'));
 
 // --- START SERVER ---
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/game-merch')
     .then(() => {
         console.log('MongoDB connected successfully!');
         app.listen(PORT, () => {

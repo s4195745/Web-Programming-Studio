@@ -412,6 +412,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast("Network error occurred.");
             }
         });
+
+        // ADD TO WISHLIST
+        const addWishlistBtn = document.querySelector("#add-wishlist-btn");
+        if (addWishlistBtn) {
+            addWishlistBtn.addEventListener("click", async () => {
+                const token = sessionStorage.getItem("token");
+                if (!token) {
+                    showToast("Please log in to add items to your wishlist.");
+                    setTimeout(() => window.location.href = "/login", 1500);
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/wishlist', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ productId: productData.id || productData._id })
+                    });
+
+                    const data = await response.json();
+                    if (response.ok) {
+                        showToast(`${productData.title} added to wishlist!`);
+                        const icon = addWishlistBtn.querySelector("i");
+                        if (icon) {
+                            icon.classList.remove("ri-heart-line");
+                            icon.classList.add("ri-heart-fill");
+                        }
+                    } else {
+                        showToast(data.error || "Failed to add item to wishlist.");
+                    }
+                } catch (error) {
+                    console.error("Wishlist Error:", error);
+                    showToast("Network error occurred.");
+                }
+            });
+        }
     }
 
     // --- CART PAGE (READ, UPDATE, DELETE CRUD) ---
