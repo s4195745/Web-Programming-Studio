@@ -21,6 +21,7 @@ router.get('/api/forum/related-products', forumController.getRelatedProducts);
 router.post('/api/forum/threads', isAuthenticated, upload.array('thread_image', 5), validateCreateThread, forumController.createThread);
 router.post('/api/forum/threads/:id/reply', isAuthenticated, validateReply, forumController.replyToThread);
 router.post('/api/forum/threads/:id/like', isAuthenticated, forumController.toggleHeart);
+router.post('/api/forum/threads/:id/reply/:replyId/like', isAuthenticated, forumController.toggleReplyHeart);
 router.post('/api/forum/threads/:id', isAuthenticated, upload.array('thread_image', 5), forumController.editThread);
 router.post('/api/forum/threads/:id/delete', isAuthenticated, forumController.deleteThread);
  

@@ -66,6 +66,15 @@
   background-color: #f0fdf4;
 }
 
+.admin-action-btn.delete {
+  color: #b42318;
+  margin-left: 4px;
+}
+
+.admin-action-btn.delete:hover {
+  background-color: #fef2f2;
+}
+
 /* confirmation pop up */
 .admin-modal-overlay {
   display: none;
@@ -144,6 +153,27 @@
 
 .admin-modal-overlay.active {
   display: flex;
+}
+
+/* danger zone inside the "view account" info modal */
+.admin-info-danger {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* red variant of the confirm button, used for destructive actions (delete account) */
+.admin-btn-confirm.admin-btn-danger,
+.admin-btn-danger {
+  background-color: #b42318 !important;
+}
+
+.admin-btn-confirm.admin-btn-danger:hover,
+.admin-btn-danger:hover {
+  background-color: #8f1d15 !important;
+  opacity: 1;
 }
 
 /* admin only delete button for blog feeed */

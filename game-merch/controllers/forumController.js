@@ -15,10 +15,14 @@ function formatThread(t, viewerId) {
         heartedByMe: viewerId ? heartedBy.some((id) => String(id) === String(viewerId)) : false,
         replies: (t.replies || []).map((r) => {
             const rAuthor = r.authorId;
+            const rHeartedBy = r.heartedBy || [];
             return {
                 ...r,
                 authorId: rAuthor && rAuthor._id ? String(rAuthor._id) : (rAuthor ? String(rAuthor) : null),
-                authorAvatar: rAuthor && rAuthor.avatar ? rAuthor.avatar : null
+                authorAvatar: rAuthor && rAuthor.avatar ? rAuthor.avatar : null,
+                heartedBy: undefined,
+                heartCount: rHeartedBy.length,
+                heartedByMe: viewerId ? rHeartedBy.some((id) => String(id) === String(viewerId)) : false
             };
         })
     };
@@ -98,6 +102,41 @@ async function toggleHeart(req, res) {
     } catch (error) {
         console.error('Failed to update tym:', error);
         res.status(400).json({ error: 'Invalid thread id.' });
+    }
+}
+
+// POST /api/forum/threads/:id/reply/:replyId/like - React on a reply
+async function toggleReplyHeart(req, res) {
+    try {
+        const thread = await Thread.findOne({ _id: req.params.id, hidden: { $ne: true } });
+        if (!thread) {
+            return res.status(404).json({ error: 'Thread not found.' });
+        }
+
+        const reply = thread.replies.id(req.params.replyId);
+        if (!reply) {
+            return res.status(404).json({ error: 'Reply not found.' });
+        }
+
+        if (!reply.heartedBy) reply.heartedBy = [];
+
+        const userId = req.currentUser._id;
+        const alreadyHearted = reply.heartedBy.some((id) => String(id) === String(userId));
+
+        if (alreadyHearted) {
+            reply.heartedBy = reply.heartedBy.filter((id) => String(id) !== String(userId));
+        } else {
+            reply.heartedBy.push(userId);
+        }
+        await thread.save();
+
+        res.status(200).json({
+            heartCount: reply.heartedBy.length,
+            heartedByMe: !alreadyHearted
+        });
+    } catch (error) {
+        console.error('Failed to update tym for reply:', error);
+        res.status(400).json({ error: 'Invalid thread or reply id.' });
     }
 }
  
@@ -252,6 +291,7 @@ module.exports = {
     getThreadById,
     getRelatedProducts,
     toggleHeart,
+    toggleReplyHeart,
     createThread,
     replyToThread,
     editThread,

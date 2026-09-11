@@ -5,6 +5,7 @@ const replySchema = new mongoose.Schema({
   authorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   content: { type: String, required: true },
   parentReplyId: { type: mongoose.Schema.Types.ObjectId, default: null },
+  heartedBy: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
 }, {timestamps: true});
 
 const threadSchema = new mongoose.Schema({

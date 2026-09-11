@@ -55,9 +55,14 @@ document.addEventListener("DOMContentLoaded", function() {
             }
  
             const threadId = checkbox.dataset.threadId;
+            const replyId = checkbox.dataset.replyId; // present only for reply reactions
             const countEl = checkbox.parentElement.querySelector('.like_count');
- 
-            fetch('/api/forum/threads/' + threadId + '/like', { 
+
+            const likeUrl = replyId
+                ? '/api/forum/threads/' + threadId + '/reply/' + replyId + '/like'
+                : '/api/forum/threads/' + threadId + '/like';
+
+            fetch(likeUrl, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {'Content-Type' : 'application/json'}
@@ -158,12 +163,13 @@ document.addEventListener("DOMContentLoaded", function() {
                     <p>${escapeHtml(reply.content)}</p>
                 </div>
                 <div class="reply_footer">
-                    <input type="checkbox" id="reply-like-${threadId}-${reply._id}" class="reaction_toggle_checkbox" hidden>
+                    <input type="checkbox" id="reply-like-${threadId}-${reply._id}" class="reaction_toggle_checkbox" data-thread-id="${escapeHtml(threadId)}" data-reply-id="${escapeHtml(reply._id)}" ${reply.heartedByMe ? 'checked' : ''} hidden>
                     <label for="reply-like-${threadId}-${reply._id}" class="reaction_btn">
                         <i class="ri-heart-line icon_outline"></i>
                         <i class="ri-heart-fill icon_filled"></i>
+                        <span class="like_count">${reply.heartCount || 0}</span>
                     </label>
-                    <button type="button" class="reply_to_btn" data-reply-id="${escapeHtml(reply._id)}">
+                    <button type="button" class="reply_to_btn" data-reply-id="${escapeHtml(reply._id)}" data-thread-id="${escapeHtml(threadId)}">
                         <i class="ri-reply-line"></i> Reply
                     </button>
                 </div>
@@ -285,6 +291,7 @@ document.addEventListener("DOMContentLoaded", function() {
         threadListEl.innerHTML = toShow.map(function (t) { return buildThreadCardHtml(t, currentUser); }).join('');
         bindDeleteHandlers();
         bindLikeHandlers(threadListEl);
+        bindQuickReplyHandlers(threadListEl);
  
         if (loadMoreBtn) {
             loadMoreBtn.style.display = (currentVisibleCount < currentSortedThreads.length) ? '' : 'none';
@@ -458,20 +465,26 @@ document.addEventListener("DOMContentLoaded", function() {
             ${renderBranch('root', false)}
         `;
  
-        bindQuickReplyHandlers(thread._id);
+        bindQuickReplyHandlers(repliesSection);
+        bindLikeHandlers(repliesSection);
     }
  
     // Handle the "Reply" button under each reply: clicking displays a small form (quick_reply_form)
-    function bindQuickReplyHandlers(threadId) {
-        const repliesSection = document.getElementById('replies_section');
-        if (!repliesSection || repliesSection.dataset.quickReplyBound === 'true') return;
-        repliesSection.dataset.quickReplyBound = 'true';
+    function bindQuickReplyHandlers(container) {
+        if (!container || container.dataset.quickReplyBound === 'true') return;
+        container.dataset.quickReplyBound = 'true';
  
-        repliesSection.addEventListener('click', function (e) {
+        container.addEventListener('click', function (e) {
             const btn = e.target.closest('.reply_to_btn');
             if (!btn) return;
  
             const parentReplyId = btn.dataset.replyId;
+            const threadId = btn.dataset.threadId;
+            if (!threadId) {
+                showToast('Invalid thread id.');
+                return;
+            }
+ 
             const slot = document.getElementById('quick_reply_slot_' + parentReplyId);
             if (!slot) return;
  
@@ -519,7 +532,13 @@ document.addEventListener("DOMContentLoaded", function() {
                             return;
                         }
                         showToast('Reply posted successfully.');
-                        renderReplies(data.thread);
+                        if (document.getElementById('replies_section')) {
+                            // Thread detail page: re-render just the replies section.
+                            renderReplies(data.thread);
+                        } else if (typeof loadThreadList === 'function') {
+                            // Forum listing page: refresh the thread list so the new reply shows up.
+                            loadThreadList();
+                        }
                     })
                     .catch(function () {
                         showToast('Something went wrong.');
