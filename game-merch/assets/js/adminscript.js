@@ -2,6 +2,7 @@
     'use strict';
 
     let pendingLockAction = null;
+    let pendingDeleteAction = null;
 
     function getTableBody() {
         return document.querySelector('#admin-users-table tbody');
@@ -118,6 +119,14 @@
                             >
                                 ${locked ? 'Unlock' : 'Lock'}
                             </button>
+                            <button
+                                type="button"
+                                class="admin-action-btn delete"
+                                data-delete-id="${escapeHtml(user.id)}"
+                                data-username="${escapeHtml(user.username || '')}"
+                            >
+                                Delete
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -136,6 +145,15 @@
                     openLockConfirmation(
                         button.dataset.lockId,
                         button.dataset.locked === 'true'
+                    );
+                });
+            });
+
+            tbody.querySelectorAll('[data-delete-id]').forEach(button => {
+                button.addEventListener('click', () => {
+                    openDeleteConfirmation(
+                        button.dataset.deleteId,
+                        button.dataset.username
                     );
                 });
             });
@@ -206,6 +224,14 @@
                     <strong>Status:</strong>
                     ${user.isLocked ? 'Locked' : 'Active'}
                 </p>
+
+                ${user.role === 'admin' ? '' : `
+                <div class="admin-info-danger">
+                    <button type="button" id="admin-delete-account-btn" class="admin-btn-confirm admin-btn-danger">
+                        <i class="ri-delete-bin-line"></i> Delete Account
+                    </button>
+                </div>
+                `}
             `;
 
             const confirmButton =
@@ -215,6 +241,13 @@
 
             if (confirmButton) {
                 confirmButton.style.display = 'none';
+            }
+
+            const deleteFromInfoBtn = document.getElementById('admin-delete-account-btn');
+            if (deleteFromInfoBtn) {
+                deleteFromInfoBtn.addEventListener('click', () => {
+                    openDeleteConfirmation(user.id, user.username);
+                });
             }
 
             modal.classList.add('active');
@@ -345,6 +378,104 @@
         }
     }
 
+    function openDeleteConfirmation(userId, username) {
+        const modal =
+            document.getElementById(
+                'admin-confirm-modal'
+            );
+
+        const title =
+            document.getElementById(
+                'admin-modal-title'
+            );
+
+        const message =
+            document.getElementById(
+                'admin-modal-message'
+            );
+
+        const confirmButton =
+            document.getElementById(
+                'admin-modal-confirm-btn'
+            );
+
+        if (
+            !modal ||
+            !title ||
+            !message ||
+            !confirmButton
+        ) {
+            return;
+        }
+
+        pendingDeleteAction = { userId, username };
+
+        title.textContent = 'Delete Account';
+
+        message.innerHTML = `
+            <p>Are you sure you want to permanently delete <strong>${escapeHtml(username || 'this user')}</strong>?</p>
+            <p style="color:#b42318;">
+                This will permanently remove the account and everything attached to it
+                (threads, replies, blog posts/comments, cart, wishlist, reviews, orders)
+                from the database. This cannot be undone.
+            </p>
+        `;
+
+        confirmButton.textContent = 'Delete';
+        confirmButton.style.display = '';
+        confirmButton.disabled = false;
+        confirmButton.classList.add('admin-btn-danger');
+        confirmButton.onclick = confirmDeleteAction;
+
+        modal.classList.add('active');
+    }
+
+    async function confirmDeleteAction() {
+        if (!pendingDeleteAction) {
+            return;
+        }
+
+        const { userId } = pendingDeleteAction;
+
+        const confirmButton =
+            document.getElementById(
+                'admin-modal-confirm-btn'
+            );
+
+        if (confirmButton) {
+            confirmButton.disabled = true;
+        }
+
+        try {
+            await apiRequest(
+                `/api/admin/users/${encodeURIComponent(userId)}`,
+                { method: 'DELETE' }
+            );
+
+            closeAdminModal();
+
+            await loadAdminUsers();
+
+        } catch (error) {
+            console.error(
+                'Error deleting account:',
+                error
+            );
+
+            alert(
+                error.message ||
+                'Failed to delete account.'
+            );
+
+        } finally {
+            if (confirmButton) {
+                confirmButton.disabled = false;
+            }
+
+            pendingDeleteAction = null;
+        }
+    }
+
     function closeAdminModal() {
         const modal =
             document.getElementById(
@@ -363,10 +494,12 @@
         if (confirmButton) {
             confirmButton.style.display = '';
             confirmButton.disabled = false;
+            confirmButton.classList.remove('admin-btn-danger');
             confirmButton.onclick = null;
         }
 
         pendingLockAction = null;
+        pendingDeleteAction = null;
     }
 
     function toggleAdminPanel() {
@@ -394,6 +527,9 @@
 
     window.handleUserLockToggle =
         openLockConfirmation;
+
+    window.openDeleteConfirmation =
+        openDeleteConfirmation;
 
     document.addEventListener(
         'DOMContentLoaded',
