@@ -77,10 +77,23 @@ Handles community discussion threads, comments/replies, thread interactions (tym
 
 ### 3. Wistlist (Hoang Xuan Quynh)
 
-Handles User's wishlist and profile.
+Handles Wishlist, User authenticater.
+View:
+Wishlist (modules/wishlist): wishlist.ejs
+User authenticater (modules/shared_module): login.ejs, register.ejs, forgot_password.ejs, forgot_password_confirm.ejs, change_password.ejs, delete_account.ejs, edit_profile.ejs, verify_password.ejs, profile.ejs.
 
-- Wistlist (modules/wishlist): `wishlist.html`
-- **CSS:** `assests/css/main`, `assets/css/wistlist.css`, `assets/css/auth.css`
+assets/css:
+assets/css/auth.css, assets/css/wishlist.css, assets/css/main.css
+
+assets/js:
+auth-validation.js, wishlistscript.js
+
+routes: authRoutes.js, wishlistRoutes.js
+
+controller / middleware: controllers/wishlistController.js, middleware/validateWishlist.js
+
+model
+user.js, wishlist.js
 
 ### 4. Blog and Administrator (Ho Nguyen Thanh)
 
@@ -104,15 +117,21 @@ Handles User's wishlist and profile.
 
 ### 5. Product Review and User Account Management (Pham Khanh An)
 
-Allows users to read and leave reviews for merchandise.
+Handles Product Review and Rating, User authenticater.
+View:
+Product Review and Rating (modules/review): productreview.ejs
+User authenticater (modules/shared_module): login.ejs, register.ejs, forgot_password.ejs, forgot_password_confirm.ejs, change_password.ejs, delete_account.ejs, edit_profile.ejs, verify_password.ejs, profile.ejs.
 
-- Product Review (modules/review): `review.html`,
-- **CSS:** `assests/css/main`, `assets/css/productreview.css`, `assets/css/auth.css`
+assets/css:
+assets/css/auth.css, assets/css/productreview.css, assets/css/main.css
 
----
+assets/js:
+auth-validation.js, reviewscript.js
 
-- Global/Shared file: `server.js`, `main.css.`, `viewroute.js`, `mockDB.js`, `seed.js`,
-  `view/partials`.
+routes: authRoutes.js, reviewRoutes.js
+
+model
+user.js, review.js
 
 ## 🚀 Installation & Deployment Instructions (Running on other Servers/Environments)
 
