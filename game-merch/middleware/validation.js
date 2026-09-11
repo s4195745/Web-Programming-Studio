@@ -1,3 +1,5 @@
+// User account and shopping cart validation
+
 function validateRegister(req, res, next) {
     const { username, email, password, description } = req.body;
     if (!username || !email || !password || !description) {

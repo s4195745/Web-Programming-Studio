@@ -369,7 +369,11 @@ document.addEventListener(
       }
     }
 
-    // user blog
+    // ---------------- pagination
+    const USER_POSTS_PER_PAGE = 5;
+    let userPosts = [];
+    let currentUserPage = 1;
+
     const loadUserPosts =
   () => {
     if (!userPostsList) {
@@ -395,76 +399,24 @@ document.addEventListener(
 
       .then( userOnlyPosts => {
           if (
-            !Array.isArray(userOnlyPosts) ||
-            userOnlyPosts.length === 0 ) {
+            !Array.isArray(userOnlyPosts) || userOnlyPosts.length === 0 ) {
+
+            userPosts = [];
+            currentUserPage = 1;
+
             userPostsList.innerHTML = `<p class="no-posts">No posts found for ${CURRENT_USER}.</p>`;
             return;
           }
 
-          // user blog render -  this shit is actually cursed i tried a bunch of other methods but it constantly breaks
-          userPostsList.innerHTML = userOnlyPosts.map(
-                post => `
-                  <div
-                    class="user-post-item"
-                    data-id="${post.id}">
+          userPosts = userOnlyPosts;
+          const totalPages = Math.ceil(
+            userPosts.length / USER_POSTS_PER_PAGE);
 
-                    <div class="user-post-thumb">
-                      <img
-                        src="${post.imageUrl || 'https://via.placeholder.com/150'}"
-                        alt="${post.title || ''}"
-                        onerror="this.src='https://via.placeholder.com/150'"/>
-                    </div>
+          if (currentUserPage > totalPages) {
+            currentUserPage = totalPages;
+          }
 
-                    <div class="user-post-info">
-                      <span class="category">
-                        <span class="icon">
-                          ${post.categoryIcon || '📝'}
-                        </span>
-                        ${post.category || ''}
-                      </span>
-
-                      <h3>
-                        ${post.title || ''}
-                      </h3>
-
-                      <p class="card-meta">
-                        ${post.dateAdded || ''} • By ${post.author || ''}
-                      </p>
-                    </div>
-
-                    <div class="menu-dropdown">
-                      <button
-                        type="button"
-                        class="three-dots-btn"
-                        onclick="toggleDropdown(event, '${post.id}')"
-                        aria-label="Post Options">
-                        ⋮
-                      </button>
-
-                      <div
-                        class="dropdown-menu"
-                        id="dropdown-${post.id}"
-                        style="display: none;">
-
-                        <button
-                          type="button"
-                          class="dropdown-item edit-btn"
-                          onclick="triggerEdit('${post.id}')">
-                          Edit
-                        </button>
-
-                        <button
-                          type="button"
-                          class="dropdown-item delete-btn"
-                          onclick="triggerDelete('${post.id}')">
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                `
-              )
-              .join('');
+          renderUserPosts();
         }
       )
 
@@ -475,6 +427,176 @@ document.addEventListener(
         }
       );
   };
+
+    // ----------------  personal posts
+    function renderUserPosts() {
+      if (!userPostsList) {
+        return;
+      }
+
+      const totalPages = Math.ceil(
+        userPosts.length / USER_POSTS_PER_PAGE);
+      const startIndex = (currentUserPage - 1) * USER_POSTS_PER_PAGE;
+      const endIndex = startIndex + USER_POSTS_PER_PAGE;
+      const postsForCurrentPage =  userPosts.slice(startIndex, endIndex);
+
+      // user blog render -  this shit is actually cursed i tried a bunch of other methods but it constantly breaks
+      userPostsList.innerHTML = postsForCurrentPage.map(
+            post => `
+              <div
+                class="user-post-item"
+                data-id="${post.id}">
+
+                <div class="user-post-thumb">
+                  <img
+                    src="${post.imageUrl || 'https://via.placeholder.com/150'}"
+                    alt="${post.title || ''}"
+                    onerror="this.src='https://via.placeholder.com/150'"/>
+                </div>
+
+                <div class="user-post-info">
+                  <span class="category">
+                    <span class="icon">
+                      ${post.categoryIcon || '📝'}
+                    </span>
+                    ${post.category || ''}
+                  </span>
+
+                  <h3>
+                    ${post.title || ''}
+                  </h3>
+
+                  <p class="card-meta">
+                    ${post.dateAdded || ''} • By ${post.author || ''}
+                  </p>
+                </div>
+
+                <div class="menu-dropdown">
+                  <button
+                    type="button"
+                    class="three-dots-btn"
+                    onclick="toggleDropdown(event, '${post.id}')"
+                    aria-label="Post Options">
+                    ⋮
+                  </button>
+
+                  <div
+                    class="dropdown-menu"
+                    id="dropdown-${post.id}"
+                    style="display: none;">
+
+                    <button
+                      type="button"
+                      class="dropdown-item edit-btn"
+                      onclick="triggerEdit('${post.id}')">
+                      Edit
+                    </button>
+
+                    <button
+                      type="button"
+                      class="dropdown-item delete-btn"
+                      onclick="triggerDelete('${post.id}')">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `
+          )
+          .join('');
+
+      // Render pagination
+      renderUserPostsPagination(totalPages);
+    };
+
+    //  pagination controls
+    function renderUserPostsPagination(totalPages) {
+      const oldPagination = document.querySelector('.user-post-pagination');
+      if (oldPagination) {
+        oldPagination.remove();
+      }
+
+      // no paignation if theres not enough posts
+      if (totalPages <= 1) {
+        return;
+      }
+
+      const pagination = document.createElement('div');
+      pagination.className = 'user-post-pagination';
+
+      // Previous button
+      const previousButton = document.createElement('button');
+      previousButton.type = 'button';
+      previousButton.className = 'pagination-btn';
+      previousButton.textContent = 'Previous';
+      previousButton.disabled = currentUserPage === 1;
+      previousButton.addEventListener('click', () => {
+
+        if (currentUserPage > 1) {
+          currentUserPage--;
+          renderUserPosts();
+          scrollToUserPosts();
+        }
+      });
+      pagination.appendChild(previousButton);
+
+      // Page number buttons
+      for (
+        let page = 1;
+        page <= totalPages;
+        page++
+      ) {
+
+        const pageButton =  document.createElement('button');
+        pageButton.type = 'button';
+        pageButton.className = 'pagination-btn';
+        pageButton.textContent = page;
+
+        if (page === currentUserPage) {
+          pageButton.classList.add('active');
+        }
+
+        pageButton.addEventListener('click', () => {
+          currentUserPage = page;
+          renderUserPosts();
+          scrollToUserPosts();
+        });
+
+        pagination.appendChild(pageButton);
+      }
+
+      // Next button
+      const nextButton = document.createElement('button');
+      nextButton.type = 'button';
+      nextButton.className = 'pagination-btn';
+      nextButton.textContent = 'Next';
+      nextButton.disabled = currentUserPage === totalPages;
+      nextButton.addEventListener('click', () => {
+
+        if (currentUserPage < totalPages) {
+          currentUserPage++;
+          renderUserPosts();
+          scrollToUserPosts();
+        }
+
+      });
+
+      pagination.appendChild(nextButton);
+      userPostsList.parentElement.appendChild(
+        pagination
+      );
+    }
+
+    // --- keep UserBlog when switching paige
+    function scrollToUserPosts() {
+      if (!userPostsList) {
+        return;
+      }
+
+      userPostsList.scrollIntoView({
+        behavior: 'smooth', block: 'start'
+      });
+    }
 
     if (postForm) {
       postForm.addEventListener('submit',
@@ -717,7 +839,7 @@ document.addEventListener(
     //⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣖⣺⡿⠿⠷⠶⠒⢶⣶⠖⠀⠉⡻⢻⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀
     //⠀⠀⠀⠀⠀⠀⠀⠀⣴⢻⣭⣫⣿⠁⠀⠀⠀⠀⠀⠀⠀⢀⣾⠃⢀⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀
     //⠀⠀⠀⠀⢀⣖⡿⠋⢙⣿⠿⢿⠿⣿⡦⠄⠀⠀⠀⣠⣾⠟⠀⠀⣼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    //⠀⠀⢀⣰⣿⣴⣿⡿⠿⠿⠿⢿⣦⣄⠀⠀⠀⣠⣾⣿⠃⠀⢀⣸⡿⣳⣶⣲⡄⠀⠀⠀⠀⠀⠀
+    //⠀⠀⢀⣰⣿⣴⣿⡿⠿⠿⠿⢿⦦⣄⠀⠀⠀⣠⣾⣿⠃⠀⢀⣸⡿⣳⣶⣲⡄⠀⠀⠀⠀⠀⠀
     //⠀⠀⣾⣽⡿⣛⣵⠾⠿⠿⠷⣦⣌⠻⣷⣄⢰⣿⠟⠁⠀⢠⣾⠿⢡⣯⠸⠧⢽⣄⠀⠀⠀⠀⠀
     //⠀⢸⡇⡟⣴⡿⢟⣽⣾⣿⣶⣌⠻⣧⣹⣿⡿⠋⠀⠀⠀⣾⠿⡇⣽⣿⣄⠀⠀⠉⠳⣄⢀⡀⠀
     //⠀⢸⠇⢳⣿⢳⣿⣿⣿⣿⣿⣿⡆⢹⡇⣿⡇⠀⡆⣠⣼⡏⢰⣿⣿⣿⣿⣦⠀⠀⠀⠈⠳⣅⠀
@@ -725,16 +847,16 @@ document.addEventListener(
     //⢰⡟⡿⡆⠹⣧⡙⢿⣿⣿⠿⡟⢡⣿⢷⣿⣧⠾⢠⣿⣾⣿⣿⣿⣿⣿⣿⠁⠀⠀⠀⠀⠀⠀⠘
     //⠀⠻⡽⣦⠀⠈⠙⠳⢶⣦⡶⠞⢻⡟⡸⠟⠁⢠⠟⠉⠉⠙⠿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⡴
     //⠀⠀⢸⣿⡇⠀⠀⣀⣠⠀⢀⡀⠸⣹⠇⠀⣰⡟⡀⠀⠈⠛⠻⢿⣻⣿⡿⠀⠀⠀⠀⠀⠀⡠⠁
-    //⠀ ⢸⣿⣇⣴⢿⣿⣿⣿⣮⣿⣷⡟⠀⣰⣿⢰⠀⣀⠀⠀⠀⢀⣉⣿⡇⠀⠀⠀⠀⠀⣸⠃⠀
+    //⠀ ⢸⣿⣇⣴⢿⣿⣿⣿⮮⣿⷟⠀⣰⣿⢰⠀⣀⠀⠀⠀⢀⣉⣿⡇⠀⠀⠀⠀⠀⣸⠃⠀
     //⠀ ⢸⣿⡟⣯⠸⣿⣿⣿⣿⢈⣿⡇⣼⣿⠇⣸⡦⣙⣷⣦⣴⣯⠿⠛⢷⡀⠀⠀⠀⣰⡟⠀⠀
-    //⠀ ⠘⣿⣿⡸⣷⣝⠻⠟⢋⣾⣟⣰⡏⣠⣤⡟⠀⠀⠈⠉⠁⠀⠀⠀⠀⢻⣶⠀⢀⣿⠁⠀⠀
-    //⠀⠀⠀⢸⡿⣿⣦⣽⣛⣛⣛⣭⣾⣷⡶⠞⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⣿⡟⠀⠀⠀⠀
-    //⠀ ⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡀⠁⢸⢻⠁⠀⠀⠀⠀
+    //⠀ ⠘⣿⣿⡸⣷⣝⠻⠟⢋⾾⣟⣰⏏⣠⣤⡟⠀⠀⠈≉⠁⠀⠀⠀⠀⢻⣶⠀⢀⣿⠁⠀⠀
+    //⠀⠀⠀⢸⡿⣿⣦⣽⣛⣛⣛⣭⣾ⷷ⡶⠞⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⣿⡟⠀⠀⠀⠀
+    //⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡀⠁⢸⢻⠁⠀⠀⠀⠀
     //⠀⠀⠀⠀⡿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⣤⣤⣀⣀⣀⣀⣀⣠⣤⠶⠛⠁⢀⣾⡟⠀⠀⠀⠀⠀
-    //⠀⠀⠀⠀⢿⣻⣿⣿⣿⣿⣿⣿⣎⣿⡅⠀⠈⠉⠉⠉⠉⠉⠁⠀⠀⠀⠀⣼⣿⠁⠀⠀⠀⠀⠀
+    //⠀⠀⠀⠀⢿⣻⣿⣿⣿⣿⣿⣿⣎⣿⡅⠀∈≉≉≉≉⠁⠀⠀⠀⠀⣼⣿⠁⠀⠀⠀⠀⠀
     // ⠀⠀⠀⠈⢻⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⡷⠟⠀⠀⠀⠀⠀⠀
     //⠀⠀⠀⠀⠀⠀⠙⢿⣿⣿⠻⢿⣿⣿⣟⣂⣀⣀⣀⣀⣀⣀⣤⠴⠋⠁⣾⠀⠀⠀⠀⠀⠀⠀⠀
-    //⠀⠀⠀⠀⠀⠀⠀⠈⢻⣿⣷⣷⡄⠀⠀⠀⠉⠉⠉⠉⠉⠀⠀⠀⢀⡞⠁⠀⠀⠀⠀⠀⠀⠀⠀
+    //⠀⠀⠀⠀⠀⠀⠀⠈⢻⣿⣷⣷⡄⠀⠀⠀≉≉≉≉≉⠀⠀⠀⢀⡞⠁⠀⠀⠀⠀⠀⠀⠀⠀
     //⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⣿⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     //⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⣷⣤⣤⣤⣤⣄⣤⣤⡤⠴⠞⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     // =========================================================
