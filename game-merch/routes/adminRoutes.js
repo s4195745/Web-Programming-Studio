@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const { isAuthenticated, requireAdmin } = require('../middleware/auth'); 
 const User = require('../models/user'); 
+const Thread = require('../models/thread');
+const Cart = require('../models/cart');
+const Product = require('../models/product');
 
 // Page route
 router.get('/admin/users', isAuthenticated, requireAdmin, (req, res) => {

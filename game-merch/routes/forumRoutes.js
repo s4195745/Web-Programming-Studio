@@ -272,43 +272,4 @@ router.post('/api/forum/threads/:id/delete', async (req, res) => {
     }
 });
 
-// Admin delete any forum post 
-router.post('/api/forum/threads/:id/admin-delete', async (req, res) => {
-    try {
-        if (!req.session || !req.session.user) {
-            return res.status(401).json({ error: 'Please log in first.' });
-        }
-
-        const freshUser = await User.findById(req.session.user.id);
-        if (!freshUser) {
-            return res.status(401).json({ error: 'User account not found.' });
-        }
-        if (freshUser.isLocked) {
-            return res.status(403).json({ error: 'Your account is locked. You cannot perform this action.' });
-        }
-
-        const isAdmin = String(freshUser.role || '').trim().toLowerCase() === 'admin';
-        if (!isAdmin) {
-            return res.status(403).json({ error: 'Admin access required.' });
-        }
-
-        const thread = await Thread.findById(req.params.id);
-        if (!thread) {
-            return res.status(404).json({ error: 'Thread not found' });
-        }
-
-        if (thread.pinned) {
-            return res.status(403).json({ error: 'Pinned posts cannot be deleted.' });
-        }
-
-        thread.hidden = true;
-        await thread.save();
-
-        res.json({ message: 'Thread deleted successfully by admin.' });
-    } catch (err) {
-        console.error('[POST /api/forum/threads/:id/admin-delete]', err);
-        res.status(500).json({ error: 'Failed to delete thread by admin: ' + err.message });
-    }
-});
-
 module.exports = router;
